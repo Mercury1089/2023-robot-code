@@ -9,12 +9,15 @@ import frc.robot.Constants.GAMEPAD_AXIS;
 import frc.robot.Constants.GAMEPAD_BUTTONS;
 import frc.robot.Constants.GAMEPAD_POV;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
+import frc.robot.sensors.REVBlinkin;
+import frc.robot.sensors.REVBlinkin.Colors;
 import frc.robot.util.PovButton;
 import frc.robot.util.TriggerButton;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -40,22 +43,37 @@ public class RobotContainer {
 
   private Autons autonCommand = Autons.DEFAULT;
   private SendableChooser<Autons> autonChooser;
+  private SendableChooser<Colors> LEDsetter;
+  private REVBlinkin LEDs;
+  
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    LEDs = new REVBlinkin();
 
     // buttons & bindings
     leftJoystick = new Joystick(DS_USB.LEFT_STICK);
     rightJoystick = new Joystick(DS_USB.RIGHT_STICK);
     gamepad = new Joystick(DS_USB.GAMEPAD);
     configureBindings();
+    
+
+    gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(LEDsetter.getSelected())));
+    // gamepadA.onTrue(new InstantCommand(() -> System.out.println("WORKING")));
 
     // autons
     autonChooser = new SendableChooser<Autons>();
     autonChooser.setDefaultOption("DEFAULT", Autons.DEFAULT);
-      
     SmartDashboard.putData("Auton Chooser", autonChooser);
+
+    LEDsetter = new SendableChooser<Colors>();
+    LEDsetter.setDefaultOption("OFF", Colors.OFF);
+    LEDsetter.addOption("CUBE", Colors.PURPLE);
+    LEDsetter.addOption("CONE", Colors.YELLOW);
+    LEDsetter.addOption("PARTY", Colors.CELEBRATION);
+    SmartDashboard.putData("Set LEDs", LEDsetter);
   }
 
   /**
