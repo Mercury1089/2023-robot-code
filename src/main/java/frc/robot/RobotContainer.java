@@ -10,6 +10,7 @@ import frc.robot.Constants.GAMEPAD_BUTTONS;
 import frc.robot.Constants.GAMEPAD_POV;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.util.PovButton;
+import frc.robot.util.ShuffleDash;
 import frc.robot.util.TriggerButton;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,10 @@ public class RobotContainer {
   private TriggerButton gamepadLT, gamepadRT;
   private PovButton gamepadPOVDown, gamepadPOVUpLeft, gamepadPOVUp, gamepadPOVUpRight;
 
+  private Autons autonCommand = Autons.DEFAULT;
+
+  private ShuffleDash shuffleDash;
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -43,9 +48,9 @@ public class RobotContainer {
     leftJoystick = new Joystick(DS_USB.LEFT_STICK);
     rightJoystick = new Joystick(DS_USB.RIGHT_STICK);
     gamepad = new Joystick(DS_USB.GAMEPAD);
-
-
     configureBindings();
+
+    shuffleDash = new ShuffleDash(this);
   }
 
   /**
@@ -112,5 +117,14 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return null;
+  }
+
+  // TEMPORARY
+  public Autons getSelectedAuton() {
+    return this.autonCommand;
+  }
+
+  public enum Autons {
+    DEFAULT
   }
 }
