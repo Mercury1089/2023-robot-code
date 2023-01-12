@@ -10,9 +10,10 @@ import frc.robot.Constants.GAMEPAD_BUTTONS;
 import frc.robot.Constants.GAMEPAD_POV;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.util.PovButton;
-import frc.robot.util.ShuffleDash;
 import frc.robot.util.TriggerButton;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -38,19 +39,23 @@ public class RobotContainer {
   private PovButton gamepadPOVDown, gamepadPOVUpLeft, gamepadPOVUp, gamepadPOVUpRight;
 
   private Autons autonCommand = Autons.DEFAULT;
-
-  private ShuffleDash shuffleDash;
+  private SendableChooser<Autons> autonChooser;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    // buttons & bindings
     leftJoystick = new Joystick(DS_USB.LEFT_STICK);
     rightJoystick = new Joystick(DS_USB.RIGHT_STICK);
     gamepad = new Joystick(DS_USB.GAMEPAD);
     configureBindings();
 
-    shuffleDash = new ShuffleDash(this);
+    // autons
+    autonChooser = new SendableChooser<Autons>();
+    autonChooser.setDefaultOption("DEFAULT", Autons.DEFAULT);
+      
+    SmartDashboard.putData("Auton Chooser", autonChooser);
   }
 
   /**
