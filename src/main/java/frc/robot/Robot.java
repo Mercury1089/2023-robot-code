@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,18 +55,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    
+    m_robotContainer.getAutonomous().updateDash();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    Command autonCommand = m_robotContainer.getAutonomous().getAutonCommand();
+    if (autonCommand != null){
+      autonCommand.schedule();
+      DriverStation.reportError("Auton is Scheduled", false);
+    }
+    DriverStation.reportError("Auton is initialized", false);
   }
 
   /** This function is called periodically during autonomous. */

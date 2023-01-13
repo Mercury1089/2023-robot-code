@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Autons.Auton;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.GAMEPAD_AXIS;
 import frc.robot.Constants.GAMEPAD_BUTTONS;
@@ -41,8 +42,7 @@ public class RobotContainer {
   private TriggerButton gamepadLT, gamepadRT;
   private PovButton gamepadPOVDown, gamepadPOVUpLeft, gamepadPOVUp, gamepadPOVUpRight;
 
-  private Autons autonCommand = Autons.DEFAULT;
-  private SendableChooser<Autons> autonChooser;
+  private Autons auton;
   private SendableChooser<Colors> LEDsetter;
   private REVBlinkin LEDs;
   
@@ -64,9 +64,8 @@ public class RobotContainer {
     // gamepadA.onTrue(new InstantCommand(() -> System.out.println("WORKING")));
 
     // autons
-    autonChooser = new SendableChooser<Autons>();
-    autonChooser.setDefaultOption("DEFAULT", Autons.DEFAULT);
-    SmartDashboard.putData("Auton Chooser", autonChooser);
+    auton = new Autons();
+    
 
     LEDsetter = new SendableChooser<Colors>();
     LEDsetter.setDefaultOption("OFF", Colors.OFF);
@@ -137,17 +136,8 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Autons getAutonomous() {
     // An example command will be run in autonomous
-    return null;
-  }
-
-  // TEMPORARY
-  public Autons getSelectedAuton() {
-    return this.autonCommand;
-  }
-
-  public enum Autons {
-    DEFAULT
+    return auton;
   }
 }
