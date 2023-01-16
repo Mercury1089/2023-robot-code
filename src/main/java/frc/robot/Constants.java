@@ -75,4 +75,32 @@ public final class Constants {
     }
   }
 
+  public static class SWERVE {
+
+    public static final double WHEEL_DIAMETER = 0.0762; // meters
+    // changes drive speed (more pinions = zoom robot)
+    public static final int PINION_TEETH = 14;
+
+    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
+    public static final double MOTOR_REDUCTION = (45.0 * 22) / (PINION_TEETH * 15);
+
+    // conversion factor to get swerve to return rotations --> meters
+    // wheel circumference (2*pi*r) / MOTOR_REDUCTION
+    public static final double METERS_CONVERSION = (WHEEL_DIAMETER * Math.PI)
+        / MOTOR_REDUCTION; // meters
+    public static final double VELOCITY_CONVERSION = METERS_CONVERSION / 60.0; // meters per second
+
+    public static final double RADIANS_CONVERSION = 2 * Math.PI;
+    public static final double RADIANS_VELOCITY_CONVERSION = RADIANS_CONVERSION / 60;
+  }
+
+  public static class UNITS {
+    public static final int
+      MAG_ENCODER_TICKS_PER_REVOLUTION = 4096,
+      PIGEON_NATIVE_UNITS_PER_ROTATION = 8192;
+
+    private UNITS() {
+    }
+}
+
 }

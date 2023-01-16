@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.MercMath;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -55,10 +56,9 @@ public class Drivetrain extends SubsystemBase {
       new Translation2d(-lengthFromCenter, -widthFromCenter)
     );
 
-    // ToDo: convert pigeonYaw --> Degrees --> Rotation2d
     odometry = new SwerveDriveOdometry(
       swerveKinematics, 
-      Rotation2d.fromDegrees(pigeon.getYaw()),
+      Rotation2d.fromDegrees(MercMath.pigeonUnitsToDegrees(pigeon.getYaw())),
       new SwerveModulePosition[] {
         frontLeftModule.getPosition(),
         frontRightModule.getPosition(),
@@ -70,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
   public void resetYaw() {
     pigeon.setYaw(0);
   }
-  
+
   public void calibratePigeon() {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
@@ -111,7 +111,8 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    odometry.update(Rotation2d.fromDegrees(pigeon.getYaw()), 
+    odometry.update(
+    Rotation2d.fromDegrees(MercMath.pigeonUnitsToDegrees(pigeon.getYaw())),
     new SwerveModulePosition[] {
       frontLeftModule.getPosition(),
       frontRightModule.getPosition(),
