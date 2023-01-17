@@ -7,6 +7,7 @@ public class REVBlinkin {
 
     private Spark blinkin;
     private Colors color;
+    
     public REVBlinkin() {
         // LEDS
         this.blinkin = new Spark(0);
@@ -17,28 +18,20 @@ public class REVBlinkin {
 
     public void setColor(Colors color) {
         this.color = color;
-        if (color == Colors.OFF) {
-            this.blinkin.set(0.99);
-        } else if (color == Colors.YELLOW) {
-            this.blinkin.set(0.69);
-        } else if (color == Colors.PURPLE) {
-            this.blinkin.set(0.91);
-        } else {
-            // confetti effect
-            this.blinkin.set(-0.87);
-        }
-        
+        this.blinkin.set(color.colorValue);
     }
 
-    public Colors getColor(){
+    public Colors getColor() {
         return this.color;
     }
 
-
     public enum Colors {
-        OFF,
-        YELLOW,
-        PURPLE,
-        CELEBRATION
+        OFF(0.99), YELLOW(0.69), PURPLE(0.91), CELEBRATION(-0.87);
+
+        public final double colorValue;
+
+        Colors(double colorValue)  {
+            this.colorValue = colorValue;
+        }
     }
 }
