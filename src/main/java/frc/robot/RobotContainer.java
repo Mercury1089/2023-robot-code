@@ -6,18 +6,12 @@ package frc.robot;
 
 import frc.robot.Autons.Auton;
 import frc.robot.Constants.DS_USB;
-import frc.robot.Constants.GAMEPAD_AXIS;
-import frc.robot.Constants.GAMEPAD_BUTTONS;
-import frc.robot.Constants.GAMEPAD_POV;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
-import frc.robot.util.PovButton;
-import frc.robot.util.TriggerButton;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -33,19 +27,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private Joystick rightJoystick, leftJoystick, gamepad;
+  private Joystick rightJoystick, leftJoystick;
+  private CommandXboxController gamepad;
 
   private JoystickButton left1, left2, left3, left4, left5, left6, left7, left8, left9, left10, left11;
   private JoystickButton right1, right2, right3, right4, right5, right6, right7, right8, right9, right10, right11;
-  private JoystickButton gamepadA, gamepadB, gamepadX, gamepadY, gamepadRB, gamepadLB, gamepadL3, gamepadBack, 
-  gamepadStart, gamepadLeftStickButton, gamepadRightStickButton;
-  private TriggerButton gamepadLT, gamepadRT;
-  private PovButton gamepadPOVDown, gamepadPOVUpLeft, gamepadPOVUp, gamepadPOVUpRight;
+  private Trigger gamepadA, gamepadB, gamepadX, gamepadY, gamepadRB, gamepadLB, gamepadL3, gamepadBack, 
+  gamepadStart, gamepadLeftStickButton, gamepadRightStickButton, gamepadLT, gamepadRT, gamepadPOVDown, gamepadPOVUpLeft, 
+  gamepadPOVUp, gamepadPOVUpRight, gamepadPOVLeft, gamepadPOVRight, gamepadPOVDownRight, gamepadPOVDownLeft;
 
   private Autons auton;
   private SendableChooser<Colors> LEDsetter;
   private REVBlinkin LEDs;
-  
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -56,7 +49,7 @@ public class RobotContainer {
     // buttons & bindings
     leftJoystick = new Joystick(DS_USB.LEFT_STICK);
     rightJoystick = new Joystick(DS_USB.RIGHT_STICK);
-    gamepad = new Joystick(DS_USB.GAMEPAD);
+    gamepad = new CommandXboxController(DS_USB.GAMEPAD);
     configureBindings();
     
 
@@ -110,25 +103,27 @@ public class RobotContainer {
         right10 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN10);
         right11 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN11);
 
-        gamepadA = new JoystickButton(gamepad, GAMEPAD_BUTTONS.A);
-        gamepadB = new JoystickButton(gamepad, GAMEPAD_BUTTONS.B);
-        gamepadX = new JoystickButton(gamepad, GAMEPAD_BUTTONS.X);
-        gamepadY = new JoystickButton(gamepad, GAMEPAD_BUTTONS.Y);
-        gamepadRB = new JoystickButton(gamepad, GAMEPAD_BUTTONS.RB);
-        gamepadLB = new JoystickButton(gamepad, GAMEPAD_BUTTONS.LB);
-        gamepadBack = new JoystickButton(gamepad, GAMEPAD_BUTTONS.BACK);
-        gamepadStart = new JoystickButton(gamepad, GAMEPAD_BUTTONS.START);
-        gamepadL3 = new JoystickButton(gamepad, GAMEPAD_BUTTONS.L3);
-        gamepadLeftStickButton = new JoystickButton(gamepad, GAMEPAD_BUTTONS.L3);
-        gamepadRightStickButton = new JoystickButton(gamepad, GAMEPAD_BUTTONS.R3);
-        gamepadLT = new TriggerButton(gamepad, GAMEPAD_AXIS.leftTrigger);
-        gamepadRT = new TriggerButton(gamepad, GAMEPAD_AXIS.rightTrigger);
+        gamepadA = gamepad.a();
+        gamepadB = gamepad.b();
+        gamepadX = gamepad.x();
+        gamepadY = gamepad.y();
+        gamepadRB = gamepad.rightBumper();
+        gamepadLB = gamepad.leftBumper();
+        gamepadBack = gamepad.back();
+        gamepadStart = gamepad.start();
+        gamepadLeftStickButton = gamepad.leftStick();
+        gamepadRightStickButton = gamepad.rightStick();
+        gamepadLT = gamepad.leftTrigger();
+        gamepadRT = gamepad.rightTrigger();
         
-
-        gamepadPOVDown = new PovButton(gamepad, GAMEPAD_POV.DOWN);
-        gamepadPOVUpLeft = new PovButton(gamepad, GAMEPAD_POV.UP_LEFT);
-        gamepadPOVUp = new PovButton(gamepad, GAMEPAD_POV.UP);
-        gamepadPOVUpRight = new PovButton(gamepad, GAMEPAD_POV.UP_RIGHT);
+        gamepadPOVDown = gamepad.povDown();
+        gamepadPOVUpLeft = gamepad.povUpLeft();
+        gamepadPOVUp = gamepad.povUp();
+        gamepadPOVUpRight = gamepad.povUpRight();
+        gamepadPOVLeft = gamepad.povLeft();
+        gamepadPOVRight = gamepad.povRight();
+        gamepadPOVDownRight = gamepad.povDownRight();
+        gamepadPOVDownLeft = gamepad.povDownLeft();
   }
 
   /**
