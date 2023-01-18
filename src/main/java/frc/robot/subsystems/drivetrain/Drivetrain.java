@@ -10,11 +10,14 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.SWERVE;
 import frc.robot.util.MercMath;
 
 public class Drivetrain extends SubsystemBase {
@@ -32,9 +35,9 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     // configure swerve modules
     frontLeftModule = new SwerveModule(0, 0, 0);
-    frontRightModule = new SwerveModule(0, 0, 0);
-    backLeftModule = new SwerveModule(0, 0, 0);
-    backRightModule = new SwerveModule(0, 0, 0);
+    frontRightModule = new SwerveModule(0, 0, 90);
+    backLeftModule = new SwerveModule(0, 0, 180);
+    backRightModule = new SwerveModule(0, 0, 270);
 
     //configure gyro
     pigeon = new PigeonIMU(0);
@@ -106,6 +109,21 @@ public class Drivetrain extends SubsystemBase {
     backLeftModule.resetEncoders();
     frontRightModule.resetEncoders();
     backRightModule.resetEncoders();
+  }
+
+  public void joyDrive(double xSpeed, double ySpeed, double angularSpeed) {
+    xSpeed *= SWERVE.MAX_DIRECTION_SPEED;
+    ySpeed *= SWERVE.MAX_DIRECTION_SPEED;
+    angularSpeed *= SWERVE.MAX_ROTATIONAL_SPEED;
+
+    // general swerve speeds --> speed per module
+    SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeed, ySpeed, angularSpeed));
+    SwerveModuleState frontLeft = moduleStates[0];
+    SwerveModuleState frontRight = moduleStates[1];
+    SwerveModuleState backLeft = moduleStates[2];
+    SwerveModuleState backRight = moduleStates[3];
+
+    
   }
 
   @Override

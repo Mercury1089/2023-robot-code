@@ -22,12 +22,13 @@ public class SwerveModule {
     private final SparkMaxPIDController drivingPIDController;
     private final SparkMaxPIDController turningPIDController;
 
-    private double currchassisAngularOffset = 0;
+    // the module position relative to robot chassis
+    private double chassisAngularOffset = 0;
     private SwerveModuleState desiredState = new SwerveModuleState(0.0, new Rotation2d());
 
-    public SwerveModule(int driveCAN, int turnCad, double chassisAngularOffset) {
+    public SwerveModule(int driveCAN, int turnCan, double chassisAngularOffset) {
         drivingSparkMax = new CANSparkMax(driveCAN, MotorType.kBrushless);
-        turningSparkMax = new CANSparkMax(turnCad, MotorType.kBrushless);
+        turningSparkMax = new CANSparkMax(turnCan, MotorType.kBrushless);
 
         // Factory reset, so we get the SPARKS MAX to a known state before configuring
     // them. This is useful in case a SPARK MAX is swapped out.
@@ -97,7 +98,7 @@ public class SwerveModule {
         drivingSparkMax.burnFlash();
         turningSparkMax.burnFlash();
 
-        currchassisAngularOffset = chassisAngularOffset;
+        this.chassisAngularOffset = chassisAngularOffset;
         desiredState.angle = new Rotation2d(turningEncoder.getPosition());
         drivingEncoder.setPosition(0);
     }
@@ -107,10 +108,24 @@ public class SwerveModule {
         // relative to the chassis.
         return new SwerveModulePosition(
             drivingEncoder.getPosition(),
-            new Rotation2d(turningEncoder.getPosition() - currchassisAngularOffset));
+            new Rotation2d(turningEncoder.getPosition() - chassisAngularOffset));
     }
 
     public void resetEncoders() {
         drivingEncoder.setPosition(0);
     }
+
+    public void setDesiredState(SwerveModuleState speed) {
+        speed.angle = speed.angle.plus(
+            Rotation2d.fromDegrees(chassisAngularOffset));
+
+        SwerveModuleState optimizedSpeed = SwerveModuleState.optimize(speed,
+            new Rotation2d(turningEncoder.getPosition()));
+    
+        // Command driving and turning SPARKS MAX towards their respective setpoints.
+        // drivingSparkMax.getPIDController().setReference(optimizedSpeed, null)
+        drivingPIDController.setReference(optimizedSpeed.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
+        turningPIDController.setReference(optimizedSpeed.angle.getRadians(), CANSparkMax.ControlType.kPosition);
+    }
+
 }

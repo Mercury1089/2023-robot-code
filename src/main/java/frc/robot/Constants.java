@@ -92,6 +92,9 @@ public final class Constants {
 
     public static final double RADIANS_CONVERSION = 2 * Math.PI;
     public static final double RADIANS_VELOCITY_CONVERSION = RADIANS_CONVERSION / 60;
+
+    public static final double MAX_DIRECTION_SPEED = 5.0; //meters per second
+    public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
   }
 
   public static class UNITS {
