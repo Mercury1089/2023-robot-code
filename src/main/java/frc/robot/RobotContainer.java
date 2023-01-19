@@ -38,7 +38,6 @@ public class RobotContainer {
   gamepadPOVUp, gamepadPOVUpRight, gamepadPOVLeft, gamepadPOVRight, gamepadPOVDownRight, gamepadPOVDownLeft;
 
   private Autons auton;
-  private SendableChooser<Colors> LEDsetter;
   private REVBlinkin LEDs;
 
   private Drivetrain drivetrain;
@@ -56,19 +55,16 @@ public class RobotContainer {
     // subsystems & sensors
     LEDs = new REVBlinkin();
 
-    drivetrain = new Drivetrain();
-    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
+    //drivetrain = new Drivetrain();
+    //drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
 
-    gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(LEDsetter.getSelected())));
+    gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
+    gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
+    gamepadY.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)));
+    gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
 
     // autons
     auton = new Autons();
-    LEDsetter = new SendableChooser<Colors>();
-    LEDsetter.setDefaultOption("OFF", Colors.OFF);
-    LEDsetter.addOption("CUBE", Colors.PURPLE);
-    LEDsetter.addOption("CONE", Colors.YELLOW);
-    LEDsetter.addOption("PARTY", Colors.CELEBRATION);
-    SmartDashboard.putData("Set LEDs", LEDsetter);
   }
 
   /**
