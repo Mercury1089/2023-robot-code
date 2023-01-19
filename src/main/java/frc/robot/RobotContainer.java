@@ -7,14 +7,15 @@ package frc.robot;
 import frc.robot.Autons.Auton;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
+import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
-import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController; 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
@@ -27,11 +28,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private Joystick rightJoystick, leftJoystick;
+  private CommandJoystick rightJoystick, leftJoystick;
   private CommandXboxController gamepad;
 
-  private JoystickButton left1, left2, left3, left4, left5, left6, left7, left8, left9, left10, left11;
-  private JoystickButton right1, right2, right3, right4, right5, right6, right7, right8, right9, right10, right11;
+  private Trigger left1, left2, left3, left4, left5, left6, left7, left8, left9, left10, left11;
+  private Trigger right1, right2, right3, right4, right5, right6, right7, right8, right9, right10, right11;
   private Trigger gamepadA, gamepadB, gamepadX, gamepadY, gamepadRB, gamepadLB, gamepadL3, gamepadBack, 
   gamepadStart, gamepadLeftStickButton, gamepadRightStickButton, gamepadLT, gamepadRT, gamepadPOVDown, gamepadPOVUpLeft, 
   gamepadPOVUp, gamepadPOVUpRight, gamepadPOVLeft, gamepadPOVRight, gamepadPOVDownRight, gamepadPOVDownLeft;
@@ -40,26 +41,28 @@ public class RobotContainer {
   private SendableChooser<Colors> LEDsetter;
   private REVBlinkin LEDs;
 
+  private Drivetrain drivetrain;
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    LEDs = new REVBlinkin();
-
     // buttons & bindings
-    leftJoystick = new Joystick(DS_USB.LEFT_STICK);
-    rightJoystick = new Joystick(DS_USB.RIGHT_STICK);
+    leftJoystick = new CommandJoystick(DS_USB.LEFT_STICK);
+    rightJoystick = new CommandJoystick(DS_USB.RIGHT_STICK);
     gamepad = new CommandXboxController(DS_USB.GAMEPAD);
     configureBindings();
     
+    // subsystems & sensors
+    LEDs = new REVBlinkin();
+
+    drivetrain = new Drivetrain();
+    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
 
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(LEDsetter.getSelected())));
-    // gamepadA.onTrue(new InstantCommand(() -> System.out.println("WORKING")));
 
     // autons
     auton = new Autons();
-    
-
     LEDsetter = new SendableChooser<Colors>();
     LEDsetter.setDefaultOption("OFF", Colors.OFF);
     LEDsetter.addOption("CUBE", Colors.PURPLE);
@@ -79,29 +82,30 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-        left1 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN1);
-        left2 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN2);
-        left3 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN3);
-        left4 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN4);
-        left5 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN5);
-        left6 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN6);
-        left7 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN7);
-        left8 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN8);
-        left9 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN9);
-        left10 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN10);
-        left11 = new JoystickButton(leftJoystick, JOYSTICK_BUTTONS.BTN11);
 
-        right1 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN1);
-        right2 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN2);
-        right3 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN3);
-        right4 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN4);
-        right5 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN5);
-        right6 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN6);
-        right7 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN7);
-        right8 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN8);
-        right9 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN9);
-        right10 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN10);
-        right11 = new JoystickButton(rightJoystick, JOYSTICK_BUTTONS.BTN11);
+        left1 = leftJoystick.button(JOYSTICK_BUTTONS.BTN1);
+        left2 = leftJoystick.button(JOYSTICK_BUTTONS.BTN2);
+        left3 = leftJoystick.button(JOYSTICK_BUTTONS.BTN3);
+        left4 = leftJoystick.button(JOYSTICK_BUTTONS.BTN4);
+        left5 = leftJoystick.button(JOYSTICK_BUTTONS.BTN5);
+        left6 = leftJoystick.button(JOYSTICK_BUTTONS.BTN6);
+        left7 = leftJoystick.button(JOYSTICK_BUTTONS.BTN7);
+        left8 = leftJoystick.button(JOYSTICK_BUTTONS.BTN8);
+        left9 = leftJoystick.button(JOYSTICK_BUTTONS.BTN9);
+        left10 = leftJoystick.button(JOYSTICK_BUTTONS.BTN10);
+        left11 = leftJoystick.button(JOYSTICK_BUTTONS.BTN11);
+
+        right1 = rightJoystick.button(JOYSTICK_BUTTONS.BTN1);
+        right2 = rightJoystick.button(JOYSTICK_BUTTONS.BTN2);
+        right3 = rightJoystick.button(JOYSTICK_BUTTONS.BTN3);
+        right4 = rightJoystick.button(JOYSTICK_BUTTONS.BTN4);
+        right5 = rightJoystick.button(JOYSTICK_BUTTONS.BTN5);
+        right6 = rightJoystick.button(JOYSTICK_BUTTONS.BTN6);
+        right7 = rightJoystick.button(JOYSTICK_BUTTONS.BTN7);
+        right8 = rightJoystick.button(JOYSTICK_BUTTONS.BTN8);
+        right9 = rightJoystick.button(JOYSTICK_BUTTONS.BTN9);
+        right10 = rightJoystick.button(JOYSTICK_BUTTONS.BTN10);
+        right11 = rightJoystick.button(JOYSTICK_BUTTONS.BTN11);
 
         gamepadA = gamepad.a();
         gamepadB = gamepad.b();

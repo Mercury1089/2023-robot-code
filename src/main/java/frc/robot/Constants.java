@@ -20,10 +20,6 @@ public final class Constants {
     private DS_USB() {
     }
   }
-
-  /**
-  *From 0 in the up direction, and counter clockwise in degrees (right is 90 and upper left is 315).
-  */
   
   public static class JOYSTICK_BUTTONS {
     public static final int BTN1 = 1;
@@ -62,6 +58,8 @@ public final class Constants {
 
     public static final double MAX_DIRECTION_SPEED = 5.0; //meters per second
     public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
+
+    public static final double JOYSTICK_DEADBAND = 0.01;
   }
 
   public static class UNITS {

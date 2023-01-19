@@ -123,6 +123,11 @@ public class Drivetrain extends SubsystemBase {
     SwerveModuleState backLeft = moduleStates[2];
     SwerveModuleState backRight = moduleStates[3];
 
+    frontLeftModule.setDesiredState(frontLeft);
+    frontRightModule.setDesiredState(frontRight);
+    backLeftModule.setDesiredState(backLeft);
+    backRightModule.setDesiredState(backRight);
+
     
   }
 
