@@ -42,7 +42,7 @@ public final class Constants {
 
     public static final double WHEEL_DIAMETER = 0.0762; // meters
     // changes drive speed (more pinions = zoom robot)
-    public static final int PINION_TEETH = 14;
+    public static final int PINION_TEETH = 13;
 
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double MOTOR_REDUCTION = (45.0 * 22) / (PINION_TEETH * 15);
@@ -56,7 +56,7 @@ public final class Constants {
     public static final double RADIANS_CONVERSION = 2 * Math.PI;
     public static final double RADIANS_VELOCITY_CONVERSION = RADIANS_CONVERSION / 60;
 
-    public static final double MAX_DIRECTION_SPEED = 5.0; //meters per second
+    public static final double MAX_DIRECTION_SPEED = 4.8; //meters per second
     public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
 
     public static final double JOYSTICK_DEADBAND = 0.01;
@@ -69,6 +69,21 @@ public final class Constants {
 
     private UNITS() {
     }
-}
+  }
+
+  public static class CAN {
+    public static final int DRIVING_FRONT_LEFT = 1;
+    public static final int TURNING_FRONT_LEFT = 2;
+    public static final int DRIVING_FRONT_RIGHT = 3;
+    public static final int TURNING_FRONT_RIGHT = 4;
+    public static final int DRIVING_BACK_LEFT = 5;
+    public static final int TURNING_BACK_LEFT = 6;
+    public static final int DRIVING_BACK_RIGHT = 7;
+    public static final int TURNING_BACK_RIGHT = 8;
+
+    
+    private CAN() {}
+  }
+
 
 }
