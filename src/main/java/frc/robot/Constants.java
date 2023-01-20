@@ -56,10 +56,21 @@ public final class Constants {
     public static final double RADIANS_CONVERSION = 2 * Math.PI;
     public static final double RADIANS_VELOCITY_CONVERSION = RADIANS_CONVERSION / 60;
 
-    public static final double MAX_DIRECTION_SPEED = 4.8; //meters per second
+    public static final double DRIVING_MOTOR_FREE_SPEED = NEO_MOTOR_CONSTANTS.FREE_SPEED_RPMS / 60; // rps
+    public static final double DRIVE_WHEEL_FREE_SPEED = 
+    (DRIVING_MOTOR_FREE_SPEED * (WHEEL_DIAMETER * Math.PI)) / MOTOR_REDUCTION;
+
+    public static final double MAX_DIRECTION_SPEED = 4.8; // meters per second
     public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
 
     public static final double JOYSTICK_DEADBAND = 0.01;
+
+    public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps 
+    public static final int TURNING_MOTOR_CURRENT_LIMIT = 20;// amps
+  }
+
+  public static final class NEO_MOTOR_CONSTANTS {
+    public static final double FREE_SPEED_RPMS = 5676;
   }
 
   public static class UNITS {
