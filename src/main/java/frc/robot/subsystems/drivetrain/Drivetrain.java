@@ -7,12 +7,12 @@ package frc.robot.subsystems.drivetrain;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
@@ -25,7 +25,7 @@ public class Drivetrain extends SubsystemBase {
 
   private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
   private PigeonIMU pigeon;
-  private SwerveDriveOdometry odometry;
+  private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
   
   private final double WHEEL_WIDTH = 26.5; // distance between front/back wheels (in inches)
@@ -59,8 +59,7 @@ public class Drivetrain extends SubsystemBase {
       new Translation2d(-lengthFromCenter, widthFromCenter),
       new Translation2d(-lengthFromCenter, -widthFromCenter)
     );
-
-    odometry = new SwerveDriveOdometry(
+    odometry = new SwerveDrivePoseEstimator(
       swerveKinematics, 
       getPigeonRotation(),
       new SwerveModulePosition[] {
@@ -68,7 +67,8 @@ public class Drivetrain extends SubsystemBase {
         frontRightModule.getPosition(),
         backLeftModule.getPosition(),
         backRightModule.getPosition()
-      });
+      },
+      getInitialPose());
   }
 
   public void resetYaw() {
@@ -79,13 +79,18 @@ public class Drivetrain extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
+  public Pose2d getInitialPose() {
+    // will need to add logic to get initial pose
+    return new Pose2d(0, 0, getPigeonRotation());
+  }
+
   /**
    * Returns the currently-estimated pose of the robot.
    *
    * @return The pose.
    */
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
 
   /**
