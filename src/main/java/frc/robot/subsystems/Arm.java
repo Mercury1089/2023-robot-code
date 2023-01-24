@@ -20,6 +20,9 @@ public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   TalonSRX arm;
   private static double NORMAL_P_VAL = 0.2;
+  private static double NORMAL_I_VAL = 0.0;
+  private static double NORMAL_D_VAL = 0.0;
+  private static double NORMAL_F_VAL = 0.0;
   
 
   private final double NOMINAL_OUTPUT_FORWARD = 0.02;
@@ -34,6 +37,8 @@ public class Arm extends SubsystemBase {
     arm.configFactoryDefault();
 
     arm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.PID.PRIMARY_PID_LOOP, Constants.CTRE_TIMEOUT);
+    arm.setSensorPhase(true);
+    arm.setInverted(false);
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
     arm.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
@@ -44,9 +49,9 @@ public class Arm extends SubsystemBase {
     arm.configAllowableClosedloopError(Constants.PID.PRIMARY_PID_LOOP, 0, Constants.CTRE_TIMEOUT);
     
     arm.config_kP(Constants.PID.PRIMARY_PID_LOOP, NORMAL_P_VAL, Constants.CTRE_TIMEOUT);
-    arm.config_kI(Constants.PID.PRIMARY_PID_LOOP, 0.0, Constants.CTRE_TIMEOUT);
-    arm.config_kD(Constants.PID.PRIMARY_PID_LOOP, 0.0, Constants.CTRE_TIMEOUT);
-    arm.config_kF(Constants.PID.PRIMARY_PID_LOOP, 0.0, Constants.CTRE_TIMEOUT);
+    arm.config_kI(Constants.PID.PRIMARY_PID_LOOP, NORMAL_I_VAL, Constants.CTRE_TIMEOUT);
+    arm.config_kD(Constants.PID.PRIMARY_PID_LOOP, NORMAL_D_VAL, Constants.CTRE_TIMEOUT);
+    arm.config_kF(Constants.PID.PRIMARY_PID_LOOP, NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
 
   }
 
