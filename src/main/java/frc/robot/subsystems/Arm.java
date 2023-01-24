@@ -23,7 +23,6 @@ public class Arm extends SubsystemBase {
   private static double NORMAL_I_VAL = 0.0;
   private static double NORMAL_D_VAL = 0.0;
   private static double NORMAL_F_VAL = 0.0;
-  
 
   private final double NOMINAL_OUTPUT_FORWARD = 0.02;
   private final double NOMINAL_OUTPUT_REVERSE = -0.02;
@@ -32,7 +31,7 @@ public class Arm extends SubsystemBase {
 
 
   public Arm() {
-    arm = new TalonSRX(0);
+    arm = new TalonSRX(1);
     
     arm.configFactoryDefault();
 
@@ -68,5 +67,28 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public enum ArmPosition{
+    // enums to be changed
+    TOP(58000, false),       // Maximum height
+    READY(43000, false),
+    BOTTOM(-500, false),     // Negative value ensures we always move down until limit switch enabled
+    HOOK(50000, false),      // Ready hook position
+    HANG(-20000, true);    // Hang position - relative to current position.
+
+    public final double encPos;
+    public final boolean isRelative;
+
+        /**
+         * Creates an arm position, storing the encoder ticks
+         * representing the height that the arm should be at.
+         *
+         * @param ep encoder position, in ticks
+         */
+        ArmPosition(double encPos, boolean isRelative) {
+            this.encPos = encPos;
+            this.isRelative = isRelative;
+        }
   }
 }
