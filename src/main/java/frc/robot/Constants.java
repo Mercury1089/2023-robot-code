@@ -96,5 +96,23 @@ public final class Constants {
     private CAN() {}
   }
 
+  public static class CAN_STATUS_FREQ {
+    public static final int
+        XTRA_HIGH = 5, // 5ms Very high - use sparingly
+        HIGH = 10, // 10ms - High for important sensors
+        NORMAL = 20, // 20ms - Match robot loop freq
+        LOW = 100, // 100ms - Less frequent
+        XTRA_LOW = 255; // 255ms - Maximum status frame period
+    private CAN_STATUS_FREQ() {
+    }
+  }
 
+  public static final int CTRE_TIMEOUT = 10;
+
+  public static class PID {
+    public static final int PRIMARY_PID_LOOP = 0;
+
+    private PID() {
+    }
+  }
 }
