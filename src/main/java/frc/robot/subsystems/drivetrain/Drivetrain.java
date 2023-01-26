@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems.drivetrain;
 
+import org.opencv.core.Mat;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,24 +27,24 @@ import frc.robot.util.MercMath;
 public class Drivetrain extends SubsystemBase {
 
   private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
-  private PigeonIMU pigeon;
+  private WPI_PigeonIMU pigeon;
   private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
   
-  private final double WHEEL_WIDTH = 26.5; // distance between front/back wheels (in inches)
-  private final double WHEEL_LENGTH = 26.5; // distance between left/right wheels (in inches)
+  private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
+  private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
 
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
     // configure swerve modules
-    frontLeftModule = new SwerveModule(CAN.DRIVING_FRONT_LEFT, CAN.TURNING_FRONT_LEFT, 0);
-    frontRightModule = new SwerveModule(CAN.DRIVING_FRONT_RIGHT, CAN.TURNING_FRONT_RIGHT, 90);
-    backLeftModule = new SwerveModule(CAN.DRIVING_BACK_LEFT, CAN.TURNING_BACK_LEFT, 180);
-    backRightModule = new SwerveModule(CAN.DRIVING_BACK_RIGHT, CAN.TURNING_BACK_RIGHT, 270);
+    frontLeftModule = new SwerveModule(CAN.DRIVING_FRONT_LEFT, CAN.TURNING_FRONT_LEFT, -Math.PI / 2);
+    frontRightModule = new SwerveModule(CAN.DRIVING_FRONT_RIGHT, CAN.TURNING_FRONT_RIGHT, 0);
+    backLeftModule = new SwerveModule(CAN.DRIVING_BACK_LEFT, CAN.TURNING_BACK_LEFT, Math.PI);
+    backRightModule = new SwerveModule(CAN.DRIVING_BACK_RIGHT, CAN.TURNING_BACK_RIGHT, Math.PI / 2);
 
     //configure gyro
-    pigeon = new PigeonIMU(0);
+    pigeon = new WPI_PigeonIMU(CAN.PIGEON);
     pigeon.configFactoryDefault();
     pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 10);
 
@@ -117,15 +120,23 @@ public class Drivetrain extends SubsystemBase {
     backRightModule.resetEncoders();
   }
 
+  public void resetGyro() {
+    pigeon.reset();
+  }
+
   public void joyDrive(double xSpeed, double ySpeed, double angularSpeed) {
     xSpeed *= SWERVE.MAX_DIRECTION_SPEED;
     ySpeed *= SWERVE.MAX_DIRECTION_SPEED;
     angularSpeed *= SWERVE.MAX_ROTATIONAL_SPEED;
 
     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, angularSpeed, getPigeonRotation());
+    // ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds(xSpeed, ySpeed, angularSpeed);
 
     // general swerve speeds --> speed per module
     SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(fieldRelativeSpeeds);
+
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        moduleStates, SWERVE.MAX_DIRECTION_SPEED);
     SwerveModuleState frontLeft = moduleStates[0];
     SwerveModuleState frontRight = moduleStates[1];
     SwerveModuleState backLeft = moduleStates[2];
@@ -135,14 +146,14 @@ public class Drivetrain extends SubsystemBase {
     frontRightModule.setDesiredState(frontRight);
     backLeftModule.setDesiredState(backLeft);
     backRightModule.setDesiredState(backRight);
-
-    
   }
 
 
   public Rotation2d getPigeonRotation() {
     /* return the pigeon's yaw as Rotation2d object */
-    return Rotation2d.fromDegrees(MercMath.pigeonUnitsToDegrees(pigeon.getYaw()));
+
+    // Yaw is negated for field-centric in order to ensure 'true' forward of robot
+    return Rotation2d.fromDegrees(-pigeon.getAngle());
   }
   @Override
   public void periodic() {
