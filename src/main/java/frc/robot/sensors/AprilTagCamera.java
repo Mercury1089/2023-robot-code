@@ -53,7 +53,8 @@ public class AprilTagCamera extends PhotonCamera {
         if (result.hasTargets()) {
             double range = PhotonUtils.calculateDistanceToTargetMeters(
                 CAMERA_HEIGHT, TARGET_HEIGHT, CAMERA_PITCH, 
-                Units.degreesToRadians(result.getBestTarget().getPitch()));
+                Units.degreesToRadians(getPitch())
+            );
             return range;
         }
         return 0.0;
@@ -61,7 +62,26 @@ public class AprilTagCamera extends PhotonCamera {
 
     public Optional<EstimatedRobotPose> getGlobalPose() {
         return estimator.update();
-    } 
+    }
+
+    public double getYaw() {
+        /* The yaw of the target in degrees (positive right). */
+        return getLatestResult().getBestTarget().getYaw();
+    }
+
+    public double getPitch() {
+        /* The pitch of the target in degrees (positive up). */
+        return getLatestResult().getBestTarget().getPitch();
+    }
+
+    public double getSkew() {
+        /* The skew of the target in degrees (counter-clockwise positive). */
+        return getLatestResult().getBestTarget().getSkew();
+    }
+
+    public double getApriltagID() {
+        return getLatestResult().getBestTarget().getFiducialId();
+    }
 
 }
 
