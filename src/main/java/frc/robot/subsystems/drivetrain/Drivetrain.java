@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems.drivetrain;
 
+import java.util.Optional;
+
 import org.opencv.core.Mat;
+import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
@@ -22,6 +25,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SWERVE;
+import frc.robot.sensors.AprilTagCamera;
 import frc.robot.util.MercMath;
 
 public class Drivetrain extends SubsystemBase {
@@ -30,6 +34,7 @@ public class Drivetrain extends SubsystemBase {
   private WPI_PigeonIMU pigeon;
   private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
+  private AprilTagCamera photonCam;
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
@@ -47,6 +52,9 @@ public class Drivetrain extends SubsystemBase {
     pigeon = new WPI_PigeonIMU(CAN.PIGEON);
     pigeon.configFactoryDefault();
     pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 10);
+
+    // photonvision wrapper
+    photonCam = new AprilTagCamera();
 
     // wpilib convienence classes
     /*
@@ -166,6 +174,13 @@ public class Drivetrain extends SubsystemBase {
       backLeftModule.getPosition(),
       backRightModule.getPosition()
     });
+
+    Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
+    if (result.isEmpty()) {
+      return;
+    }
+
+    odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
   }
 
 
