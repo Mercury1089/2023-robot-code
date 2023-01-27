@@ -60,9 +60,11 @@ public class RobotContainer {
     LEDs = new REVBlinkin();
     arm = new Arm();
     arm.setDefaultCommand(new ManualArm(arm, rightJoystick));
-    //drivetrain = new Drivetrain();
-    //drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
     
+    drivetrain = new Drivetrain();
+    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
+    drivetrain.resetGyro();
+
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
     gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
     gamepadY.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)));

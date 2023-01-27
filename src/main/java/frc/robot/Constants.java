@@ -60,10 +60,10 @@ public final class Constants {
     public static final double DRIVE_WHEEL_FREE_SPEED = 
     (DRIVING_MOTOR_FREE_SPEED * (WHEEL_DIAMETER * Math.PI)) / MOTOR_REDUCTION;
 
-    public static final double MAX_DIRECTION_SPEED = 4.8; // meters per second
+    public static final double MAX_DIRECTION_SPEED = 4; // meters per second
     public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
 
-    public static final double JOYSTICK_DEADBAND = 0.01;
+    public static final double JOYSTICK_DEADBAND = 0.1;
 
     public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps 
     public static final int TURNING_MOTOR_CURRENT_LIMIT = 20;// amps
@@ -91,6 +91,8 @@ public final class Constants {
     public static final int TURNING_BACK_LEFT = 6;
     public static final int DRIVING_BACK_RIGHT = 7;
     public static final int TURNING_BACK_RIGHT = 8;
+    
+    public static final int PIGEON = 10;
 
     
     private CAN() {}

@@ -36,18 +36,14 @@ public class AprilTagCamera extends PhotonCamera {
     private PhotonPoseEstimator estimator;
 
     public AprilTagCamera() {
-        this(DEFAULT_CAM_NAME, DEFAULT_CAM_X, DEFAULT_CAM_Y, DEFAULT_CAM_Z);
-    }
-
-    public AprilTagCamera(String camName, double camX, double camY, double camZ) {
-        super(camName);
+        super(DEFAULT_CAM_NAME);
         try {
             fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
         } catch (IOException e) {
             fieldLayout = null;
         }
         Transform3d robotToCam = new Transform3d(
-            new Translation3d(camX, camY, camZ), new Rotation3d(0, 0, 0)
+            new Translation3d(DEFAULT_CAM_X, DEFAULT_CAM_Y, DEFAULT_CAM_Z), new Rotation3d(0, 0, 0)
         );
         estimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, this, robotToCam);
     }

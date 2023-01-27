@@ -124,10 +124,13 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState speed) {
-        speed.angle = speed.angle.plus(
-            Rotation2d.fromDegrees(chassisAngularOffset));
 
-        SwerveModuleState optimizedSpeed = SwerveModuleState.optimize(speed,
+        SwerveModuleState desired = new SwerveModuleState();
+        desired.speedMetersPerSecond = speed.speedMetersPerSecond;
+        desired.angle = speed.angle.plus(
+            Rotation2d.fromRadians(chassisAngularOffset));
+
+        SwerveModuleState optimizedSpeed = SwerveModuleState.optimize(desired,
             new Rotation2d(turningEncoder.getPosition()));
     
         // Command driving and turning SPARKS MAX towards their respective setpoints.

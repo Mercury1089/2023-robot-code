@@ -35,12 +35,11 @@ public class SwerveOnJoysticks extends CommandBase {
   @Override
   public void execute() {
 
-    xSpeed = MathUtil.applyDeadband(leftJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
-    ySpeed = MathUtil.applyDeadband(leftJoy.getY(), SWERVE.JOYSTICK_DEADBAND);
+    xSpeed = MathUtil.applyDeadband(leftJoy.getY(), SWERVE.JOYSTICK_DEADBAND);
+    ySpeed = MathUtil.applyDeadband(leftJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
     angularSpeed = MathUtil.applyDeadband(rightJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
     
     this.drivetrain.joyDrive(xSpeed, ySpeed, angularSpeed);
-
     
   }
 
