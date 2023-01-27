@@ -5,28 +5,30 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
 
 public class ManualArm extends CommandBase {
   /** Creates a new ManualArm. */
   private Arm arm;
-  private CommandJoystick rightJoystick;
-  public ManualArm(Arm arm, CommandJoystick rightJoystick) {
+  private CommandXboxController gamepad;
+  public ManualArm(Arm arm, CommandXboxController gamepad) {
     addRequirements(arm);
     this.arm = arm;
-    this.rightJoystick = rightJoystick;
+    this.gamepad = gamepad;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    double degrees = 90 * gamepad.getRightY();
+    arm.setPosition(degrees);
   }
 
   // Called once the command ends or is interrupted.
@@ -40,26 +42,4 @@ public class ManualArm extends CommandBase {
     return false;
   }
 
-  public enum ArmPosition{
-    // enums to be changed
-    TOP(58000, false),       // Maximum height
-    READY(43000, false),
-    BOTTOM(-500, false),     // Negative value ensures we always move down until limit switch enabled
-    HOOK(50000, false),      // Ready hook position
-    HANG(-20000, true);    // Hang position - relative to current position.
-
-    public final double encPos;
-    public final boolean isRelative;
-
-        /**
-         * Creates an arm position, storing the encoder ticks
-         * representing the height that the arm should be at.
-         *
-         * @param ep encoder position, in ticks
-         */
-        ArmPosition(double encPos, boolean isRelative) {
-            this.encPos = encPos;
-            this.isRelative = isRelative;
-        }
-  }
 }

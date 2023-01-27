@@ -31,7 +31,7 @@ public class Arm extends SubsystemBase {
 
 
   public Arm() {
-    arm = new TalonSRX(1);
+    arm = new TalonSRX(9);
     
     arm.configFactoryDefault();
 

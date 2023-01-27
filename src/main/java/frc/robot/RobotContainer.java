@@ -8,7 +8,6 @@ import frc.robot.Autons.Auton;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.commands.arm.ManualArm;
-import frc.robot.commands.arm.ManualArm.ArmPosition;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
@@ -59,14 +58,14 @@ public class RobotContainer {
     // subsystems & sensors
     LEDs = new REVBlinkin();
     arm = new Arm();
-    arm.setDefaultCommand(new ManualArm(arm, rightJoystick));
-    
+    arm.setDefaultCommand(new ManualArm(arm, gamepad));
+
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
     drivetrain.resetGyro();
 
-    gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
-    gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
+    //gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
+    //gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
     gamepadY.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)));
     gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
 
