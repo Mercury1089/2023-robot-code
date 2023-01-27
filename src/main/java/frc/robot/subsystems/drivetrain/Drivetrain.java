@@ -22,6 +22,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SWERVE;
@@ -35,6 +37,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
   private AprilTagCamera photonCam;
+  private Field2d smartdash_field;
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
@@ -55,6 +58,9 @@ public class Drivetrain extends SubsystemBase {
 
     // photonvision wrapper
     photonCam = new AprilTagCamera();
+
+    smartdash_field = new Field2d();
+    SmartDashboard.putData("Swerve Odometry", smartdash_field);
 
     // wpilib convienence classes
     /*
@@ -92,6 +98,10 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getInitialPose() {
     // will need to add logic to get initial pose
+    Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
+    if (result.isPresent()) {
+      return result.get().estimatedPose.toPose2d();
+    }
     return new Pose2d(0, 0, getPigeonRotation());
   }
 
@@ -163,6 +173,7 @@ public class Drivetrain extends SubsystemBase {
     // Yaw is negated for field-centric in order to ensure 'true' forward of robot
     return Rotation2d.fromDegrees(-pigeon.getAngle());
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -179,8 +190,9 @@ public class Drivetrain extends SubsystemBase {
     if (result.isEmpty()) {
       return;
     }
-
     odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
+    smartdash_field.setRobotPose(getPose());
+    
   }
 
 
