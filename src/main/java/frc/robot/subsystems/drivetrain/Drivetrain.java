@@ -97,13 +97,22 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Pose2d getInitialPose() {
-    // will need to add logic to get initial pose
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
     if (result.isPresent()) {
       return result.get().estimatedPose.toPose2d();
     }
     return new Pose2d(0, 0, getPigeonRotation());
   }
+
+  public void lockSwerve() {
+    // set wheels into X formation
+    frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromRadians(Math.PI / 4)));
+    frontRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromRadians(-Math.PI / 4)));
+    backLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromRadians(- Math.PI / 4)));
+    backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromRadians(Math.PI / 4)));
+  }
+
+
 
   /**
    * Returns the currently-estimated pose of the robot.

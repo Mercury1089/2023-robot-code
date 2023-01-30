@@ -64,10 +64,12 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
     drivetrain.resetGyro();
 
-    //gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
-    //gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
+    gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
+    gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
     gamepadY.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)));
     gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
+
+    left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     // autons
     auton = new Autons();

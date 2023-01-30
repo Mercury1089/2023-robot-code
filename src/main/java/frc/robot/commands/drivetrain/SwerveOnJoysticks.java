@@ -27,14 +27,14 @@ public class SwerveOnJoysticks extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // 0 if in deadband
-    // (speed - deadband) / (1 - deadband)
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    // 0 if in deadband
+    // (speed - deadband) / (1 - deadband)
     xSpeed = MathUtil.applyDeadband(leftJoy.getY(), SWERVE.JOYSTICK_DEADBAND);
     ySpeed = MathUtil.applyDeadband(leftJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
     angularSpeed = MathUtil.applyDeadband(rightJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
