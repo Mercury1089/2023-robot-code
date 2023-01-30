@@ -166,6 +166,29 @@ public class Drivetrain extends SubsystemBase {
     backRightModule.setDesiredState(backRight);
   }
 
+  /**
+   * Set the odometry object to a predetermined pose
+   * No need to reset gyro as it auto-applies offset
+   * 
+   * Used to set initial pose from an auton trajectory
+   */
+  public void setManualPose(Pose2d pose) {
+    odometry.resetPosition(
+    getPigeonRotation(), 
+    new SwerveModulePosition[] {
+      frontLeftModule.getPosition(),
+      frontRightModule.getPosition(),
+      backLeftModule.getPosition(),
+      backRightModule.getPosition()
+      },
+    pose
+    );
+  }
+
+  public SwerveDriveKinematics getKinematics() {
+    return swerveKinematics;
+  }
+
 
   public Rotation2d getPigeonRotation() {
     /* return the pigeon's yaw as Rotation2d object */
