@@ -102,6 +102,11 @@ public class Drivetrain extends SubsystemBase {
     return new Pose2d(0, 0, getPigeonRotation());
   }
 
+  public boolean isTargetPresent() {
+    Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
+    return result.isPresent();
+  }
+
   public void lockSwerve() {
     // set wheels into X formation
     frontLeftModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromRadians(Math.PI / 4)));
@@ -167,17 +172,7 @@ public class Drivetrain extends SubsystemBase {
     // general swerve speeds --> speed per module
     SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(fieldRelativeSpeeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        moduleStates, SWERVE.MAX_DIRECTION_SPEED);
-    SwerveModuleState frontLeft = moduleStates[0];
-    SwerveModuleState frontRight = moduleStates[1];
-    SwerveModuleState backLeft = moduleStates[2];
-    SwerveModuleState backRight = moduleStates[3];
-
-    frontLeftModule.setDesiredState(frontLeft);
-    frontRightModule.setDesiredState(frontRight);
-    backLeftModule.setDesiredState(backLeft);
-    backRightModule.setDesiredState(backRight);
+    setModuleStates(moduleStates);
   }
 
   /**
