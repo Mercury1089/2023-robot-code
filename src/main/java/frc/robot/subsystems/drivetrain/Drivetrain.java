@@ -6,7 +6,6 @@ package frc.robot.subsystems.drivetrain;
 
 import java.util.Optional;
 
-import org.opencv.core.Mat;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.SWERVE;
 import frc.robot.sensors.AprilTagCamera;
-import frc.robot.util.MercMath;
 
 public class Drivetrain extends SubsystemBase {
 
@@ -37,7 +35,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
   private AprilTagCamera photonCam;
-  private Field2d smartdash_field;
+  private Field2d smartdashField;
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
@@ -59,8 +57,8 @@ public class Drivetrain extends SubsystemBase {
     // photonvision wrapper
     photonCam = new AprilTagCamera();
 
-    smartdash_field = new Field2d();
-    SmartDashboard.putData("Swerve Odometry", smartdash_field);
+    smartdashField = new Field2d();
+    SmartDashboard.putData("Swerve Odometry", smartdashField);
 
     // wpilib convienence classes
     /*
@@ -230,7 +228,7 @@ public class Drivetrain extends SubsystemBase {
       return;
     }
     odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
-    smartdash_field.setRobotPose(getPose());
+    smartdashField.setRobotPose(getPose());
     
   }
 
