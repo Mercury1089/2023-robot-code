@@ -72,7 +72,7 @@ public class RobotContainer {
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     // autons
-    auton = new Autons();
+    auton = new Autons(drivetrain);
   }
 
   /**
