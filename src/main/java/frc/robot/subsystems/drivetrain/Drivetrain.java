@@ -112,7 +112,14 @@ public class Drivetrain extends SubsystemBase {
     backRightModule.setDesiredState(new SwerveModuleState(0, Rotation2d.fromRadians(Math.PI / 4)));
   }
 
-
+  public void setModuleStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        desiredStates, SWERVE.MAX_DIRECTION_SPEED);
+    frontLeftModule.setDesiredState(desiredStates[0]);
+    frontRightModule.setDesiredState(desiredStates[1]);
+    backLeftModule.setDesiredState(desiredStates[2]);
+    backRightModule.setDesiredState(desiredStates[3]);
+  }
 
   /**
    * Returns the currently-estimated pose of the robot.

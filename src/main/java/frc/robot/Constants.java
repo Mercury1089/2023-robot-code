@@ -62,6 +62,7 @@ public final class Constants {
 
     public static final double MAX_DIRECTION_SPEED = 4; // meters per second
     public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
+    public static final double MAX_ACCELERATION = 3.0; //m/s^2
 
     public static final double JOYSTICK_DEADBAND = 0.1;
 
