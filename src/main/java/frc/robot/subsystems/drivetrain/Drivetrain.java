@@ -36,6 +36,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveDriveKinematics swerveKinematics;
   private AprilTagCamera photonCam;
   private Field2d smartdashField;
+  private final String fieldWidgetType = "photonvision";
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
@@ -223,8 +224,13 @@ public class Drivetrain extends SubsystemBase {
       return;
     }
     odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
-    smartdashField.setRobotPose(getPose());
-    
+
+    if (fieldWidgetType.equals("Odometry")) {
+      smartdashField.setRobotPose(getPose());
+    } else if (fieldWidgetType.equals("photonvision")) {
+      smartdashField.setRobotPose(getInitialPose());
+    }
+   
   }
 
 
