@@ -52,7 +52,6 @@ public class Autons {
         autonChooser.setDefaultOption("DEFAULT", KnownPoses.DEFAULT);
         autonChooser.addOption("GRID", KnownPoses.GRID);
         autonChooser.addOption("CHARGING STATION", KnownPoses.CHARGING_STATION);
-        autonChooser.addOption("LOADING STATION", KnownPoses.LOADING_STATION);
         SmartDashboard.putData("Auton Chooser", autonChooser);
         SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
 
@@ -126,8 +125,7 @@ public class Autons {
     public enum KnownPoses {
         DEFAULT(new Pose2d(0, 0, new Rotation2d(0))),
         GRID(new Pose2d(0, 0, Rotation2d.fromDegrees(0))),
-        CHARGING_STATION(new Pose2d(0, 0, Rotation2d.fromDegrees(0))),
-        LOADING_STATION(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        CHARGING_STATION(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
         
         public final Pose2d pose;
 
