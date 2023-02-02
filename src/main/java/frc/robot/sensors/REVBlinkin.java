@@ -1,7 +1,6 @@
 package frc.robot.sensors;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.util.Color;
 
 public class REVBlinkin {
 

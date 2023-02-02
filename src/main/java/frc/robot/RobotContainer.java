@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Autons.Auton;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.commands.arm.ManualArm;
@@ -13,8 +12,6 @@ import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.Arm;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
