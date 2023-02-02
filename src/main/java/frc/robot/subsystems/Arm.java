@@ -7,15 +7,14 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.MercMath;
-
-
 
 
 public class Arm extends SubsystemBase {
@@ -39,23 +38,23 @@ public class Arm extends SubsystemBase {
     CLAW_NORMAL_D_VAL = 0.0,
     CLAW_NORMAL_F_VAL = 0.0;
 
-
-
-
-
   private final double NOMINAL_OUTPUT_FORWARD = 0.02;
   private final double NOMINAL_OUTPUT_REVERSE = -0.02;
   private final double PEAK_OUTPUT_FORWARD = 1.0;
   private final double PEAK_OUTPUT_REVERSE = -1.0;
 
   private TalonSRX arm, telescope, claw;
-  private PigeonIMU clawPigeon;
+  private PigeonIMU pigeon;
 
   public Arm() {
     arm = new TalonSRX(9);
     telescope = new TalonSRX(0);
     claw = new TalonSRX(0);
-    
+    // Configure Gyro
+    pigeon = new PigeonIMU(0);
+    pigeon.configFactoryDefault();
+    pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 10);
+
     arm.configFactoryDefault();
     telescope.configFactoryDefault();
     claw.configFactoryDefault();
@@ -65,10 +64,17 @@ public class Arm extends SubsystemBase {
     telescope.setInverted(false);
     claw.setInverted(false);
 
-    arm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.PID.PRIMARY_PID_LOOP, Constants.CTRE_TIMEOUT);
-    arm.setSensorPhase(true);
+    arm.setSensorPhase(false);
+    telescope.setSensorPhase(false);
+    claw.setSensorPhase(false);
 
+    arm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
+    telescope.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
+    telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
+    claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
     arm.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
     arm.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
@@ -91,6 +97,10 @@ public class Arm extends SubsystemBase {
     configPID(telescope, TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_P_VAL, TELESCOPE_NORMAL_I_VAL, TELESCOPE_NORMAL_D_VAL, TELESCOPE_NORMAL_F_VAL);
     configPID(claw, CLAW_PID_SLOT, CLAW_NORMAL_P_VAL, CLAW_NORMAL_I_VAL, CLAW_NORMAL_D_VAL, CLAW_NORMAL_F_VAL);
 
+  }
+
+  public void calibratePigeon() {
+    pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
   public void setPosition(double degrees) {
@@ -142,6 +152,5 @@ public class Arm extends SubsystemBase {
     talon.config_kI(slot, i_val, Constants.CTRE_TIMEOUT);
     talon.config_kD(slot, d_val, Constants.CTRE_TIMEOUT);
     talon.config_kF(slot, f_val, Constants.CTRE_TIMEOUT);
-    
   }
 }
