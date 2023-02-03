@@ -14,6 +14,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CAN;
 import frc.robot.util.MercMath;
 
 
@@ -47,11 +48,11 @@ public class Arm extends SubsystemBase {
   private PigeonIMU pigeon;
 
   public Arm() {
-    arm = new TalonSRX(9);
-    telescope = new TalonSRX(0);
-    claw = new TalonSRX(0);
+    arm = new TalonSRX(CAN.ARM_TALON);
+    telescope = new TalonSRX(CAN.TELESCOPE_TALON);
+    claw = new TalonSRX(CAN.CLAW_TALON);
     // Configure Gyro
-    pigeon = new PigeonIMU(0);
+    pigeon = new PigeonIMU(CAN.ARM_GYRO);
     pigeon.configFactoryDefault();
     pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 10);
 

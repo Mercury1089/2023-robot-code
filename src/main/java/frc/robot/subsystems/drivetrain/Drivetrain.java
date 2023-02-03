@@ -51,7 +51,7 @@ public class Drivetrain extends SubsystemBase {
     backRightModule = new SwerveModule(CAN.DRIVING_BACK_RIGHT, CAN.TURNING_BACK_RIGHT, Math.PI / 2);
 
     //configure gyro
-    pigeon = new WPI_PigeonIMU(CAN.PIGEON);
+    pigeon = new WPI_PigeonIMU(CAN.PIGEON_DRIVETRAIN);
     pigeon.configFactoryDefault();
     pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 10);
 
