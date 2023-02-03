@@ -39,10 +39,22 @@ public class Arm extends SubsystemBase {
     CLAW_NORMAL_D_VAL = 0.0,
     CLAW_NORMAL_F_VAL = 0.0;
 
+  public static final double
+    SPROCKET_DIAMETER_INCHES = 6.0;
+
   private final double NOMINAL_OUTPUT_FORWARD = 0.02;
   private final double NOMINAL_OUTPUT_REVERSE = -0.02;
   private final double PEAK_OUTPUT_FORWARD = 1.0;
   private final double PEAK_OUTPUT_REVERSE = -1.0;
+  // Need to find upper and lower limit values
+  public final double
+    ARM_UPPER_LIMIT = 90,
+    ARM_LOWER_LIMIT = -90,
+    CLAW_UPPER_LIMIT = 90,
+    CLAW_LOWER_LIMIT = -90;
+  // Need to find Gear ratio
+  public final double GEAR_RATIO = 7.5;
+
 
   private TalonSRX arm, telescope, claw;
   private PigeonIMU pigeon;
@@ -69,6 +81,15 @@ public class Arm extends SubsystemBase {
     telescope.setSensorPhase(false);
     claw.setSensorPhase(false);
 
+    arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
+    arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT), Constants.CTRE_TIMEOUT);
+    arm.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+    arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+    claw.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
+    claw.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_LOWER_LIMIT), Constants.CTRE_TIMEOUT);
+    claw.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+    claw.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+
     arm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
     telescope.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
     claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
@@ -90,9 +111,9 @@ public class Arm extends SubsystemBase {
     claw.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
     claw.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
     
-    arm.configAllowableClosedloopError(Constants.PID.PRIMARY_PID_LOOP, 0, Constants.CTRE_TIMEOUT);
-    telescope.configAllowableClosedloopError(Constants.PID.PRIMARY_PID_LOOP, 0, Constants.CTRE_TIMEOUT);
-    claw.configAllowableClosedloopError(Constants.PID.PRIMARY_PID_LOOP, 0, Constants.CTRE_TIMEOUT);
+    arm.configAllowableClosedloopError(ARM_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
+    telescope.configAllowableClosedloopError(TELESCOPE_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
+    claw.configAllowableClosedloopError(CLAW_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
 
     configPID(arm, ARM_PID_SLOT, ARM_NORMAL_P_VAL, ARM_NORMAL_I_VAL, ARM_NORMAL_D_VAL, ARM_NORMAL_F_VAL);
     configPID(telescope, TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_P_VAL, TELESCOPE_NORMAL_I_VAL, TELESCOPE_NORMAL_D_VAL, TELESCOPE_NORMAL_F_VAL);
@@ -110,10 +131,9 @@ public class Arm extends SubsystemBase {
   }
 
   public void setPosition(double armAngle, double armLength, double clawAngle) {
-    double ticks = MercMath.degreesToEncoderTicks(armAngle);
-    arm.set(ControlMode.Position, ticks);
-    //telescope.set(ControlMode.Position, ticks);
-    //claw.set(ControlMode.Position, ticks);
+    arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armAngle));
+    telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(armLength));
+    claw.set(ControlMode.Position, MercMath.degreesToEncoderTicks(clawAngle));
   }
 
   public double getPosition() {
@@ -127,14 +147,13 @@ public class Arm extends SubsystemBase {
 
   public enum ArmPosition{
     // enums to be changed
-    TOP(58000, false),       // Maximum height
-    READY(43000, false),
-    BOTTOM(-500, false),     // Negative value ensures we always move down until limit switch enabled
-    HOOK(50000, false),      // Ready hook position
-    HANG(-20000, true);    // Hang position - relative to current position.
+    TOP(58000),       // Maximum height
+    READY(43000),
+    BOTTOM(-500),     // Negative value ensures we always move down until limit switch enabled
+    HOOK(50000),      // Ready hook position
+    HANG(-20000);    // Hang position - relative to current position.
 
-    public final double encPos;
-    public final boolean isRelative;
+    public final double degreePos;
 
         /**
          * Creates an arm position, storing the encoder ticks
@@ -142,9 +161,8 @@ public class Arm extends SubsystemBase {
          *
          * @param ep encoder position, in ticks
          */
-        ArmPosition(double encPos, boolean isRelative) {
-            this.encPos = encPos;
-            this.isRelative = isRelative;
+        ArmPosition(double degreePos) {
+            this.degreePos = degreePos;
         }
   }
 
