@@ -134,23 +134,6 @@ public class Drivetrain extends SubsystemBase {
     return odometry.getEstimatedPosition();
   }
 
-  /**
-   * Resets the odometry to the specified pose.
-   *
-   * @param pose The pose to which to set the odometry.
-   */
-  public void resetOdometry(Pose2d pose) {
-    odometry.resetPosition(
-        getPigeonRotation(),
-        new SwerveModulePosition[] {
-            frontLeftModule.getPosition(),
-            frontRightModule.getPosition(),
-            backLeftModule.getPosition(),
-            backRightModule.getPosition()
-        },
-        pose);
-  }
-
   public void resetEncoders() {
     frontLeftModule.resetEncoders();
     backLeftModule.resetEncoders();

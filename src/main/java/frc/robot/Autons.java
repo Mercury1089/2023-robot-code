@@ -83,6 +83,7 @@ public class Autons {
                 List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
                 this.currentSelectedAuton.pose,
                 this.trajConfig);
+            drivetrain.setManualPose(startingPoseChooser.getSelected().pose);
         } else {
             SmartDashboard.putBoolean("MANUAL START NEEDED", false);
             trajectory = TrajectoryGenerator.generateTrajectory(
@@ -90,6 +91,7 @@ public class Autons {
                 List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
                 this.currentSelectedAuton.pose,
                 trajConfig);
+            drivetrain.setManualPose(drivetrain.getInitialPose());
         }
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
             trajectory,
