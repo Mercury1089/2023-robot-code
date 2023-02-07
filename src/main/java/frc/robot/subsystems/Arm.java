@@ -48,11 +48,11 @@ public class Arm extends SubsystemBase {
   private final double PEAK_OUTPUT_REVERSE = -1.0;
   // Need to find upper and lower limit values
   public final double
-    ARM_UPPER_LIMIT = 90,
+    ARM_UPPER_LIMIT = 20,
     ARM_LOWER_LIMIT = -90,
     CLAW_UPPER_LIMIT = 90,
     CLAW_LOWER_LIMIT = -90;
-  // Need to find Gear ratio
+  // Need to find Gear ratio 30:1
   public final double GEAR_RATIO = 7.5;
 
 
@@ -82,11 +82,11 @@ public class Arm extends SubsystemBase {
     claw.setSensorPhase(false);
 
     arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
-    arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT), Constants.CTRE_TIMEOUT);
+    arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
     arm.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
     arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
     claw.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
-    claw.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_LOWER_LIMIT), Constants.CTRE_TIMEOUT);
+    claw.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
     claw.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
     claw.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
@@ -125,11 +125,17 @@ public class Arm extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
+  public boolean isLevel() {
+    double pitch = pigeon.getPitch();
+    return pitch == 0;
+  }
+
   public void setPosition(double degrees) {
     double ticks = MercMath.degreesToEncoderTicks(degrees);
     arm.set(ControlMode.Position, ticks);
   }
 
+  // sets the position of the entire arm
   public void setPosition(double armAngle, double armLength, double clawAngle) {
     arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armAngle));
     telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(armLength));
@@ -145,13 +151,15 @@ public class Arm extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public enum ArmPosition{
-    // enums to be changed
-    TOP(58000),       // Maximum height
-    READY(43000),
-    BOTTOM(-500),     // Negative value ensures we always move down until limit switch enabled
-    HOOK(50000),      // Ready hook position
-    HANG(-20000);    // Hang position - relative to current position.
+  public enum ArmPosition {
+    // enum values to be changed
+    INSIDE(0),
+    TOP_CONE(0),
+    MID_CONE(0),
+    TOP_CUBE(0),
+    MID_CUBE(0),
+    FLOOR(0),
+    DOUBLE_SUBSTATION(0);
 
     public final double degreePos;
 
@@ -162,8 +170,40 @@ public class Arm extends SubsystemBase {
          * @param ep encoder position, in ticks
          */
         ArmPosition(double degreePos) {
-            this.degreePos = degreePos;
+          this.degreePos = degreePos;
         }
+  }
+
+  public enum TelescopePosition {
+    INSIDE(0),
+    TOP_CONE(0),
+    MID_CONE(0),
+    TOP_CUBE(0),
+    MID_CUBE(0),
+    FLOOR(0),
+    DOUBLE_SUBSTATION(0);
+
+    public final double encPos;
+
+    TelescopePosition(double encPos) {
+      this.encPos = encPos;
+    }
+  }
+
+  public enum ClawPosition {
+    INSIDE(0),
+    TOP_CONE(0),
+    MID_CONE(0),
+    TOP_CUBE(0),
+    MID_CUBE(0),
+    FLOOR(0),
+    DOUBLE_SUBSTATION(0);
+
+    public final double degreePos;
+
+    ClawPosition(double degreePos) {
+      this.degreePos = degreePos;
+    }
   }
 
   private void configPID(TalonSRX talon, int slot, double p_val, double i_val, double d_val, double f_val) {
