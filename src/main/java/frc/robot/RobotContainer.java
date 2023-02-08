@@ -54,12 +54,15 @@ public class RobotContainer {
     
     // subsystems & sensors
     LEDs = new REVBlinkin();
-    arm = new Arm();
-    arm.setDefaultCommand(new ManualArm(arm, gamepad));
+   // arm = new Arm();
+   // arm.setDefaultCommand(new ManualArm(arm, gamepad));
 
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
     drivetrain.resetGyro();
+
+    // autons
+    auton = new Autons(drivetrain);
 
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
     gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
@@ -67,9 +70,10 @@ public class RobotContainer {
     gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
 
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
+    left2.onTrue(auton.testSwerveCommand());
 
-    // autons
-    auton = new Autons(drivetrain);
+
+    drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());
   }
 
   /**

@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +37,7 @@ public class Drivetrain extends SubsystemBase {
   private SwerveDriveKinematics swerveKinematics;
   private AprilTagCamera photonCam;
   private Field2d smartdashField;
-  private final String fieldWidgetType = "photonvision";
+  private final String fieldWidgetType = "Odometry";
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
@@ -157,6 +158,11 @@ public class Drivetrain extends SubsystemBase {
     SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(fieldRelativeSpeeds);
 
     setModuleStates(moduleStates);
+  }
+
+  /** update smartdash with trajectory */
+  public void setTrajectorySmartdash(Trajectory trajectory) {
+    smartdashField.getObject("traj").setTrajectory(trajectory);
   }
 
   /**

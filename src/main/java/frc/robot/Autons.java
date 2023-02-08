@@ -38,7 +38,7 @@ public class Autons {
         this.canSeeTarget = drivetrain.isTargetPresent();
         this.currentSelectedAuton = KnownPoses.DEFAULT;
         this.drivetrain = drivetrain;
-        this.swerveCommand = generateSwerveCommand();
+        
         this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics());
         this.trapezoidalConstraint = new TrapezoidProfile.Constraints(
             MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
@@ -55,10 +55,12 @@ public class Autons {
         SmartDashboard.putData("Auton Chooser", autonChooser);
         SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
 
-        startingPoseChooser = new SendableChooser<StartingPoses>();
-        startingPoseChooser.setDefaultOption("DEFAULT", StartingPoses.DEFAULT);
+        this.startingPoseChooser = new SendableChooser<StartingPoses>();
+        this.startingPoseChooser.setDefaultOption("DEFAULT", StartingPoses.DEFAULT);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
         SmartDashboard.putBoolean("MANUAL START NEEDED", false);
+
+        this.swerveCommand = generateSwerveCommand();
     }
 
     public Command getAutonCommand() {
@@ -67,7 +69,37 @@ public class Autons {
         // will eventually use this.swerveCommand 
         // in conjunction w/ other subsystems
         // to build full autons
-        return this.swerveCommand;
+        return testSwerveCommand();
+    }
+
+    public Trajectory generateTestTrajectory() {
+        return TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, Rotation2d.fromDegrees(0.0)), 
+            List.of(new Translation2d(.5, .5)), 
+            new Pose2d(1, 1, Rotation2d.fromDegrees(180)), 
+            trajConfig);
+    }
+
+
+    public Command testSwerveCommand() {
+        drivetrain.setManualPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, Rotation2d.fromDegrees(0.0)), 
+            List.of(new Translation2d(.5, .5)), 
+            new Pose2d(1, 1, Rotation2d.fromDegrees(180)), 
+            trajConfig);
+
+        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+            trajectory,
+            () -> drivetrain.getPose(),
+            drivetrain.getKinematics(), 
+            xController, 
+            yController,
+            turningPIDController,
+            (x) -> drivetrain.setModuleStates(x),
+            drivetrain);
+
+        return swerveControllerCommand;
     }
 
     /** Generate the swerve-specfic command by building the desired trajectory */
