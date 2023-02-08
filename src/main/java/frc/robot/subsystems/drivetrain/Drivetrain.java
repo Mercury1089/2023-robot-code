@@ -208,18 +208,17 @@ public class Drivetrain extends SubsystemBase {
       backRightModule.getPosition()
     });
 
-    Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
-    if (result.isEmpty()) {
-      return;
-    }
-    odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
-
     if (fieldWidgetType.equals("Odometry")) {
       smartdashField.setRobotPose(getPose());
     } else if (fieldWidgetType.equals("photonvision")) {
       smartdashField.setRobotPose(getInitialPose());
     }
-   
+
+    Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
+    if (result.isEmpty()) {
+      return;
+    }
+    odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
   }
 
 

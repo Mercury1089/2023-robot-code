@@ -104,27 +104,23 @@ public class Autons {
 
     /** Generate the swerve-specfic command by building the desired trajectory */
     public Command generateSwerveCommand() {
-        Trajectory trajectory = null;
+        Pose2d initialPose;
 
         // if photonvision does not see a target
         // we will manually need to set the Pose using a known location from SD
         if (!this.canSeeTarget) {
             SmartDashboard.putBoolean("MANUAL START NEEDED", true);
-            trajectory = TrajectoryGenerator.generateTrajectory(
-                startingPoseChooser.getSelected().pose,
-                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                this.currentSelectedAuton.pose,
-                this.trajConfig);
-            drivetrain.setManualPose(startingPoseChooser.getSelected().pose);
+            initialPose = startingPoseChooser.getSelected().pose;
         } else {
             SmartDashboard.putBoolean("MANUAL START NEEDED", false);
-            trajectory = TrajectoryGenerator.generateTrajectory(
-                drivetrain.getInitialPose(), 
-                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                this.currentSelectedAuton.pose,
-                trajConfig);
-            drivetrain.setManualPose(drivetrain.getInitialPose());
+            initialPose = drivetrain.getInitialPose();
         }
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+            initialPose, 
+            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+            this.currentSelectedAuton.pose,
+            trajConfig);
+        drivetrain.setManualPose(trajectory.getInitialPose());
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
             trajectory,
             () -> drivetrain.getPose(), // Functional interface to feed supplier
