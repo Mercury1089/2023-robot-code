@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
@@ -53,7 +52,7 @@ public class Arm extends SubsystemBase {
     CLAW_UPPER_LIMIT = 90,
     CLAW_LOWER_LIMIT = -90;
   // Need to find Gear ratio 30:1
-  public final double GEAR_RATIO = 7.5;
+  public final double GEAR_RATIO = 1;
 
 
   private TalonSRX arm, telescope, claw;
@@ -66,7 +65,7 @@ public class Arm extends SubsystemBase {
     // Configure Gyro
     pigeon = new PigeonIMU(CAN.ARM_GYRO);
     pigeon.configFactoryDefault();
-    pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 10);
+    pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, Constants.CTRE_TIMEOUT);
 
     arm.configFactoryDefault();
     telescope.configFactoryDefault();
@@ -125,9 +124,11 @@ public class Arm extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
-  public boolean isLevel() {
+  public void levelClaw() {
     double pitch = pigeon.getPitch();
-    return pitch == 0;
+    if (pitch != 0) {
+      claw.set(ControlMode.Position, 0 - pitch);
+    }
   }
 
   public void setPosition(double degrees) {
@@ -136,10 +137,10 @@ public class Arm extends SubsystemBase {
   }
 
   // sets the position of the entire arm
-  public void setPosition(double armAngle, double armLength, double clawAngle) {
-    arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armAngle));
-    telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(armLength));
-    claw.set(ControlMode.Position, MercMath.degreesToEncoderTicks(clawAngle));
+  public void setPosition(double armPos, double telePos, double clawPos) {
+    arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armPos));
+    telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos));
+    claw.set(ControlMode.Position, MercMath.degreesToEncoderTicks(clawPos));
   }
 
   public double getPosition() {
@@ -159,16 +160,11 @@ public class Arm extends SubsystemBase {
     TOP_CUBE(0),
     MID_CUBE(0),
     FLOOR(0),
-    DOUBLE_SUBSTATION(0);
+    DOUBLE_SUBSTATION(0),
+    FELL_OVER(0);
 
     public final double degreePos;
 
-        /**
-         * Creates an arm position, storing the encoder ticks
-         * representing the height that the arm should be at.
-         *
-         * @param ep encoder position, in ticks
-         */
         ArmPosition(double degreePos) {
           this.degreePos = degreePos;
         }
