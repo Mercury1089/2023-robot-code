@@ -35,9 +35,9 @@ public class SwerveOnJoysticks extends CommandBase {
   public void execute() {
     // 0 if in deadband
     // (speed - deadband) / (1 - deadband)
-    xSpeed = MathUtil.applyDeadband(leftJoy.getY(), SWERVE.JOYSTICK_DEADBAND);
-    ySpeed = MathUtil.applyDeadband(leftJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
-    angularSpeed = MathUtil.applyDeadband(rightJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
+    xSpeed = MathUtil.applyDeadband(-leftJoy.getY(), SWERVE.JOYSTICK_DEADBAND);
+    ySpeed = MathUtil.applyDeadband(-leftJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
+    angularSpeed = MathUtil.applyDeadband(-rightJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
     
     this.drivetrain.joyDrive(xSpeed, ySpeed, angularSpeed);
     

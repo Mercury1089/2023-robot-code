@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.commands.Auton;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -82,7 +83,7 @@ public class Autons {
 
 
     public Command testSwerveCommand() {
-        drivetrain.setManualPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+       // drivetrain.setManualPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, Rotation2d.fromDegrees(0.0)), 
             List.of(new Translation2d(.5, .5)), 
@@ -105,7 +106,7 @@ public class Autons {
     /** Generate the swerve-specfic command by building the desired trajectory */
     public Command generateSwerveCommand() {
         Pose2d initialPose;
-
+        
         // if photonvision does not see a target
         // we will manually need to set the Pose using a known location from SD
         if (!this.canSeeTarget) {
@@ -120,7 +121,7 @@ public class Autons {
             List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
             this.currentSelectedAuton.pose,
             trajConfig);
-        drivetrain.setManualPose(trajectory.getInitialPose());
+       // drivetrain.setManualPose(trajectory.getInitialPose());
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
             trajectory,
             () -> drivetrain.getPose(), // Functional interface to feed supplier

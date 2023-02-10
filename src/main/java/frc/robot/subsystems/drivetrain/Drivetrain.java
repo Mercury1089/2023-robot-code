@@ -42,6 +42,8 @@ public class Drivetrain extends SubsystemBase {
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
 
+  private Pose2d testInitialPose; 
+
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
@@ -61,6 +63,8 @@ public class Drivetrain extends SubsystemBase {
 
     smartdashField = new Field2d();
     SmartDashboard.putData("Swerve Odometry", smartdashField);
+
+    testInitialPose = new Pose2d(Units.inchesToMeters(54.93 + 13.5), Units.inchesToMeters(173.52), getPigeonRotation());
 
     // wpilib convienence classes
     /*
@@ -101,7 +105,7 @@ public class Drivetrain extends SubsystemBase {
     if (result.isPresent()) {
       return result.get().estimatedPose.toPose2d();
     }
-    return new Pose2d(0, 0, getPigeonRotation());
+    return testInitialPose;
   }
 
   public boolean isTargetPresent() {
