@@ -13,6 +13,9 @@ import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Arm.ArmPosition;
+import frc.robot.subsystems.Arm.ClawPosition;
+import frc.robot.subsystems.Arm.TelescopePosition;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -57,6 +60,11 @@ public class RobotContainer {
     LEDs = new REVBlinkin();
    // arm = new Arm();
    // arm.setDefaultCommand(new ManualArm(arm, gamepad));
+
+    //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));
+    //gamepadPOVRight.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE, TelescopePosition.MID_CONE, ClawPosition.MID_CONE), arm));
+    //gamepadPOVLeft.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.DOUBLE_SUBSTATION, TelescopePosition.DOUBLE_SUBSTATION, ClawPosition.DOUBLE_SUBSTATION), arm));
+    //gamepadPOVDown.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR, TelescopePosition.FLOOR, ClawPosition.FLOOR), arm));
 
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
