@@ -131,20 +131,24 @@ public class Arm extends SubsystemBase {
     }
   }
 
-  public void setPosition(double degrees) {
-    double ticks = MercMath.degreesToEncoderTicks(degrees);
+  public void setPosition(ArmPosition armPos) {
+    double ticks = MercMath.degreesToEncoderTicks(armPos.degreePos);
     arm.set(ControlMode.Position, ticks);
   }
 
   // sets the position of the entire arm
-  public void setPosition(double armPos, double telePos, double clawPos) {
-    arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armPos));
-    telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos));
-    claw.set(ControlMode.Position, MercMath.degreesToEncoderTicks(clawPos));
+  public void setPosition(ArmPosition armPos, TelescopePosition telePos, ClawPosition clawPos) {
+    arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armPos.degreePos));
+    telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
+    claw.set(ControlMode.Position, MercMath.degreesToEncoderTicks(clawPos.degreePos));
   }
 
   public double getPosition() {
     return MercMath.encoderTicksToDegrees(arm.getSelectedSensorPosition());
+  }
+
+  public boolean isPositionAcquired() {
+    return false;
   }
 
   @Override
@@ -177,7 +181,8 @@ public class Arm extends SubsystemBase {
     TOP_CUBE(0),
     MID_CUBE(0),
     FLOOR(0),
-    DOUBLE_SUBSTATION(0);
+    DOUBLE_SUBSTATION(0),
+    FELL_OVER(0);
 
     public final double encPos;
 
@@ -193,7 +198,8 @@ public class Arm extends SubsystemBase {
     TOP_CUBE(0),
     MID_CUBE(0),
     FLOOR(0),
-    DOUBLE_SUBSTATION(0);
+    DOUBLE_SUBSTATION(0),
+    FELL_OVER(0);
 
     public final double degreePos;
 
