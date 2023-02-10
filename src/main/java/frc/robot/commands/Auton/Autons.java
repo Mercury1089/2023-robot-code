@@ -19,7 +19,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class Autons {
     private SendableChooser<KnownPoses> autonChooser;
-    private SendableChooser<StartingPoses> startingPoseChooser;
+    private SendableChooser<Pose2d> startingPoseChooser;
     private KnownPoses currentSelectedAuton;
     private Drivetrain drivetrain;
     private TrajectoryConfig trajConfig;
@@ -36,6 +36,8 @@ public class Autons {
     private final double MAX_ROTATIONAL_SPEED = Math.PI;
 
     public Autons(Drivetrain drivetrain) {
+
+        this.knownLocations = new KnownLocations();
         this.canSeeTarget = drivetrain.isTargetPresent();
         this.currentSelectedAuton = KnownPoses.DEFAULT;
         this.drivetrain = drivetrain;
@@ -56,14 +58,16 @@ public class Autons {
         SmartDashboard.putData("Auton Chooser", autonChooser);
         SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
 
-        this.startingPoseChooser = new SendableChooser<StartingPoses>();
-        this.startingPoseChooser.setDefaultOption("DEFAULT", StartingPoses.DEFAULT);
+        this.startingPoseChooser = new SendableChooser<Pose2d>();
+        this.startingPoseChooser.setDefaultOption("TOPMOST", knownLocations.START_TOPMOST);
+        this.startingPoseChooser.addOption("TOP SECOND", knownLocations.START_TOP_SECOND);
+        this.startingPoseChooser.addOption("BOTTOM SECOND", knownLocations.START_BOTTOM_SECOND);
+        this.startingPoseChooser.addOption("BOTTOMMOST", knownLocations.START_BOTTOMMOST);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
         SmartDashboard.putBoolean("MANUAL START NEEDED", false);
 
         this.swerveCommand = generateSwerveCommand();
 
-        knownLocations = new KnownLocations();
     }
 
     public Command getAutonCommand() {
@@ -113,7 +117,7 @@ public class Autons {
         // we will manually need to set the Pose using a known location from SD
         if (!this.canSeeTarget) {
             SmartDashboard.putBoolean("MANUAL START NEEDED", true);
-            initialPose = startingPoseChooser.getSelected().pose;
+            initialPose = startingPoseChooser.getSelected();
         } else {
             SmartDashboard.putBoolean("MANUAL START NEEDED", false);
             initialPose = drivetrain.getInitialPose();
@@ -167,14 +171,5 @@ public class Autons {
         }
     }
 
-    /** If photonvision can't see for some reason, manually set the Pose */
-    public enum StartingPoses {
-        DEFAULT(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-
-        public final Pose2d pose;
-
-        private StartingPoses(Pose2d pose) {
-            this.pose = pose;
-        }
-    }
+    
 }
