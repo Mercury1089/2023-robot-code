@@ -13,7 +13,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -28,6 +27,7 @@ public class Autons {
     private PIDController xController, yController;
     private Command swerveCommand;
     private boolean canSeeTarget;
+    private KnownLocations knownLocations;
 
     private final double TURNING_P_VAL = 1;
     private final double X_P_VAL = 1, Y_P_VAL = 1;
@@ -62,6 +62,8 @@ public class Autons {
         SmartDashboard.putBoolean("MANUAL START NEEDED", false);
 
         this.swerveCommand = generateSwerveCommand();
+
+        knownLocations = new KnownLocations();
     }
 
     public Command getAutonCommand() {
