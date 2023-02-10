@@ -72,6 +72,7 @@ public class RobotContainer {
 
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
     left2.onTrue(auton.testSwerveCommand());
+    left3.onTrue(auton.driveStraight(1.5));
 
 
     drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());

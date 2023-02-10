@@ -141,6 +141,29 @@ public class Autons {
         return swerveControllerCommand;
     }
 
+    /** Move straight in x direction */
+    public Command driveStraight(double distanceX) {
+        Pose2d initPose = drivetrain.getPose();
+        Pose2d finalPose = new Pose2d(initPose.getX() + distanceX, initPose.getY(), initPose.getRotation());
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+            initPose, 
+            List.of(), 
+            finalPose, 
+            trajConfig);
+
+        return new SwerveControllerCommand(
+            trajectory,
+            () -> drivetrain.getPose(), 
+            drivetrain.getKinematics(), 
+            xController, 
+            yController, 
+            turningPIDController,
+            (x) -> drivetrain.setModuleStates(x),
+            drivetrain
+            );
+            
+        }
+
     public void updateDash() {
         // run constantly when disabled
         KnownPoses currAuton = autonChooser.getSelected();
