@@ -1,4 +1,4 @@
-package frc.robot.commands.Auton;
+package frc.robot.commands.auton;
 
 import java.util.List;
 
@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class Autons {
-    private SendableChooser<KnownPoses> autonChooser;
+    private SendableChooser<Pose2d> autonChooser;
     private SendableChooser<Pose2d> startingPoseChooser;
-    private KnownPoses currentSelectedAuton;
+    private Pose2d currentSelectedAuton;
     private Drivetrain drivetrain;
     private TrajectoryConfig trajConfig;
     private ProfiledPIDController turningPIDController;
@@ -39,7 +39,7 @@ public class Autons {
 
         this.knownLocations = new KnownLocations();
         this.canSeeTarget = drivetrain.isTargetPresent();
-        this.currentSelectedAuton = KnownPoses.DEFAULT;
+        this.currentSelectedAuton = knownLocations.ELEMENT1;
         this.drivetrain = drivetrain;
         
         this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics());
@@ -51,10 +51,12 @@ public class Autons {
         xController = new PIDController(X_P_VAL, 0, 0);
         yController = new PIDController(Y_P_VAL, 0, 0);
         
-        autonChooser = new SendableChooser<KnownPoses>();
-        autonChooser.setDefaultOption("DEFAULT", KnownPoses.DEFAULT);
-        autonChooser.addOption("GRID", KnownPoses.GRID);
-        autonChooser.addOption("CHARGING STATION", KnownPoses.CHARGING_STATION);
+        autonChooser = new SendableChooser<Pose2d>();
+        autonChooser.setDefaultOption("Element 1", knownLocations.ELEMENT1);
+        autonChooser.addOption("Element 2", knownLocations.ELEMENT2);
+        autonChooser.addOption("Element 3", knownLocations.ELEMENT3);
+        autonChooser.addOption("Element 4", knownLocations.ELEMENT4);
+        autonChooser.addOption("Charging Station", knownLocations.CHARGING_CENTER);
         SmartDashboard.putData("Auton Chooser", autonChooser);
         SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
 
@@ -67,7 +69,6 @@ public class Autons {
         SmartDashboard.putBoolean("MANUAL START NEEDED", false);
 
         this.swerveCommand = generateSwerveCommand();
-
     }
 
     public Command getAutonCommand() {
@@ -86,7 +87,6 @@ public class Autons {
             new Pose2d(1, 1, Rotation2d.fromDegrees(180)), 
             trajConfig);
     }
-
 
     public Command testSwerveCommand() {
        // drivetrain.setManualPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
@@ -125,7 +125,7 @@ public class Autons {
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             initialPose, 
             List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            this.currentSelectedAuton.pose,
+            this.currentSelectedAuton,
             trajConfig);
        // drivetrain.setManualPose(trajectory.getInitialPose());
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
@@ -166,7 +166,7 @@ public class Autons {
 
     public void updateDash() {
         // run constantly when disabled
-        KnownPoses currAuton = autonChooser.getSelected();
+        Pose2d currAuton = autonChooser.getSelected();
         boolean targetIsPresent = drivetrain.isTargetPresent();
         
         if (currAuton != this.currentSelectedAuton) {
@@ -179,20 +179,5 @@ public class Autons {
             this.canSeeTarget = targetIsPresent;
             this.swerveCommand = generateSwerveCommand();
         }
-    }
-
-    /** Destination Poses to swerve to */
-    public enum KnownPoses {
-        DEFAULT(new Pose2d(0, 0, new Rotation2d(0))),
-        GRID(new Pose2d(0, 0, Rotation2d.fromDegrees(0))),
-        CHARGING_STATION(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-        
-        public final Pose2d pose;
-
-        private KnownPoses(Pose2d pose) {
-            this.pose = pose;
-        }
-    }
-
-    
+    }    
 }
