@@ -24,7 +24,7 @@ import edu.wpi.first.math.util.Units;
 /** Wrapper for PhotonCamera class */
 public class AprilTagCamera extends PhotonCamera {
 
-    private static final String DEFAULT_CAM_NAME = "photonCamera";
+    private static final String DEFAULT_CAM_NAME = "AprilTagCamera";
     private static final double DEFAULT_CAM_X = 0.5; // .5m forward of center
     private static final double DEFAULT_CAM_Y = 0.0; // centered in robot Y
     private static final double DEFAULT_CAM_Z = 0.5; // .5m up from center

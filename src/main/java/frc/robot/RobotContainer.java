@@ -72,6 +72,7 @@ public class RobotContainer {
 
     // autons
     auton = new Autons(drivetrain);
+    drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());
 
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
     gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
@@ -83,7 +84,6 @@ public class RobotContainer {
     left3.onTrue(auton.driveStraight(1.5));
 
 
-    drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());
   }
 
   /**
