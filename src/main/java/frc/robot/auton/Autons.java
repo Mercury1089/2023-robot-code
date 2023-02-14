@@ -1,4 +1,4 @@
-package frc.robot.commands.auton;
+package frc.robot.auton;
 
 import java.util.List;
 
