@@ -4,6 +4,8 @@
 
 package frc.robot.commands.drivetrain;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -12,16 +14,17 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class SwerveOnJoysticks extends CommandBase {
   Drivetrain drivetrain;
-  CommandJoystick leftJoy, rightJoy;
+  Supplier<Double> leftJoyX, leftJoyY, rightJoyX;
   double xSpeed, ySpeed, angularSpeed;
   /** Creates a new SwerveOnJoysticks. */
-  public SwerveOnJoysticks(Drivetrain drivetrain, CommandJoystick leftJoy, CommandJoystick rightJoy) {
+  public SwerveOnJoysticks(Drivetrain drivetrain, Supplier<Double> leftJoyX, Supplier<Double> leftJoyY, Supplier<Double> rightJoyX) {
     // Use addRequirements() here to declare subsystem dependencies.
     setName("SwerveOnJoysticks");
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
-    this.leftJoy = leftJoy;
-    this.rightJoy = rightJoy;
+    this.leftJoyX = leftJoyX;
+    this.leftJoyY = leftJoyY;
+    this.rightJoyX = rightJoyX;
   }
 
   // Called when the command is initially scheduled.
@@ -35,9 +38,9 @@ public class SwerveOnJoysticks extends CommandBase {
   public void execute() {
     // 0 if in deadband
     // (speed - deadband) / (1 - deadband)
-    xSpeed = MathUtil.applyDeadband(-leftJoy.getY(), SWERVE.JOYSTICK_DEADBAND);
-    ySpeed = MathUtil.applyDeadband(-leftJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
-    angularSpeed = MathUtil.applyDeadband(-rightJoy.getX(), SWERVE.JOYSTICK_DEADBAND);
+    xSpeed = MathUtil.applyDeadband(-leftJoyY.get(), SWERVE.JOYSTICK_DEADBAND);
+    ySpeed = MathUtil.applyDeadband(-leftJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
+    angularSpeed = MathUtil.applyDeadband(-rightJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
     
     this.drivetrain.joyDrive(xSpeed, ySpeed, angularSpeed);
     

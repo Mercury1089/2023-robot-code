@@ -16,6 +16,9 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmPosition;
 import frc.robot.subsystems.Arm.ClawPosition;
 import frc.robot.subsystems.Arm.TelescopePosition;
+
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -43,6 +46,8 @@ public class RobotContainer {
   gamepadStart, gamepadLeftStickButton, gamepadRightStickButton, gamepadLT, gamepadRT, gamepadPOVDown, gamepadPOVUpLeft, 
   gamepadPOVUp, gamepadPOVUpRight, gamepadPOVLeft, gamepadPOVRight, gamepadPOVDownRight, gamepadPOVDownLeft;
 
+  private Supplier<Double> gamepadLeftX, gamepadLeftY, gamepadRightX, gamepadRightY, rightJoystickX, rightJoystickY, leftJoystickX, leftJoystickY;
+
   private Autons auton;
   private REVBlinkin LEDs;
   private Arm arm;
@@ -61,7 +66,7 @@ public class RobotContainer {
     // subsystems & sensors
     LEDs = new REVBlinkin();
     arm = new Arm();
-    arm.setDefaultCommand(new ManualArm(arm, gamepad));
+    arm.setDefaultCommand(new ManualArm(gamepadRightY, arm));
 
     //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));
     //gamepadPOVRight.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE, TelescopePosition.MID_CONE, ClawPosition.MID_CONE), arm));
@@ -69,7 +74,7 @@ public class RobotContainer {
     //gamepadPOVDown.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR, TelescopePosition.FLOOR, ClawPosition.FLOOR), arm));
 
     drivetrain = new Drivetrain();
-    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystick, rightJoystick));
+    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
     drivetrain.resetGyro();
 
     // autons
@@ -149,6 +154,18 @@ public class RobotContainer {
         gamepadPOVRight = gamepad.povRight();
         gamepadPOVDownRight = gamepad.povDownRight();
         gamepadPOVDownLeft = gamepad.povDownLeft();
+
+        gamepadLeftX = () -> gamepad.getLeftX();
+        gamepadRightX = () -> gamepad.getRightX();
+        gamepadLeftY = () -> gamepad.getLeftY();
+        gamepadRightY = () -> gamepad.getRightY();
+
+        leftJoystickX = () -> leftJoystick.getX();
+        leftJoystickY = () -> rightJoystick.getY();
+        rightJoystickX = () -> rightJoystick.getX();
+        rightJoystickY = () -> rightJoystick.getY();
+
+
   }
 
   /**

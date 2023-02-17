@@ -4,6 +4,8 @@
 
 package frc.robot.commands.arm;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
@@ -11,11 +13,12 @@ import frc.robot.subsystems.Arm;
 public class ManualArm extends CommandBase {
   /** Creates a new ManualArm. */
   private Arm arm;
-  private CommandXboxController gamepad;
-  public ManualArm(Arm arm, CommandXboxController gamepad) {
-    addRequirements(arm);
+  private Supplier<Double> gamepadRightY;
+  public ManualArm(Supplier<Double> gamepadRightY, Arm arm) {
     this.arm = arm;
-    this.gamepad = gamepad;
+    this.gamepadRightY = gamepadRightY;
+
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
@@ -27,7 +30,7 @@ public class ManualArm extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // double degrees = 90 * gamepad.getRightY();
+    // double degrees = 90 * gamepadRightY.get();
     // arm.setPosition(degrees);
   }
 
