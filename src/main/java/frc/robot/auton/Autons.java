@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -141,18 +142,23 @@ public class Autons {
         return swerveControllerCommand;
     }
 
-    /** Move straight in x direction */
-    public Command driveStraight(double distanceX) {
-        Pose2d initPose = drivetrain.getPose();
-        Pose2d finalPose = new Pose2d(initPose.getX() + distanceX, initPose.getY(), initPose.getRotation());
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    public Trajectory generateDriveStraightTraj() {
+        Pose2d initPose =  new Pose2d(Units.inchesToMeters(54.93), Units.inchesToMeters(199.65), Rotation2d.fromDegrees(0));
+        Pose2d finalPose = new Pose2d(initPose.getX() + 5, initPose.getY(), Rotation2d.fromDegrees(180));
+        Translation2d waypoint = new Translation2d(initPose.getX() + 2.5, initPose.getY() + 2.5);
+
+        Trajectory traj = TrajectoryGenerator.generateTrajectory(
             initPose, 
-            List.of(), 
+            List.of(waypoint),
             finalPose, 
             trajConfig);
+        return traj;
+    }
 
+    /** Move straight in x direction */
+    public Command driveStraight() {
         return new SwerveControllerCommand(
-            trajectory,
+            generateDriveStraightTraj(),
             () -> drivetrain.getPose(), 
             drivetrain.getKinematics(), 
             xController, 
@@ -161,8 +167,8 @@ public class Autons {
             (x) -> drivetrain.setModuleStates(x),
             drivetrain
             );
-            
         }
+
 
     public void updateDash() {
         // run constantly when disabled

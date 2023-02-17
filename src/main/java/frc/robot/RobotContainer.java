@@ -16,6 +16,8 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Arm.ArmPosition;
 import frc.robot.subsystems.Arm.ClawPosition;
 import frc.robot.subsystems.Arm.TelescopePosition;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -81,9 +83,13 @@ public class RobotContainer {
 
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
     left2.onTrue(auton.testSwerveCommand());
-    left3.onTrue(auton.driveStraight(1.5));
 
+    left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj()), drivetrain));
+    left5.onTrue(auton.driveStraight());
+    left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())));
 
+    // in honor of resetTurret
+    left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain));
   }
 
   /**
