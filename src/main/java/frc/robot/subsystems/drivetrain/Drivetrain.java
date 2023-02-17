@@ -64,7 +64,7 @@ public class Drivetrain extends SubsystemBase {
     smartdashField = new Field2d();
     SmartDashboard.putData("Swerve Odometry", smartdashField);
 
-    testInitialPose = new Pose2d(Units.inchesToMeters(54.93 + 13.5), Units.inchesToMeters(173.52), getPigeonRotation());
+    testInitialPose = new Pose2d(Units.inchesToMeters(54.93), Units.inchesToMeters(199.65), getPigeonRotation());
 
     // wpilib convienence classes
     /*
@@ -90,6 +90,10 @@ public class Drivetrain extends SubsystemBase {
         backRightModule.getPosition()
       },
       getInitialPose());
+
+    SmartDashboard.putNumber("CurrentPose X", getPose().getX());
+    SmartDashboard.putNumber("CurrentPose Y", getPose().getY());
+    SmartDashboard.putNumber("CurrentPose Rotation", getPose().getRotation().getDegrees());
   }
 
   public void resetYaw() {
@@ -218,11 +222,18 @@ public class Drivetrain extends SubsystemBase {
       smartdashField.setRobotPose(getInitialPose());
     }
 
+    SmartDashboard.putNumber("CurrentPose X", getPose().getX());
+    SmartDashboard.putNumber("CurrentPose Y", getPose().getY());
+    SmartDashboard.putNumber("CurrentPose Rotation", getPose().getRotation().getDegrees());
+
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
     if (result.isEmpty()) {
       return;
     }
     odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
+
+    
+
   }
 
 

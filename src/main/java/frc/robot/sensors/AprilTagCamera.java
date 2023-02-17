@@ -25,9 +25,9 @@ import edu.wpi.first.math.util.Units;
 public class AprilTagCamera extends PhotonCamera {
 
     private static final String DEFAULT_CAM_NAME = "AprilTagCamera";
-    private static final double DEFAULT_CAM_X = 0.5; // .5m forward of center
+    private static final double DEFAULT_CAM_X = Units.inchesToMeters(-12.5); // .5m forward of center
     private static final double DEFAULT_CAM_Y = 0.0; // centered in robot Y
-    private static final double DEFAULT_CAM_Z = 0.5; // .5m up from center
+    private static final double DEFAULT_CAM_Z = Units.inchesToMeters(52); // 52in up from center
     private final double CAMERA_HEIGHT = 0.0; // height on robot (meters)
     private final double TARGET_HEIGHT = 0.36; // may need to change 
     private final int CAMERA_PITCH = 0; // tilt of our camera (radians)
