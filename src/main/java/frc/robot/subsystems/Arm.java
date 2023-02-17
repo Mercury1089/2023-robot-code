@@ -6,11 +6,13 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
@@ -23,6 +25,13 @@ public class Arm extends SubsystemBase {
     ARM_PID_SLOT = 1,
     TELESCOPE_PID_SLOT = 2,
     CLAW_PID_SLOT = 3;
+
+  public static final int
+    REMOTE_DEVICE_0 = 0,
+    REMOTE_DEVICE_1 = 1;
+
+  public static final int
+    PITCH_LOOP = 0;
 
   private static final double 
     ARM_NORMAL_P_VAL = 1.0,
@@ -43,8 +52,8 @@ public class Arm extends SubsystemBase {
 
   private final double NOMINAL_OUTPUT_FORWARD = 0.02;
   private final double NOMINAL_OUTPUT_REVERSE = -0.02;
-  private final double PEAK_OUTPUT_FORWARD = 1.0;
-  private final double PEAK_OUTPUT_REVERSE = -1.0;
+  private final double PEAK_OUTPUT_FORWARD = 0.2;
+  private final double PEAK_OUTPUT_REVERSE = -0.2;
   // Need to find upper and lower limit values
   public final double
     ARM_UPPER_LIMIT = 20,
@@ -91,8 +100,12 @@ public class Arm extends SubsystemBase {
 
     arm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
     telescope.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
+
+    claw.configRemoteFeedbackFilter(pigeon.getDeviceID(), RemoteSensorSource.Pigeon_Pitch, Arm.REMOTE_DEVICE_0);
     claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
-    
+
+    claw.configSelectedFeedbackCoefficient(1, Arm.PITCH_LOOP, Constants.CTRE_TIMEOUT);
+
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
     telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
@@ -143,17 +156,29 @@ public class Arm extends SubsystemBase {
     claw.set(ControlMode.Position, MercMath.degreesToEncoderTicks(clawPos.degreePos));
   }
 
-  public double getPosition() {
-    return MercMath.encoderTicksToDegrees(arm.getSelectedSensorPosition());
+  public double getArmPosition() {
+    return arm.getSelectedSensorPosition();
   }
 
-  public boolean isPositionAcquired() {
-    return false;
+  public double getTelescopePosition() {
+    return telescope.getSelectedSensorPosition();
+  }
+
+  public double getClawPosition() {
+    return claw.getSelectedSensorPosition();
+  }
+
+  public boolean isPositionAcquired(ArmPosition armPos, TelescopePosition telePos, ClawPosition clawPos) {
+    return false; //getArmPosition();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Pigeon Pitch", pigeon.getPitch());
+    SmartDashboard.putNumber("Pigeon Pitch(Talon)", claw.getSelectedSensorPosition());
+
+
   }
 
   public enum ArmPosition {

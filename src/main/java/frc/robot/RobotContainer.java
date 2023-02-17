@@ -58,8 +58,8 @@ public class RobotContainer {
     
     // subsystems & sensors
     LEDs = new REVBlinkin();
-   // arm = new Arm();
-   // arm.setDefaultCommand(new ManualArm(arm, gamepad));
+    arm = new Arm();
+    arm.setDefaultCommand(new ManualArm(arm, gamepad));
 
     //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));
     //gamepadPOVRight.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE, TelescopePosition.MID_CONE, ClawPosition.MID_CONE), arm));
