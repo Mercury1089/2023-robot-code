@@ -11,11 +11,11 @@ import frc.robot.commands.arm.ManualArm;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.Claw;
+import frc.robot.subsystems.arm.Telescope;
+import frc.robot.subsystems.arm.Arm.ArmPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Arm.ArmPosition;
-import frc.robot.subsystems.Arm.ClawPosition;
-import frc.robot.subsystems.Arm.TelescopePosition;
 
 import java.util.function.Supplier;
 
@@ -51,6 +51,8 @@ public class RobotContainer {
   private Autons auton;
   private REVBlinkin LEDs;
   private Arm arm;
+  private Telescope telescope;
+  private Claw claw;
   private Drivetrain drivetrain;
 
 
@@ -65,7 +67,10 @@ public class RobotContainer {
     
     // subsystems & sensors
     LEDs = new REVBlinkin();
+    
     arm = new Arm();
+    telescope = new Telescope();
+    claw = new Claw();
     arm.setDefaultCommand(new ManualArm(gamepadRightY, arm));
 
     //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));

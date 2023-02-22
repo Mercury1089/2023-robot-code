@@ -1,7 +1,7 @@
 package frc.robot.util;
 
 import frc.robot.Constants.UNITS;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Telescope;
 
 public class MercMath {
     public static double pigeonUnitsToDegrees(double pigeonUnits) {
@@ -21,7 +21,7 @@ public class MercMath {
     }
 
     public static double inchesToEncoderTicks(double inches) {
-        return inches / (Math.PI * Arm.SPROCKET_DIAMETER_INCHES) *
+        return inches / (Math.PI * Telescope.SPROCKET_DIAMETER_INCHES) *
                 (UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION);
     }
 

@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.arm.Arm;
 
 public class ManualArm extends CommandBase {
   /** Creates a new ManualArm. */
