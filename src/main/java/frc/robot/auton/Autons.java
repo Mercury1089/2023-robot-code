@@ -12,10 +12,12 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class Autons {
@@ -36,9 +38,9 @@ public class Autons {
     private final double MAX_DIRECTIONAL_SPEED = 3, MAX_ACCELERATION = 3;
     private final double MAX_ROTATIONAL_SPEED = Math.PI;
 
-    public Autons(Drivetrain drivetrain) {
+    public Autons(Drivetrain drivetrain, GenericEntry allianceWidget) {
 
-        this.knownLocations = new KnownLocations();
+        this.knownLocations = new KnownLocations(allianceWidget);
         this.canSeeTarget = drivetrain.isTargetPresent();
         this.currentSelectedAuton = knownLocations.ELEMENT1;
         this.drivetrain = drivetrain;

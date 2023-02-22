@@ -7,6 +7,7 @@ package frc.robot.auton;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -40,11 +41,14 @@ public class KnownLocations {
         
     public static Alliance allianceColor = DriverStation.getAlliance();
 
-    public KnownLocations() {
+    public KnownLocations(GenericEntry allianceColorWidget) {
+
         // ToDo: configure theta values
         // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/coordinate-systems.html#field-coordinate-system
         
         if (allianceColor == Alliance.Blue) {
+            allianceColorWidget.setBoolean(false);
+
             START_TOPMOST = Pose2dInch(54.93, 199.65, 0);
             START_TOP_SECOND = Pose2dInch(54.93, 173.52, 0);
             START_BOTTOM_SECOND = Pose2dInch(54.93, 41.67, 0);
@@ -62,6 +66,8 @@ public class KnownLocations {
             CHARGING_BOTTOM_RIGHT = Pose2dInch(190.96, 60.2, 0);
 
         } else {
+            allianceColorWidget.setBoolean(true);
+
             START_TOPMOST = Pose2dInch(598.41, 199.65, 0);
             START_TOP_SECOND = Pose2dInch(598.41, 173.52, 0);
             START_BOTTOM_SECOND = Pose2dInch(598.41, 41.67, 0);

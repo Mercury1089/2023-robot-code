@@ -17,9 +17,14 @@ import frc.robot.subsystems.Arm.ArmPosition;
 import frc.robot.subsystems.Arm.ClawPosition;
 import frc.robot.subsystems.Arm.TelescopePosition;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -48,6 +53,8 @@ public class RobotContainer {
 
   private Supplier<Double> gamepadLeftX, gamepadLeftY, gamepadRightX, gamepadRightY, rightJoystickX, rightJoystickY, leftJoystickX, leftJoystickY;
 
+  private GenericEntry allianceBooleanBox;
+
   private Autons auton;
   private REVBlinkin LEDs;
   private Arm arm;
@@ -73,12 +80,22 @@ public class RobotContainer {
     //gamepadPOVLeft.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.DOUBLE_SUBSTATION, TelescopePosition.DOUBLE_SUBSTATION, ClawPosition.DOUBLE_SUBSTATION), arm));
     //gamepadPOVDown.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR, TelescopePosition.FLOOR, ClawPosition.FLOOR), arm));
 
+
+    ShuffleboardTab tab = Shuffleboard.getTab("Competition");
+    GenericEntry elementBooleanBox = tab.add("Cone or Cube", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#4d3399", "Color when false", "#ffff4d")).getEntry();
+    SmartDashboard.putData("Box Color True", new InstantCommand(() -> elementBooleanBox.setBoolean(true)));
+    SmartDashboard.putData("Box Color False", new InstantCommand(() -> elementBooleanBox.setBoolean(false)));
+
+    GenericEntry allianceBooleanBox = tab.add("Alliance Color", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "red", "Color when false", "blue")).getEntry();
+
+
+    
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
     drivetrain.resetGyro();
 
     // autons
-    auton = new Autons(drivetrain);
+    auton = new Autons(drivetrain, allianceBooleanBox);
     drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());
 
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
