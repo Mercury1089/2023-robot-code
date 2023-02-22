@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController; 
@@ -99,8 +100,18 @@ public class RobotContainer {
     drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());
 
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
-    gamepadX.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)));
-    gamepadY.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)));
+    gamepadX.onTrue(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)),
+        new InstantCommand(() -> elementBooleanBox.setBoolean(true))
+      )
+    );
+    gamepadY.onTrue(
+      new ParallelCommandGroup(
+        new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)),
+        new InstantCommand(() -> elementBooleanBox.setBoolean(false))
+      )
+    );
     gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
 
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
