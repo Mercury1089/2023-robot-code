@@ -112,6 +112,8 @@ public class RobotContainer {
 
     // in honor of resetTurret
     left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain));
+
+    right1.onTrue(new InstantCommand(() -> drivetrain.joyDrive(0, 0, 0), drivetrain));
   }
 
   /**
