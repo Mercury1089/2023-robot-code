@@ -81,11 +81,14 @@ public class RobotContainer {
     claw = new Claw();
     arm.setDefaultCommand(new ManualArm(gamepadRightY, arm));
 
+    drivetrain = new Drivetrain();
+    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
+    drivetrain.resetGyro();
+
     //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));
     //gamepadPOVRight.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE, TelescopePosition.MID_CONE, ClawPosition.MID_CONE), arm));
     //gamepadPOVLeft.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.DOUBLE_SUBSTATION, TelescopePosition.DOUBLE_SUBSTATION, ClawPosition.DOUBLE_SUBSTATION), arm));
     //gamepadPOVDown.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR, TelescopePosition.FLOOR, ClawPosition.FLOOR), arm));
-
 
     ShuffleboardTab tab = Shuffleboard.getTab("Competition");
     GenericEntry elementBooleanBox = tab.add("Cone or Cube", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#4d3399", "Color when false", "#ffff4d")).getEntry();
@@ -93,13 +96,7 @@ public class RobotContainer {
     SmartDashboard.putData("Box Color False", new InstantCommand(() -> elementBooleanBox.setBoolean(false)));
 
     GenericEntry allianceBooleanBox = tab.add("Alliance Color", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "red", "Color when false", "blue")).getEntry();
-
-
     
-    drivetrain = new Drivetrain();
-    drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
-    drivetrain.resetGyro();
-
     // autons
     auton = new Autons(drivetrain, allianceBooleanBox);
     drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());

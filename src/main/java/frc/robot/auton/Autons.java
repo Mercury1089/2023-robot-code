@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class Autons {
@@ -121,6 +120,7 @@ public class Autons {
         if (!this.canSeeTarget) {
             SmartDashboard.putBoolean("MANUAL START NEEDED", true);
             initialPose = startingPoseChooser.getSelected();
+            drivetrain.setManualPose(initialPose);
         } else {
             SmartDashboard.putBoolean("MANUAL START NEEDED", false);
             initialPose = drivetrain.getInitialPose();
@@ -130,7 +130,7 @@ public class Autons {
             List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
             this.currentSelectedAuton,
             trajConfig);
-       // drivetrain.setManualPose(trajectory.getInitialPose());
+       // 
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
             trajectory,
             () -> drivetrain.getPose(), // Functional interface to feed supplier

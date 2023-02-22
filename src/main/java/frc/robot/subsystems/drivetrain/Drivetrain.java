@@ -64,7 +64,8 @@ public class Drivetrain extends SubsystemBase {
     smartdashField = new Field2d();
     SmartDashboard.putData("Swerve Odometry", smartdashField);
 
-    testInitialPose = new Pose2d(Units.inchesToMeters(54.93), Units.inchesToMeters(199.65), getPigeonRotation());
+   // testInitialPose = new Pose2d(Units.inchesToMeters(54.93), Units.inchesToMeters(199.65), getPigeonRotation());
+    testInitialPose = new Pose2d(0, 0, getPigeonRotation()); //  will be reset by setManualPose()
 
     // wpilib convienence classes
     /*
