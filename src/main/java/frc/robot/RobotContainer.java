@@ -79,7 +79,9 @@ public class RobotContainer {
     arm = new Arm();
     telescope = new Telescope();
     claw = new Claw();
-    arm.setDefaultCommand(new ManualArm(gamepadRightY, arm));
+    //arm.setDefaultCommand(new ManualArm(arm, telescope, claw, gamepadRightY));
+    arm.setDefaultCommand(new ManualArm(arm, telescope, claw, gamepadRightY));
+
 
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));

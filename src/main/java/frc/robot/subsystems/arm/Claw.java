@@ -60,8 +60,8 @@ public class Claw extends SubsystemBase {
 
     claw.configFactoryDefault();
 
-    claw.setInverted(false);
-    claw.setSensorPhase(false);
+    claw.setInverted(true);
+    claw.setSensorPhase(true);
 
     //claw.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
     //claw.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(CLAW_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
@@ -70,7 +70,7 @@ public class Claw extends SubsystemBase {
 
     claw.configRemoteFeedbackFilter(pigeon.getDeviceID(), RemoteSensorSource.Pigeon_Roll, REMOTE_DEVICE_0);
     claw.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
-    claw.configSelectedFeedbackCoefficient(8192, ROLL_LOOP, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackCoefficient(Constants.UNITS.MAX_ROLL_DEGREES / Constants.UNITS.PIGEON_ROLL_UNITS, ROLL_LOOP, Constants.CTRE_TIMEOUT);
 
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
@@ -78,7 +78,7 @@ public class Claw extends SubsystemBase {
     claw.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
     claw.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
     claw.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
-    claw.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0);
+    claw.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0); 
 
     claw.configAllowableClosedloopError(CLAW_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
 
@@ -88,6 +88,8 @@ public class Claw extends SubsystemBase {
     claw.config_kF(CLAW_PID_SLOT, CLAW_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
     
   }
+
+
 
   public void calibratePigeon() {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);

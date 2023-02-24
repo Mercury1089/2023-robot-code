@@ -79,6 +79,11 @@ public final class Constants {
       MAG_ENCODER_TICKS_PER_REVOLUTION = 4096,
       PIGEON_NATIVE_UNITS_PER_ROTATION = 8192;
 
+    public static final double
+      MAX_ROLL_DEGREES = 90.0,
+      PIGEON_ROLL_UNITS = 2048;
+
+
     private UNITS() {
     }
   }
