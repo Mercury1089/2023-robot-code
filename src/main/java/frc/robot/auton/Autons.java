@@ -16,19 +16,22 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
+
 public class Autons {
+
     private SendableChooser<Pose2d> autonChooser;
     private SendableChooser<Pose2d> startingPoseChooser;
     private Pose2d currentSelectedAuton;
+    private Pose2d currentSelectedPose;
     private Drivetrain drivetrain;
     private TrajectoryConfig trajConfig;
     private ProfiledPIDController turningPIDController;
     private PIDController xController, yController;
     private Command swerveCommand;
-    private boolean canSeeTarget;
     private KnownLocations knownLocations;
 
     private final double TURNING_P_VAL = 1;
@@ -37,11 +40,14 @@ public class Autons {
     private final double MAX_DIRECTIONAL_SPEED = 3, MAX_ACCELERATION = 3;
     private final double MAX_ROTATIONAL_SPEED = Math.PI;
 
+    /**
+     * made by rohan no thanks to owen :(
+     */
     public Autons(Drivetrain drivetrain, GenericEntry allianceWidget) {
 
         this.knownLocations = new KnownLocations(allianceWidget);
-        this.canSeeTarget = drivetrain.isTargetPresent();
         this.currentSelectedAuton = knownLocations.ELEMENT1;
+        this.currentSelectedPose = knownLocations.START_TOPMOST;
         this.drivetrain = drivetrain;
         
         this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics());
@@ -70,7 +76,7 @@ public class Autons {
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
         SmartDashboard.putBoolean("MANUAL START NEEDED", false);
 
-        this.swerveCommand = generateSwerveCommand();
+        this.swerveCommand = getAutonCommand();
     }
 
     public Command getAutonCommand() {
@@ -79,8 +85,24 @@ public class Autons {
         // will eventually use this.swerveCommand 
         // in conjunction w/ other subsystems
         // to build full autons
-        return testSwerveCommand();
+        long nanos = System.nanoTime();
+        generateTestTrajectory();
+        long diff = System.nanoTime() - nanos;
+        SmartDashboard.putNumber("RobotPathfinder Generation Time (s)", diff / 1e9);
+
+        Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, currentSelectedAuton, List.of());
+        drivetrain.setTrajectorySmartdash(traj1, "traj1");
+        Command firstSwerveCommand = generateSwerveCommand(traj1);
+        Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, knownLocations.CHARGING_BOTTOM_LEFT, List.of());
+        drivetrain.setTrajectorySmartdash(traj2, "traj2");
+        Command secondSwerveCommand = generateSwerveCommand(traj2);
+
+        return new SequentialCommandGroup(
+            firstSwerveCommand,
+            secondSwerveCommand
+        );
     }
+
 
     public Trajectory generateTestTrajectory() {
         return TrajectoryGenerator.generateTrajectory(
@@ -111,26 +133,12 @@ public class Autons {
         return swerveControllerCommand;
     }
 
+    public Trajectory generateSwerveTrajectory(Pose2d initialPose, Pose2d finalPose, List<Translation2d> waypoints) {
+        return TrajectoryGenerator.generateTrajectory(initialPose, waypoints, finalPose, trajConfig);
+    }
+
     /** Generate the swerve-specfic command by building the desired trajectory */
-    public Command generateSwerveCommand() {
-        Pose2d initialPose;
-        
-        // if photonvision does not see a target
-        // we will manually need to set the Pose using a known location from SD
-        if (!this.canSeeTarget) {
-            SmartDashboard.putBoolean("MANUAL START NEEDED", true);
-            initialPose = startingPoseChooser.getSelected();
-            drivetrain.setManualPose(initialPose);
-        } else {
-            SmartDashboard.putBoolean("MANUAL START NEEDED", false);
-            initialPose = drivetrain.getInitialPose();
-        }
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-            initialPose, 
-            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-            this.currentSelectedAuton,
-            trajConfig);
-       // 
+    public Command generateSwerveCommand(Trajectory trajectory) {
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
             trajectory,
             () -> drivetrain.getPose(), // Functional interface to feed supplier
@@ -175,17 +183,17 @@ public class Autons {
     public void updateDash() {
         // run constantly when disabled
         Pose2d currAuton = autonChooser.getSelected();
-        boolean targetIsPresent = drivetrain.isTargetPresent();
+        Pose2d currPose = startingPoseChooser.getSelected();
         
         if (currAuton != this.currentSelectedAuton) {
             this.currentSelectedAuton = currAuton;
             SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
-            this.swerveCommand = generateSwerveCommand();
+            this.swerveCommand = getAutonCommand();
         }
 
-        if (targetIsPresent != this.canSeeTarget) {
-            this.canSeeTarget = targetIsPresent;
-            this.swerveCommand = generateSwerveCommand();
+        if (currPose != this.currentSelectedPose) {
+            this.currentSelectedPose = currPose;
+            this.swerveCommand = getAutonCommand();
         }
     }    
 }

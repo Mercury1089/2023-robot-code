@@ -101,7 +101,6 @@ public class RobotContainer {
     
     // autons
     auton = new Autons(drivetrain, allianceBooleanBox);
-    drivetrain.setTrajectorySmartdash(auton.generateTestTrajectory());
 
     gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
     gamepadX.onTrue(
@@ -121,7 +120,7 @@ public class RobotContainer {
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
     left2.onTrue(auton.testSwerveCommand());
 
-    left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj()), drivetrain));
+    left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj(), "traj"), drivetrain));
     left5.onTrue(auton.driveStraight());
     left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())));
 

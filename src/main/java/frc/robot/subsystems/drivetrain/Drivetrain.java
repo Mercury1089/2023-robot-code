@@ -170,8 +170,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /** update smartdash with trajectory */
-  public void setTrajectorySmartdash(Trajectory trajectory) {
-    smartdashField.getObject("traj").setTrajectory(trajectory);
+  public void setTrajectorySmartdash(Trajectory trajectory, String type) {
+    smartdashField.getObject(type).setTrajectory(trajectory);
   }
 
   /**
