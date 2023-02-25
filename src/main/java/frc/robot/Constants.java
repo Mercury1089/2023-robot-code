@@ -99,7 +99,7 @@ public final class Constants {
     public static final int TURNING_BACK_RIGHT = 8;
     public static final int ARM_TALON = 9;
     public static final int PIGEON_DRIVETRAIN = 10;
-    public static final int CLAW_TALON = 11;
+    public static final int WRIST_TALON = 11;
     public static final int TELESCOPE_TALON = 12;
     public static final int ARM_GYRO = 13;
 

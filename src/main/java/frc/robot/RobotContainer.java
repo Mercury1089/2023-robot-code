@@ -12,7 +12,7 @@ import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.sensors.REVBlinkin;
 import frc.robot.sensors.REVBlinkin.Colors;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.Claw;
+import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -60,7 +60,7 @@ public class RobotContainer {
   private REVBlinkin LEDs;
   private Arm arm;
   private Telescope telescope;
-  private Claw claw;
+  private Wrist wrist;
   private Drivetrain drivetrain;
 
 
@@ -78,9 +78,9 @@ public class RobotContainer {
     
     arm = new Arm();
     telescope = new Telescope();
-    claw = new Claw();
-    //arm.setDefaultCommand(new ManualArm(arm, telescope, claw, gamepadRightY));
-    arm.setDefaultCommand(new ManualArm(arm, telescope, claw, gamepadRightY));
+    wrist = new Wrist();
+    //arm.setDefaultCommand(new ManualArm(arm, telescope, wrist, gamepadRightY));
+    arm.setDefaultCommand(new ManualArm(arm, telescope, wrist, gamepadRightY));
 
 
     drivetrain = new Drivetrain();
