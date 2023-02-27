@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.arm;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
@@ -58,6 +60,10 @@ public class Telescope extends SubsystemBase {
     telescope.config_kI(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_I_VAL, Constants.CTRE_TIMEOUT);
     telescope.config_kD(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_D_VAL, Constants.CTRE_TIMEOUT);
     telescope.config_kF(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
+  }
+
+  public void moveTelescope(Supplier<Double> speedSupplier) {
+    telescope.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
   }
 
   public void setTelescopePosition(TelescopePosition telePos) {

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.arm;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
@@ -89,7 +91,9 @@ public class Wrist extends SubsystemBase {
     
   }
 
-
+  public void moveWrist(Supplier<Double> speedSupplier) {
+    wrist.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
+  }
 
   public void calibratePigeon() {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);

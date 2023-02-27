@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.arm;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
@@ -77,6 +79,10 @@ public class Arm extends SubsystemBase {
   // sets the position of the entire arm
   public void setPosition(ArmPosition armPos) {
     arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armPos.degreePos));
+  }
+
+  public void moveArm(Supplier<Double> speedSupplier) {
+    arm.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
   }
 
   public double getArmPosition() {
