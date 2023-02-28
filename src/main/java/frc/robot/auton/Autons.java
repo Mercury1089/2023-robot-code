@@ -1,5 +1,6 @@
 package frc.robot.auton;
 
+import java.util.Arrays;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -80,20 +81,38 @@ public class Autons {
     }
 
     public Command getAutonCommand() {
-        // run once at the start of auton
-
-        // will eventually use this.swerveCommand 
-        // in conjunction w/ other subsystems
-        // to build full autons
+        // will eventually use this.swerveCommand; 
+        // in conjunction w/ other subsystems;
+        // to build full autons;
         long nanos = System.nanoTime();
         generateTestTrajectory();
         long diff = System.nanoTime() - nanos;
         SmartDashboard.putNumber("RobotPathfinder Generation Time (s)", diff / 1e9);
+        List<Translation2d> waypoints = List.of();
+        Pose2d finalPose = currentSelectedPose;
 
-        Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, currentSelectedAuton, List.of());
+        if (currentSelectedPose == knownLocations.START_TOPMOST || currentSelectedPose == knownLocations.START_TOP_SECOND) {
+            waypoints = Arrays.asList(knownLocations.WAYPOINT_TOP);
+            // 
+            if (currentSelectedPose == knownLocations.START_TOPMOST) {
+                finalPose = knownLocations.START_TOP_SECOND;
+            } else {
+                finalPose = knownLocations.START_TOPMOST;
+            }
+        } else if (currentSelectedPose == knownLocations.START_BOTTOM_SECOND || currentSelectedPose == knownLocations.START_BOTTOMMOST) {
+            waypoints = Arrays.asList(knownLocations.WAYPOINT_BOTTOM);
+
+            if (currentSelectedPose == knownLocations.START_BOTTOMMOST) {
+                finalPose = knownLocations.START_BOTTOM_SECOND;
+            } else {
+                finalPose = knownLocations.START_BOTTOMMOST;
+            }
+        }
+
+        Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, currentSelectedAuton, waypoints);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
-        Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, knownLocations.CHARGING_BOTTOM_LEFT, List.of());
+        Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, finalPose, waypoints);
         drivetrain.setTrajectorySmartdash(traj2, "traj2");
         Command secondSwerveCommand = generateSwerveCommand(traj2);
 

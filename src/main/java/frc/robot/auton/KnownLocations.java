@@ -6,6 +6,7 @@ package frc.robot.auton;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -37,6 +38,10 @@ public class KnownLocations {
         CHARGING_TOP_RIGHT,
         CHARGING_BOTTOM_LEFT,
         CHARGING_BOTTOM_RIGHT;
+
+    public final Translation2d
+        WAYPOINT_TOP,
+        WAYPOINT_BOTTOM;
     
         
     public static Alliance allianceColor = DriverStation.getAlliance();
@@ -59,11 +64,14 @@ public class KnownLocations {
             ELEMENT3 = Pose2dInch(279.31, 84.02, 0);
             ELEMENT4 = Pose2dInch(279.31, 36.02, 0);
 
-            CHARGING_CENTER = Pose2dInch(513.93, 107.85, 0);
+            CHARGING_CENTER = Pose2dInch(153.93, 107.85, 0);
             CHARGING_TOP_LEFT=  Pose2dInch(117.16, 155.51, 0);
             CHARGING_TOP_RIGHT = Pose2dInch(190.96, 155.51, 0);
             CHARGING_BOTTOM_LEFT = Pose2dInch(117.16, 60.2, 0);
             CHARGING_BOTTOM_RIGHT = Pose2dInch(190.96, 60.2, 0);
+
+            WAYPOINT_TOP = Pose2dInch(190.96, 185.62, 0).getTranslation();
+            WAYPOINT_BOTTOM = Pose2dInch(190.96, 30.101, 0).getTranslation();
 
         } else {
             allianceColorWidget.setBoolean(true);
@@ -83,6 +91,9 @@ public class KnownLocations {
             CHARGING_TOP_RIGHT = Pose2dInch(536.18, 155.51, 0);
             CHARGING_BOTTOM_LEFT = Pose2dInch(462.38, 60.2, 0);
             CHARGING_BOTTOM_RIGHT = Pose2dInch(536.18, 60.2, 0);
+
+            WAYPOINT_TOP = Pose2dInch(463.39, 185.62, 0).getTranslation();
+            WAYPOINT_BOTTOM = Pose2dInch(463.39, 30.1, 0).getTranslation();
         }
     }
 
