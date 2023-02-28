@@ -15,6 +15,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
+import frc.robot.subsystems.arm.Wrist.WristPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 import java.util.Map;
@@ -87,6 +88,11 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
     drivetrain.resetGyro();
 
+    wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(() -> -gamepadLeftY.get()), wrist));
+    gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
+    gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
+    gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
+
     //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));
     //gamepadPOVRight.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE, TelescopePosition.MID_CONE, ClawPosition.MID_CONE), arm));
     //gamepadPOVLeft.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.DOUBLE_SUBSTATION, TelescopePosition.DOUBLE_SUBSTATION, ClawPosition.DOUBLE_SUBSTATION), arm));
@@ -102,20 +108,20 @@ public class RobotContainer {
     // autons
     auton = new Autons(drivetrain, allianceBooleanBox);
 
-    gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
-    gamepadX.onTrue(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)),
-        new InstantCommand(() -> elementBooleanBox.setBoolean(true))
-      )
-    );
+    // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
+    // gamepadX.onTrue(
+    //   new ParallelCommandGroup(
+    //     new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)),
+    //     new InstantCommand(() -> elementBooleanBox.setBoolean(true))
+    //   )
+    // );
     gamepadY.onTrue(
       new ParallelCommandGroup(
         new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)),
         new InstantCommand(() -> elementBooleanBox.setBoolean(false))
       )
     );
-    gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
+    // gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
 
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
     left2.onTrue(auton.testSwerveCommand());

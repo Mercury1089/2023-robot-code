@@ -33,7 +33,7 @@ public class Wrist extends SubsystemBase {
     ROLL_LOOP = 0;
 
   private static final double
-    WRIST_NORMAL_P_VAL = 1.0,
+    WRIST_NORMAL_P_VAL = 1.0 / 180.0 * 1024.0,
     WRIST_NORMAL_I_VAL = 0.0,
     WRIST_NORMAL_D_VAL = 0.0,
     WRIST_NORMAL_F_VAL = 0.0;
@@ -41,8 +41,8 @@ public class Wrist extends SubsystemBase {
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
     NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 0.2,
-    PEAK_OUTPUT_REVERSE = -0.2;
+    PEAK_OUTPUT_FORWARD = 1.0,
+    PEAK_OUTPUT_REVERSE = -1.0;
 
   public final double
     WRIST_UPPER_LIMIT = 90,
@@ -62,8 +62,8 @@ public class Wrist extends SubsystemBase {
 
     wrist.configFactoryDefault();
 
-    wrist.setInverted(true);
     wrist.setSensorPhase(true);
+    wrist.setInverted(false);
 
     //wrist.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(WRIST_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
     //wrist.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(WRIST_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
@@ -107,7 +107,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public void setWristPosition(WristPosition wristPos) {
-    wrist.set(ControlMode.Position, MercMath.degreesToEncoderTicks(wristPos.degreePos));
+    wrist.set(ControlMode.Position, wristPos.degreePos);
   }
 
   public double getwristPosition() {
@@ -123,11 +123,12 @@ public class Wrist extends SubsystemBase {
 
   public enum WristPosition {
     INSIDE(0),
-    TOP_CONE(0),
+    TOP_CONE(45.0),
+    BOTTOM_MOST(-25.0),
     MID_CONE(0),
     TOP_CUBE(0),
     MID_CUBE(0),
-    FLOOR(0),
+    FLOOR(0.0),
     DOUBLE_SUBSTATION(0),
     FELL_OVER(0);
 

@@ -52,7 +52,7 @@ public class Arm extends SubsystemBase {
 
     // Account for motor orientation.
     arm.setInverted(false);
-    arm.setSensorPhase(false);
+    arm.setSensorPhase(true);
 
     arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
     arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
