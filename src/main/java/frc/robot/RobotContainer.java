@@ -9,8 +9,8 @@ import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.auton.Autons;
 import frc.robot.commands.arm.ManualArm;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
-import frc.robot.sensors.REVBlinkin;
-import frc.robot.sensors.REVBlinkin.Colors;
+import frc.robot.subsystems.GamePieceLEDs;
+import frc.robot.subsystems.GamePieceLEDs.LEDState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
@@ -58,7 +58,7 @@ public class RobotContainer {
   private GenericEntry allianceBooleanBox;
 
   private Autons auton;
-  private REVBlinkin LEDs;
+  private GamePieceLEDs LEDs;
   private Arm arm;
   private Telescope telescope;
   private Wrist wrist;
@@ -75,7 +75,7 @@ public class RobotContainer {
     configureBindings();
     
     // subsystems & sensors
-    LEDs = new REVBlinkin();
+    LEDs = new GamePieceLEDs();
     
     arm = new Arm();
     telescope = new Telescope();
@@ -104,6 +104,8 @@ public class RobotContainer {
     SmartDashboard.putData("Box Color False", new InstantCommand(() -> elementBooleanBox.setBoolean(false)));
 
     GenericEntry allianceBooleanBox = tab.add("Alliance Color", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "red", "Color when false", "blue")).getEntry();
+
+    LEDs.setBooleanBox(elementBooleanBox);
     
     // autons
     auton = new Autons(drivetrain, allianceBooleanBox);
@@ -116,10 +118,7 @@ public class RobotContainer {
     //   )
     // );
     gamepadY.onTrue(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> LEDs.setColor(Colors.YELLOW)),
-        new InstantCommand(() -> elementBooleanBox.setBoolean(false))
-      )
+      new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
     );
     // gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
 
