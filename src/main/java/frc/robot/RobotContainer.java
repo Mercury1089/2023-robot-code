@@ -80,8 +80,7 @@ public class RobotContainer {
     arm = new Arm();
     telescope = new Telescope();
     wrist = new Wrist();
-    //arm.setDefaultCommand(new ManualArm(arm, telescope, wrist, gamepadRightY));
-    arm.setDefaultCommand(new ManualArm(arm, telescope, wrist, gamepadRightY));
+    arm.setDefaultCommand(new RunCommand(() -> arm.moveArm(gamepadRightY), arm));
 
 
     drivetrain = new Drivetrain();
@@ -92,11 +91,6 @@ public class RobotContainer {
     gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
     gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
     gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
-
-    //gamepadPOVUp.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.TOP_CONE, TelescopePosition.TOP_CONE, ClawPosition.TOP_CONE), arm));
-    //gamepadPOVRight.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE, TelescopePosition.MID_CONE, ClawPosition.MID_CONE), arm));
-    //gamepadPOVLeft.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.DOUBLE_SUBSTATION, TelescopePosition.DOUBLE_SUBSTATION, ClawPosition.DOUBLE_SUBSTATION), arm));
-    //gamepadPOVDown.onTrue(new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR, TelescopePosition.FLOOR, ClawPosition.FLOOR), arm));
 
     ShuffleboardTab tab = Shuffleboard.getTab("Competition");
     GenericEntry elementBooleanBox = tab.add("Cone or Cube", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#4d3399", "Color when false", "#ffff4d")).getEntry();

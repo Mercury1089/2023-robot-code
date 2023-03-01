@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
@@ -35,31 +36,32 @@ public class Arm extends SubsystemBase {
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
     NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 0.2,
-    PEAK_OUTPUT_REVERSE = -0.2;
+    PEAK_OUTPUT_FORWARD = 1.0,
+    PEAK_OUTPUT_REVERSE = -1.0;
   // Need to find upper and lower limit values
   public final double
     ARM_UPPER_LIMIT = 20,
     ARM_LOWER_LIMIT = -90;
   public final double GEAR_RATIO = 1;
 
-  private TalonSRX arm;
+  private TalonFX arm;
 
   public Arm() {
-    arm = new TalonSRX(CAN.ARM_TALON);
+    arm = new TalonFX(CAN.ARM_TALON);
 
     arm.configFactoryDefault();
 
     // Account for motor orientation.
-    arm.setInverted(false);
     arm.setSensorPhase(true);
+    arm.setInverted(true);
+    
 
-    arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
-    arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
-    arm.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
-    arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+    // arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
+    // arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
+    // arm.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+    // arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
-    arm.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
+    arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
@@ -82,7 +84,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void moveArm(Supplier<Double> speedSupplier) {
-    arm.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
+    arm.set(ControlMode.PercentOutput, -speedSupplier.get());
   }
 
   public double getArmPosition() {
@@ -96,6 +98,7 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("arm encoder", getArmPosition());
 
   }
 

@@ -18,7 +18,7 @@ public class ManualArm extends CommandBase {
   private Wrist wrist;
   private Supplier<Double> gamepadRightY;
   /** Creates a new ManualArm. */
-  public ManualArm(Arm arm, Telescope telescope, Wrist wrist, Supplier<Double> gamepadRightY) {
+  public ManualArm(Arm arm, Supplier<Double> gamepadRightY) {
     this.arm = arm;
     this.telescope = telescope;
     this.wrist = wrist;
