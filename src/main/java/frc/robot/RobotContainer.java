@@ -12,6 +12,7 @@ import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
 import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.Claw;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
@@ -61,6 +62,7 @@ public class RobotContainer {
   private GamePieceLEDs LEDs;
   private Arm arm;
   private Telescope telescope;
+  private Claw claw;
   private Wrist wrist;
   private Drivetrain drivetrain;
 
@@ -78,16 +80,19 @@ public class RobotContainer {
     LEDs = new GamePieceLEDs();
     
     arm = new Arm();
-    telescope = new Telescope();
-    wrist = new Wrist();
     arm.setDefaultCommand(new RunCommand(() -> arm.moveArm(gamepadRightY), arm));
-
+    telescope = new Telescope();
+    telescope.setDefaultCommand(new RunCommand(() -> telescope.moveTelescope(gamepadLeftY), telescope));
+    
+    wrist = new Wrist();
+    claw = new Claw();
+    claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
     drivetrain.resetGyro();
 
-    wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(() -> -gamepadLeftY.get()), wrist));
+    // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(() -> -gamepadLeftY.get()), wrist));
     gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
     gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
     gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));

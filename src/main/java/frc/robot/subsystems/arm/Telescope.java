@@ -9,8 +9,10 @@ import java.util.function.Supplier;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
@@ -32,20 +34,20 @@ public class Telescope extends SubsystemBase {
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
     NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 0.2,
-    PEAK_OUTPUT_REVERSE = -0.2;
+    PEAK_OUTPUT_FORWARD = 1,
+    PEAK_OUTPUT_REVERSE = -1;
 
-  private TalonSRX telescope;
+  private TalonFX telescope;
 
   public Telescope() {
-    telescope = new TalonSRX(CAN.TELESCOPE_TALON);
+    telescope = new TalonFX(CAN.TELESCOPE_TALON);
 
     telescope.configFactoryDefault();
 
     telescope.setInverted(false);
     telescope.setSensorPhase(false);
 
-    telescope.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
+    telescope.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
 
     telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
@@ -63,7 +65,7 @@ public class Telescope extends SubsystemBase {
   }
 
   public void moveTelescope(Supplier<Double> speedSupplier) {
-    telescope.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
+    telescope.set(ControlMode.PercentOutput, -speedSupplier.get() * 0.5);
   }
 
   public void setTelescopePosition(TelescopePosition telePos) {
@@ -77,6 +79,7 @@ public class Telescope extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("telescope encoder", getTelescopePosition());
   }
 
   public enum TelescopePosition {
