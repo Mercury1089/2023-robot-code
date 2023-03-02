@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
+import frc.robot.subsystems.GamePieceLEDs;
+import frc.robot.subsystems.GamePieceLEDs.GamePiece;
+import frc.robot.util.MercMath;
 
 public class Claw extends SubsystemBase {
 
@@ -64,8 +67,36 @@ public class Claw extends SubsystemBase {
 
   }
 
+  public void adjustClawMode(GamePieceLEDs leds) {
+    GamePiece gamePiece = leds.getGameState();
+    if (gamePiece == GamePiece.CONE) {
+      setClawPosition(ClawPosition.CONE);
+    } else if (gamePiece == GamePiece.CUBE) {
+      setClawPosition(ClawPosition.CUBE);
+    } else {
+      setClawPosition(ClawPosition.NONE); 
+    }
+  }
+
   public void moveClaw(Supplier<Double> speedSupplier) {
     claw.set(ControlMode.PercentOutput, -speedSupplier.get() * 0.25);
+  }
+
+  public void setClawPosition(ClawPosition position) {
+    claw.set(ControlMode.Position, MercMath.encoderTicksToDegrees(position.encoderPosition));
+  }
+
+  public enum ClawPosition {
+    NONE(0),
+    CONE(0),
+    CUBE(0);
+
+    public final double encoderPosition;
+
+    private ClawPosition(double encoderPos) {
+      this.encoderPosition = encoderPos;
+
+    }
   }
 
   @Override

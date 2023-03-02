@@ -86,6 +86,7 @@ public class RobotContainer {
     
     wrist = new Wrist();
     claw = new Claw();
+    // claw.setDefaultCommand(new RunCommand(() -> claw.adjustClawMode(LEDs), claw));
     claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
     drivetrain = new Drivetrain();
