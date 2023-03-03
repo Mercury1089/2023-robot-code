@@ -29,9 +29,6 @@ public class Claw extends SubsystemBase {
     CLAW_NORMAL_D_VAL = 0.0,
     CLAW_NORMAL_F_VAL = 0.0;
 
-  public static final double
-    SPROCKET_DIAMETER_INCHES = 6.0;
-
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
     NOMINAL_OUTPUT_REVERSE = -0.02,
@@ -46,10 +43,11 @@ public class Claw extends SubsystemBase {
 
     claw.configFactoryDefault();
 
-    claw.setInverted(false);
-    claw.setSensorPhase(false);
+    claw.setSensorPhase(true);
+    claw.setInverted(true);
+    
 
-    claw.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
 
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
