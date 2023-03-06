@@ -89,14 +89,14 @@ public final class Constants {
   }
 
   public static class CAN {
-    public static final int DRIVING_FRONT_LEFT = 1;
-    public static final int TURNING_FRONT_LEFT = 2;
-    public static final int DRIVING_FRONT_RIGHT = 3;
-    public static final int TURNING_FRONT_RIGHT = 4;
-    public static final int DRIVING_BACK_LEFT = 5;
-    public static final int TURNING_BACK_LEFT = 6;
-    public static final int DRIVING_BACK_RIGHT = 7;
-    public static final int TURNING_BACK_RIGHT = 8;
+    public static final int DRIVING_FRONT_LEFT = 3;
+    public static final int TURNING_FRONT_LEFT = 4;
+    public static final int DRIVING_FRONT_RIGHT = 7;
+    public static final int TURNING_FRONT_RIGHT = 8; 
+    public static final int DRIVING_BACK_LEFT = 1;
+    public static final int TURNING_BACK_LEFT = 2;
+    public static final int DRIVING_BACK_RIGHT = 5;
+    public static final int TURNING_BACK_RIGHT = 6;
     public static final int ARM_TALON = 9;
     public static final int PIGEON_DRIVETRAIN = 10;
     public static final int WRIST_TALON = 11;
