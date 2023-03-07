@@ -8,6 +8,8 @@ import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.auton.Autons;
 import frc.robot.commands.arm.ManualArm;
+import frc.robot.commands.arm.MoveArm;
+import frc.robot.commands.arm.MoveTelescope;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
@@ -16,6 +18,7 @@ import frc.robot.subsystems.arm.Claw;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
+import frc.robot.subsystems.arm.Telescope.TelescopePosition;
 import frc.robot.subsystems.arm.Wrist.WristPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
@@ -31,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController; 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -94,9 +98,9 @@ public class RobotContainer {
     drivetrain.resetGyro();
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(() -> -gamepadLeftY.get()), wrist));
-    gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
-    gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
-    gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
+    // gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
+    // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
+    // gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
 
     ShuffleboardTab tab = Shuffleboard.getTab("Competition");
     GenericEntry elementBooleanBox = tab.add("Cone or Cube", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#4d3399", "Color when false", "#ffff4d")).getEntry();
@@ -111,12 +115,25 @@ public class RobotContainer {
     auton = new Autons(drivetrain, allianceBooleanBox);
 
     // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
-    // gamepadX.onTrue(
-    //   new ParallelCommandGroup(
-    //     new InstantCommand(() -> LEDs.setColor(Colors.PURPLE)),
-    //     new InstantCommand(() -> elementBooleanBox.setBoolean(true))
-    //   )
-    // );
+    gamepadX.onTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new MoveArm(arm, ArmPosition.FLOOR),
+          new MoveTelescope(telescope, TelescopePosition.FLOOR)
+        ),
+        new RunCommand(() -> claw.close(LEDs), LEDs)
+      )
+    );
+
+    gamepadY.onTrue(
+      new ParallelCommandGroup(
+        new MoveArm(arm, ArmPosition.INSIDE),
+        new MoveTelescope(telescope, TelescopePosition.INSIDE)
+      )
+    );
+
+
+
     gamepadY.onTrue(
       new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
     );

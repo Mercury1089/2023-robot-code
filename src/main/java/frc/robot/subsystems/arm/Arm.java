@@ -87,6 +87,10 @@ public class Arm extends SubsystemBase {
     arm.set(ControlMode.PercentOutput, -speedSupplier.get());
   }
 
+  public double getError() {
+    return arm.getClosedLoopError(ARM_PID_SLOT);
+  }
+
   public double getArmPosition() {
     return arm.getSelectedSensorPosition();
   }

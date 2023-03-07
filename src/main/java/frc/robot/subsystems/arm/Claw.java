@@ -65,16 +65,15 @@ public class Claw extends SubsystemBase {
 
   }
 
-  public void adjustClawMode(GamePieceLEDs leds) {
+  public void close(GamePieceLEDs leds) {
     GamePiece gamePiece = leds.getGameState();
     if (gamePiece == GamePiece.CONE) {
       setClawPosition(ClawPosition.CONE);
     } else if (gamePiece == GamePiece.CUBE) {
       setClawPosition(ClawPosition.CUBE);
-    } else {
-      setClawPosition(ClawPosition.NONE); 
     }
   }
+
 
   public void moveClaw(Supplier<Double> speedSupplier) {
     claw.set(ControlMode.PercentOutput, -speedSupplier.get() * 0.25);
@@ -83,6 +82,7 @@ public class Claw extends SubsystemBase {
   public void setClawPosition(ClawPosition position) {
     claw.set(ControlMode.Position, MercMath.encoderTicksToDegrees(position.encoderPosition));
   }
+  
 
   public enum ClawPosition {
     NONE(0),
@@ -93,9 +93,10 @@ public class Claw extends SubsystemBase {
 
     private ClawPosition(double encoderPos) {
       this.encoderPosition = encoderPos;
-
     }
   }
+
+
 
   @Override
   public void periodic() {

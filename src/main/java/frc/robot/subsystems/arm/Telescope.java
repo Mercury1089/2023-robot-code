@@ -71,6 +71,10 @@ public class Telescope extends SubsystemBase {
   public void setTelescopePosition(TelescopePosition telePos) {
     telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
   }
+
+  public double getError() {
+    return telescope.getClosedLoopError(TELESCOPE_PID_SLOT);
+  }
   
   public double getTelescopePosition() {
     return telescope.getSelectedSensorPosition();
