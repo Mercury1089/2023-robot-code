@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController; 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -115,29 +117,67 @@ public class RobotContainer {
     auton = new Autons(drivetrain, allianceBooleanBox);
 
     // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
+
+    /* PICK UP PIECE */
     gamepadX.onTrue(
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new MoveArm(arm, ArmPosition.FLOOR),
-          new MoveTelescope(telescope, TelescopePosition.FLOOR)
+      new ParallelCommandGroup(
+        new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR), arm),
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> arm.isFinishedMoving()),
+          new ParallelCommandGroup(
+            new RunCommand(() -> telescope.setPosition(TelescopePosition.FLOOR))
+            // RC to set wrist down
+          )
         ),
-        new RunCommand(() -> claw.close(LEDs), LEDs)
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> arm.isFinishedMoving()),
+          new WaitUntilCommand(() -> telescope.isFinishedMoving())
+          // waitUntil wrist
+          // RC to close claw
+        )
       )
     );
 
+    /** CLOSE THE CLAW */
+    gamepadB.onTrue(
+      new ParallelCommandGroup(
+        new RunCommand(() -> claw.close(LEDs))
+      )
+    );
+
+    /** TUCK EVERYTHING INTO ROBOT */
     gamepadY.onTrue(
       new ParallelCommandGroup(
-        new MoveArm(arm, ArmPosition.INSIDE),
-        new MoveTelescope(telescope, TelescopePosition.INSIDE)
+        new RunCommand(() -> claw.close(LEDs), claw),
+        new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE)),
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> telescope.isFinishedMoving()),
+          new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
+        )
       )
     );
 
-
-
-    gamepadY.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
+    /** SCORE IT */
+    gamepadA.onTrue(
+      new ParallelCommandGroup(
+        new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE), arm),
+        new SequentialCommandGroup(
+          new WaitUntilCommand(() -> arm.isFinishedMoving()),
+          new ParallelCommandGroup(
+            new RunCommand(() -> telescope.setPosition(TelescopePosition.TOP_CONE), telescope)
+            // also RC for wrist level as well
+          ),
+          new SequentialCommandGroup(
+            new WaitUntilCommand(() -> arm.isFinishedMoving()),
+            new WaitUntilCommand(() -> telescope.isFinishedMoving()),
+            // also waitUntil(wrist)
+            new RunCommand(() -> claw.open(), claw)
+          )
+        )
+      )
     );
-    // gamepadB.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.OFF)));
+
+  
 
     left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
     left2.onTrue(auton.testSwerveCommand());

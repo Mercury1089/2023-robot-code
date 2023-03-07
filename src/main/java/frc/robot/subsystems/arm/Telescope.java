@@ -37,6 +37,8 @@ public class Telescope extends SubsystemBase {
     PEAK_OUTPUT_FORWARD = 1,
     PEAK_OUTPUT_REVERSE = -1;
 
+  public final double THRESHOLD_INCHES = 1.0;
+
   private TalonFX telescope;
 
   public Telescope() {
@@ -68,12 +70,16 @@ public class Telescope extends SubsystemBase {
     telescope.set(ControlMode.PercentOutput, -speedSupplier.get() * 0.5);
   }
 
-  public void setTelescopePosition(TelescopePosition telePos) {
+  public void setPosition(TelescopePosition telePos) {
     telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
   }
 
   public double getError() {
     return telescope.getClosedLoopError(TELESCOPE_PID_SLOT);
+  }
+
+  public boolean isFinishedMoving() {
+    return getError() < MercMath.inchesToEncoderTicks(THRESHOLD_INCHES);
   }
   
   public double getTelescopePosition() {
@@ -84,6 +90,7 @@ public class Telescope extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("telescope encoder", getTelescopePosition());
+    SmartDashboard.putNumber("telescope error", getError());
   }
 
   public enum TelescopePosition {

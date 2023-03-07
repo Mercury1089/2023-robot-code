@@ -43,6 +43,7 @@ public class Arm extends SubsystemBase {
     ARM_UPPER_LIMIT = 20,
     ARM_LOWER_LIMIT = -90;
   public final double GEAR_RATIO = 1;
+  public final double THRESHOLD_DEGREES = 1.0;
 
   private TalonFX arm;
 
@@ -78,7 +79,7 @@ public class Arm extends SubsystemBase {
     arm.config_kF(ARM_PID_SLOT, ARM_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
   }
 
-  // sets the position of the entire arm
+  /**  sets the position of the entire arm */
   public void setPosition(ArmPosition armPos) {
     arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armPos.degreePos));
   }
@@ -91,18 +92,19 @@ public class Arm extends SubsystemBase {
     return arm.getClosedLoopError(ARM_PID_SLOT);
   }
 
-  public double getArmPosition() {
-    return arm.getSelectedSensorPosition();
+  public boolean isFinishedMoving() {
+    return getError() < MercMath.degreesToEncoderTicks(THRESHOLD_DEGREES);
   }
 
-  public boolean isPositionAcquired() {
-    return false; //getArmPosition();
+  public double getArmPosition() {
+    return arm.getSelectedSensorPosition();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("arm encoder", getArmPosition());
+    SmartDashboard.putNumber("arm error", getError());
 
   }
 

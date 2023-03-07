@@ -74,6 +74,10 @@ public class Claw extends SubsystemBase {
     }
   }
 
+  public void open() {
+    setClawPosition(ClawPosition.OPEN);
+  }
+
 
   public void moveClaw(Supplier<Double> speedSupplier) {
     claw.set(ControlMode.PercentOutput, -speedSupplier.get() * 0.25);
@@ -85,7 +89,7 @@ public class Claw extends SubsystemBase {
   
 
   public enum ClawPosition {
-    NONE(0),
+    OPEN(0),
     CONE(0),
     CUBE(0);
 
