@@ -17,8 +17,17 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.subsystems.GamePieceLEDs;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.Claw;
+import frc.robot.subsystems.arm.Telescope;
+import frc.robot.subsystems.arm.Arm.ArmPosition;
+import frc.robot.subsystems.arm.Telescope.TelescopePosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 
@@ -133,9 +142,12 @@ public class Autons {
         Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, currentSelectedAuton, waypoints);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
+        // pickUpCommand()
+        // tuckInCommand()
         Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, finalPose, waypoints);
         drivetrain.setTrajectorySmartdash(traj2, "traj2");
         Command secondSwerveCommand = generateSwerveCommand(traj2);
+        // scoreCommand()
 
         return new SequentialCommandGroup(
             firstSwerveCommand,
@@ -218,6 +230,61 @@ public class Autons {
             );
         }
 
+    /**
+     * The logic for picking up, moving, and scoring pieces
+     * will be used in both auton and throughout the game on buttons
+     * so we declare in auton, and just call these methods to tie to 
+     * buttons in RBC
+     * @return Command
+     */
+    public Command getPickUpCommand(Arm arm, Telescope telescope) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR), arm),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.FLOOR))
+                // RC to set wrist down
+              )
+            ),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new WaitUntilCommand(() -> telescope.isFinishedMoving())
+              // waitUntil wrist
+              // RC to close claw
+            )
+          );
+    }
+
+    public Command getTuckInCommand(Claw claw, Telescope telescope, Arm arm, GamePieceLEDs LEDs) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> claw.close(LEDs), claw),
+            new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE)),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> telescope.isFinishedMoving()),
+              new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
+            )
+          );
+    }
+
+    public Command getScorePieceCommand(Arm arm, Telescope telescope, Claw claw) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE), arm),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.TOP_CONE), telescope)
+                // also RC for wrist level as well
+              ),
+              new SequentialCommandGroup(
+                new WaitUntilCommand(() -> arm.isFinishedMoving()),
+                new WaitUntilCommand(() -> telescope.isFinishedMoving()),
+                // also waitUntil(wrist)
+                new RunCommand(() -> claw.open(), claw)
+              )
+            )
+          );
+    }
 
     public void updateDash() {
         // run constantly when disabled

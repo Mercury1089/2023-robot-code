@@ -120,24 +120,7 @@ public class RobotContainer {
     // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
 
     /* PICK UP PIECE */
-    gamepadX.onTrue(
-      new ParallelCommandGroup(
-        new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR), arm),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(() -> arm.isFinishedMoving()),
-          new ParallelCommandGroup(
-            new RunCommand(() -> telescope.setPosition(TelescopePosition.FLOOR))
-            // RC to set wrist down
-          )
-        ),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(() -> arm.isFinishedMoving()),
-          new WaitUntilCommand(() -> telescope.isFinishedMoving())
-          // waitUntil wrist
-          // RC to close claw
-        )
-      )
-    );
+    gamepadX.onTrue(auton.getPickUpCommand(arm, telescope));
 
     /** CLOSE THE CLAW */
     gamepadB.onTrue(
@@ -147,36 +130,10 @@ public class RobotContainer {
     );
 
     /** TUCK EVERYTHING INTO ROBOT */
-    gamepadY.onTrue(
-      new ParallelCommandGroup(
-        new RunCommand(() -> claw.close(LEDs), claw),
-        new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE)),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(() -> telescope.isFinishedMoving()),
-          new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
-        )
-      )
-    );
+    gamepadY.onTrue(auton.getTuckInCommand(claw, telescope, arm, LEDs));
 
     /** SCORE IT */
-    gamepadA.onTrue(
-      new ParallelCommandGroup(
-        new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE), arm),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(() -> arm.isFinishedMoving()),
-          new ParallelCommandGroup(
-            new RunCommand(() -> telescope.setPosition(TelescopePosition.TOP_CONE), telescope)
-            // also RC for wrist level as well
-          ),
-          new SequentialCommandGroup(
-            new WaitUntilCommand(() -> arm.isFinishedMoving()),
-            new WaitUntilCommand(() -> telescope.isFinishedMoving()),
-            // also waitUntil(wrist)
-            new RunCommand(() -> claw.open(), claw)
-          )
-        )
-      )
-    );
+    gamepadA.onTrue(auton.getScorePieceCommand(arm, telescope, claw));
 
   
 
