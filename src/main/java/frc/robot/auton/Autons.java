@@ -32,7 +32,7 @@ public class Autons {
     private TrajectoryConfig trajConfig;
     private ProfiledPIDController turningPIDController;
     private PIDController xController, yController;
-    private Command swerveCommand;
+    private Command autonCommand;
     private KnownLocations knownLocations;
 
     private final double TURNING_P_VAL = 1;
@@ -77,10 +77,14 @@ public class Autons {
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
         SmartDashboard.putBoolean("MANUAL START NEEDED", false);
 
-        this.swerveCommand = getAutonCommand();
+        this.autonCommand = buildAutonCommand();
     }
 
     public Command getAutonCommand() {
+        return this.autonCommand;
+    }
+
+    public Command buildAutonCommand() {
         // will eventually use this.swerveCommand; 
         // in conjunction w/ other subsystems;
         // to build full autons;
@@ -109,6 +113,23 @@ public class Autons {
             }
         }
 
+        // if charging station is selected, this is our final destination (only 1 traj required)
+        if (currentSelectedAuton == knownLocations.CHARGING_CENTER) {
+            waypoints = List.of(); // ToDo: get waypoint for directly in front of the charging station
+            finalPose = currentSelectedAuton;
+
+
+            Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, finalPose, waypoints);
+            drivetrain.setTrajectorySmartdash(traj1, "traj1");
+            Command firstSwerveCommand = generateSwerveCommand(traj1);
+
+            // reset the 2nd trajectory on the field widget
+            Trajectory traj2 = new Trajectory();
+            drivetrain.setTrajectorySmartdash(traj2, "traj2");
+
+            return firstSwerveCommand;
+        }
+
         Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, currentSelectedAuton, waypoints);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
@@ -121,7 +142,6 @@ public class Autons {
             secondSwerveCommand
         );
     }
-
 
     public Trajectory generateTestTrajectory() {
         return TrajectoryGenerator.generateTrajectory(
@@ -207,12 +227,12 @@ public class Autons {
         if (currAuton != this.currentSelectedAuton) {
             this.currentSelectedAuton = currAuton;
             SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
-            this.swerveCommand = getAutonCommand();
+            this.autonCommand = buildAutonCommand();
         }
 
         if (currPose != this.currentSelectedPose) {
             this.currentSelectedPose = currPose;
-            this.swerveCommand = getAutonCommand();
+            this.autonCommand = buildAutonCommand();
         }
     }    
 }
