@@ -104,7 +104,8 @@ public class RobotContainer {
     // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
     // gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
 
-    ShuffleboardTab tab = Shuffleboard.getTab("Competition");
+    Shuffleboard.selectTab("TestLayout");
+    ShuffleboardTab tab = Shuffleboard.getTab("TestLayout");
     GenericEntry elementBooleanBox = tab.add("Cone or Cube", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#4d3399", "Color when false", "#ffff4d")).getEntry();
     SmartDashboard.putData("Box Color True", new InstantCommand(() -> elementBooleanBox.setBoolean(true)));
     SmartDashboard.putData("Box Color False", new InstantCommand(() -> elementBooleanBox.setBoolean(false)));
