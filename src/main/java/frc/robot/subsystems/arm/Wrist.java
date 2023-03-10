@@ -99,13 +99,6 @@ public class Wrist extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
-  public void levelWrist() {
-    double roll = pigeon.getRoll();
-    if (roll != 0) {
-      wrist.set(ControlMode.Position, MercMath.degreesToEncoderTicks(0 - roll));
-    }
-  }
-
   public void setWristPosition(WristPosition wristPos) {
     wrist.set(ControlMode.Position, wristPos.degreePos);
   }
@@ -122,12 +115,9 @@ public class Wrist extends SubsystemBase {
   }
 
   public enum WristPosition {
-    INSIDE(0),
+    INSIDE(0.0),
     TOP_CONE(45.0),
     BOTTOM_MOST(-25.0),
-    MID_CONE(0),
-    TOP_CUBE(0),
-    MID_CUBE(0),
     FLOOR(0.0),
     DOUBLE_SUBSTATION(0),
     FELL_OVER(0);

@@ -62,8 +62,6 @@ public class RobotContainer {
 
   private Supplier<Double> gamepadLeftX, gamepadLeftY, gamepadRightX, gamepadRightY, rightJoystickX, rightJoystickY, leftJoystickX, leftJoystickY;
 
-  private GenericEntry allianceBooleanBox;
-
   private Autons auton;
   private GamePieceLEDs LEDs;
   private Arm arm;
@@ -104,18 +102,8 @@ public class RobotContainer {
     // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
     // gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
 
-    Shuffleboard.selectTab("TestLayout");
-    ShuffleboardTab tab = Shuffleboard.getTab("TestLayout");
-    GenericEntry elementBooleanBox = tab.add("Cone or Cube", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#4d3399", "Color when false", "#ffff4d")).getEntry();
-    SmartDashboard.putData("Box Color True", new InstantCommand(() -> elementBooleanBox.setBoolean(true)));
-    SmartDashboard.putData("Box Color False", new InstantCommand(() -> elementBooleanBox.setBoolean(false)));
-
-    GenericEntry allianceBooleanBox = tab.add("Alliance Color", false).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "red", "Color when false", "blue")).getEntry();
-
-    LEDs.setBooleanBox(elementBooleanBox);
-    
     // autons
-    auton = new Autons(drivetrain, allianceBooleanBox);
+    auton = new Autons(drivetrain);
 
     // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
 

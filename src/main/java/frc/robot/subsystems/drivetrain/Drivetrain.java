@@ -226,6 +226,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("CurrentPose X", getPose().getX());
     SmartDashboard.putNumber("CurrentPose Y", getPose().getY());
     SmartDashboard.putNumber("CurrentPose Rotation", getPose().getRotation().getDegrees());
+    SmartDashboard.putNumber("Drive Yaw", getPigeonRotation().getDegrees());
 
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
     if (result.isEmpty()) {

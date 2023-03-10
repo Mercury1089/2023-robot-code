@@ -46,14 +46,12 @@ public class KnownLocations {
         
     public static Alliance allianceColor = DriverStation.getAlliance();
 
-    public KnownLocations(GenericEntry allianceColorWidget) {
+    public KnownLocations() {
 
         // ToDo: configure theta values
         // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/coordinate-systems.html#field-coordinate-system
         
         if (allianceColor == Alliance.Blue) {
-            allianceColorWidget.setBoolean(false);
-
             START_TOPMOST = Pose2dInch(54.93, 199.65, 0);
             START_TOP_SECOND = Pose2dInch(54.93, 173.52, 0);
             START_BOTTOM_SECOND = Pose2dInch(54.93, 41.67, 0);
@@ -74,8 +72,6 @@ public class KnownLocations {
             WAYPOINT_BOTTOM = Pose2dInch(190.96, 30.101, 0).getTranslation();
 
         } else {
-            allianceColorWidget.setBoolean(true);
-
             START_TOPMOST = Pose2dInch(598.41, 199.65, 0);
             START_TOP_SECOND = Pose2dInch(598.41, 173.52, 0);
             START_BOTTOM_SECOND = Pose2dInch(598.41, 41.67, 0);

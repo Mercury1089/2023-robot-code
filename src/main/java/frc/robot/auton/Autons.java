@@ -13,7 +13,6 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -53,9 +52,9 @@ public class Autons {
     /**
      * made by rohan no thanks to owen :(
      */
-    public Autons(Drivetrain drivetrain, GenericEntry allianceWidget) {
+    public Autons(Drivetrain drivetrain) {
 
-        this.knownLocations = new KnownLocations(allianceWidget);
+        this.knownLocations = new KnownLocations();
         this.currentSelectedAuton = knownLocations.ELEMENT1;
         this.currentSelectedPose = knownLocations.START_TOPMOST;
         this.drivetrain = drivetrain;
@@ -273,7 +272,7 @@ public class Autons {
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> arm.isFinishedMoving()),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.TOP_CONE), telescope)
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.OUT), telescope)
                 // also RC for wrist level as well
               ),
               new SequentialCommandGroup(
