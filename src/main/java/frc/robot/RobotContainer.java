@@ -202,7 +202,7 @@ public class RobotContainer {
         gamepadRightY = () -> gamepad.getRightY();
 
         leftJoystickX = () -> leftJoystick.getX();
-        leftJoystickY = () -> rightJoystick.getY();
+        leftJoystickY = () -> leftJoystick.getY();
         rightJoystickX = () -> rightJoystick.getX();
         rightJoystickY = () -> rightJoystick.getY();
 

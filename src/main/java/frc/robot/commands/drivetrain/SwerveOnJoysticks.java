@@ -7,6 +7,7 @@ package frc.robot.commands.drivetrain;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants.SWERVE;
@@ -38,10 +39,12 @@ public class SwerveOnJoysticks extends CommandBase {
   public void execute() {
     // 0 if in deadband
     // (speed - deadband) / (1 - deadband)
-    xSpeed = MathUtil.applyDeadband(-leftJoyY.get(), SWERVE.JOYSTICK_DEADBAND);
-    ySpeed = MathUtil.applyDeadband(-leftJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
+    xSpeed = MathUtil.applyDeadband(-leftJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
+    ySpeed = MathUtil.applyDeadband(-leftJoyY.get(), SWERVE.JOYSTICK_DEADBAND);
     angularSpeed = MathUtil.applyDeadband(-rightJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
     
+    SmartDashboard.putNumber("xSpeedJoystick", xSpeed);
+    SmartDashboard.putNumber("ySpeedJoystick", ySpeed);
     this.drivetrain.joyDrive(xSpeed, ySpeed, angularSpeed);
     
   }
@@ -49,6 +52,7 @@ public class SwerveOnJoysticks extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
     this.drivetrain.joyDrive(0.0, 0.0, 0.0);
   }
 
