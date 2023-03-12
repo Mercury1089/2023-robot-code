@@ -75,11 +75,10 @@ public final class Constants {
   }
 
   public static class UNITS {
-    public static final int
-      MAG_ENCODER_TICKS_PER_REVOLUTION = 4096,
-      PIGEON_NATIVE_UNITS_PER_ROTATION = 8192;
-
     public static final double
+      MAG_ENCODER_TICKS_PER_REVOLUTION = 4096,
+      PIGEON_NATIVE_UNITS_PER_ROTATION = 8192,
+      FALCON_ENCODER_TICKS_PER_REVOLUTION = 2048,
       MAX_ROLL_DEGREES = 90.0,
       PIGEON_ROLL_UNITS = 2048;
 

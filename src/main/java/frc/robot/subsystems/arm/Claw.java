@@ -21,7 +21,7 @@ import frc.robot.util.MercMath;
 
 public class Claw extends SubsystemBase {
 
-  public static final int CLAW_PID_SLOT = 2;
+  public static final int CLAW_PID_SLOT = 0;
 
   private static final double
     CLAW_NORMAL_P_VAL = 1.0,
@@ -35,10 +35,12 @@ public class Claw extends SubsystemBase {
     PEAK_OUTPUT_FORWARD = 1,
     PEAK_OUTPUT_REVERSE = -1;
 
+  public static final double
+    SPROCKET_DIAMETER_INCHES = 1.5;
+    
   private TalonFX claw;
   /** Creates a new Claw. */
   public Claw() {
-
     claw = new TalonFX(CAN.CLAW_TALON);
 
     claw.configFactoryDefault();
@@ -46,8 +48,8 @@ public class Claw extends SubsystemBase {
     claw.setSensorPhase(true);
     claw.setInverted(true);
     
-
     claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
 
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
@@ -80,7 +82,7 @@ public class Claw extends SubsystemBase {
 
 
   public void moveClaw(Supplier<Double> speedSupplier) {
-    claw.set(ControlMode.PercentOutput, -speedSupplier.get() * 0.25);
+    claw.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
   }
 
   public void setClawPosition(ClawPosition position) {
@@ -104,6 +106,6 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Claw Position", claw.getSelectedSensorPosition());
+    SmartDashboard.putNumber("Claw Position", claw.getSelectedSensorPosition(CLAW_PID_SLOT));
   }
 }
