@@ -34,7 +34,7 @@ public class Wrist extends SubsystemBase {
     ROLL_LOOP = 0;
 
   private static final double
-    WRIST_NORMAL_P_VAL = 1.0 / 180.0 * 1024.0,
+    WRIST_NORMAL_P_VAL = 1.0 / 10.0 * 1024.0,
     WRIST_NORMAL_I_VAL = 0.0,
     WRIST_NORMAL_D_VAL = 0.0,
     WRIST_NORMAL_F_VAL = 0.0;
@@ -49,7 +49,6 @@ public class Wrist extends SubsystemBase {
     WRIST_UPPER_LIMIT = 90,
     WRIST_LOWER_LIMIT = -90;
   // Need to find Gear ratio 30:1
-  public final double GEAR_RATIO = 1;
 
   private TalonFX wrist;
   private PigeonIMU pigeon;
@@ -63,12 +62,12 @@ public class Wrist extends SubsystemBase {
 
     wrist.configFactoryDefault();
 
-    wrist.setSensorPhase(false);
+    wrist.setSensorPhase(true);
     wrist.setInverted(false);
 
     wrist.configRemoteFeedbackFilter(pigeon.getDeviceID(), RemoteSensorSource.Pigeon_Roll, REMOTE_DEVICE_0);
     wrist.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, WRIST_PID_SLOT, Constants.CTRE_TIMEOUT);
-    wrist.configSelectedFeedbackCoefficient(Constants.UNITS.MAX_ROLL_DEGREES / Constants.UNITS.PIGEON_ROLL_UNITS, ROLL_LOOP, Constants.CTRE_TIMEOUT);
+    wrist.configSelectedFeedbackCoefficient(Constants.UNITS.MAX_ROLL_DEGREES / Constants.UNITS.PIGEON_ROLL_UNITS, WRIST_PID_SLOT, Constants.CTRE_TIMEOUT);
 
     wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
@@ -76,7 +75,7 @@ public class Wrist extends SubsystemBase {
     wrist.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
     wrist.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
     wrist.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
-    wrist.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0); 
+    //wrist.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0); 
 
     wrist.configAllowableClosedloopError(WRIST_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
 
@@ -88,7 +87,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public void moveWrist(Supplier<Double> speedSupplier) {
-    wrist.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
+    wrist.set(ControlMode.PercentOutput, speedSupplier.get());
   }
 
   public void calibratePigeon() {
@@ -111,11 +110,9 @@ public class Wrist extends SubsystemBase {
   }
 
   public enum WristPosition {
-    INSIDE(0.0),
-    TOP_CONE(45.0),
-    BOTTOM_MOST(-25.0),
-    FLOOR(0.0),
-    DOUBLE_SUBSTATION(0),
+    INSIDE(58.0),
+    FLOOR(-25.0),
+    LEVEL(0.0),
     FELL_OVER(0);
 
     public final double degreePos;

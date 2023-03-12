@@ -86,7 +86,7 @@ public class RobotContainer {
     arm = new Arm();
     arm.setDefaultCommand(new RunCommand(() -> arm.moveArm(gamepadRightY), arm));
     telescope = new Telescope();
-    telescope.setDefaultCommand(new RunCommand(() -> telescope.moveTelescope(gamepadLeftY), telescope));
+    telescope.setDefaultCommand(new RunCommand(() -> telescope.moveTelescope(gamepadRightX), telescope));
     
     wrist = new Wrist();
     claw = new Claw();
@@ -97,10 +97,11 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
     drivetrain.resetGyro();
 
-    // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(() -> -gamepadLeftY.get()), wrist));
-    // gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
-    // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.TOP_CONE), wrist));
-    // gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.BOTTOM_MOST), wrist));
+    // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
+    wrist.setDefaultCommand(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+    gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
+    gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
+    gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
 
     // autons
     auton = new Autons(drivetrain);
@@ -108,20 +109,20 @@ public class RobotContainer {
     // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
 
     /* PICK UP PIECE */
-    gamepadX.onTrue(auton.getPickUpCommand(arm, telescope));
+    // gamepadX.onTrue(auton.getPickUpCommand(arm, telescope));
 
     /** CLOSE THE CLAW */
-    gamepadB.onTrue(
-      new ParallelCommandGroup(
-        new RunCommand(() -> claw.close(LEDs))
-      )
-    );
+    // gamepadB.onTrue(
+    //   new ParallelCommandGroup(
+    //     new RunCommand(() -> claw.close(LEDs))
+    //   )
+    // );
 
     /** TUCK EVERYTHING INTO ROBOT */
-    gamepadY.onTrue(auton.getTuckInCommand(claw, telescope, arm, LEDs));
+    // gamepadY.onTrue(auton.getTuckInCommand(claw, telescope, arm, LEDs));
 
     /** SCORE IT */
-    gamepadA.onTrue(auton.getScorePieceCommand(arm, telescope, claw));
+    // gamepadA.onTrue(auton.getScorePieceCommand(arm, telescope, claw));
 
   
 
@@ -198,8 +199,8 @@ public class RobotContainer {
 
         gamepadLeftX = () -> gamepad.getLeftX();
         gamepadRightX = () -> gamepad.getRightX();
-        gamepadLeftY = () -> gamepad.getLeftY();
-        gamepadRightY = () -> gamepad.getRightY();
+        gamepadLeftY = () -> -gamepad.getLeftY();
+        gamepadRightY = () -> -gamepad.getRightY();
 
         leftJoystickX = () -> leftJoystick.getX();
         leftJoystickY = () -> leftJoystick.getY();

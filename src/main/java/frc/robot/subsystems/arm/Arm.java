@@ -11,9 +11,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -85,7 +82,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void moveArm(Supplier<Double> speedSupplier) {
-    arm.set(ControlMode.PercentOutput, -speedSupplier.get());
+    arm.set(ControlMode.PercentOutput, speedSupplier.get());
   }
 
   public double getError() {
