@@ -6,6 +6,7 @@ package frc.robot.subsystems.arm;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
@@ -46,11 +47,13 @@ public class Claw extends SubsystemBase {
     claw.configFactoryDefault();
 
     claw.setSensorPhase(true);
-    claw.setInverted(true);
+    claw.setInverted(false);
     
     claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
-    claw.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackCoefficient(2*(SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
 
+
+    claw.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
     claw.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
@@ -103,9 +106,10 @@ public class Claw extends SubsystemBase {
   }
 
 
-
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Claw Position", claw.getSelectedSensorPosition(CLAW_PID_SLOT));
+    SmartDashboard.putNumber("claw fwd limit", claw.isFwdLimitSwitchClosed()); // yellow
+    SmartDashboard.putNumber("claw reverse limit", claw.isRevLimitSwitchClosed());
   }
 }

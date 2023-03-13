@@ -63,6 +63,8 @@ public class Arm extends SubsystemBase {
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
+    arm.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
+
     arm.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
     arm.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
     arm.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
@@ -102,6 +104,7 @@ public class Arm extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("arm encoder", getArmPosition());
     SmartDashboard.putNumber("arm error", getError());
+    SmartDashboard.putNumber("arm rev limit", arm.isRevLimitSwitchClosed());
 
   }
 

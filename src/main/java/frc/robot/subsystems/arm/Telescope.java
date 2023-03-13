@@ -53,6 +53,8 @@ public class Telescope extends SubsystemBase {
     telescope.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
     telescope.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / (GEAR_RATIO * Constants.UNITS.FALCON_ENCODER_TICKS_PER_REVOLUTION), TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
 
+    telescope.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
+    
     telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
     telescope.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
