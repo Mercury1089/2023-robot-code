@@ -12,7 +12,6 @@ public class GamePieceLEDs extends SubsystemBase {
 
   private Spark blinkin;
   private LEDState gamePieceState;
-  private GenericEntry booleanBox = null; 
   /** Creates a new GamePieceLEDs. */
   public GamePieceLEDs() {
     this.blinkin = new Spark(0);
@@ -28,21 +27,11 @@ public class GamePieceLEDs extends SubsystemBase {
   public void lightUp(LEDState ledState) {
    this.gamePieceState = ledState;
 
-   if (this.gamePieceState.gamePiece == GamePiece.CONE) {
-    this.booleanBox.setBoolean(false);
-   } else if (this.gamePieceState.gamePiece == GamePiece.CUBE) {
-    this.booleanBox.setBoolean(true);
-   }
-
    blinkin.set(gamePieceState.colorValue);
   }
 
   public GamePiece getGameState() {
     return this.gamePieceState.gamePiece;
-  }
-
-  public void setBooleanBox(GenericEntry booleanBox) {
-    this.booleanBox = booleanBox;
   }
 
   public enum LEDState {

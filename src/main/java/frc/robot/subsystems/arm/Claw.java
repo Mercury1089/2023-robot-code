@@ -6,11 +6,10 @@ package frc.robot.subsystems.arm;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,14 +17,13 @@ import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.GamePiece;
-import frc.robot.util.MercMath;
 
 public class Claw extends SubsystemBase {
 
   public static final int CLAW_PID_SLOT = 0;
 
   private static final double
-    CLAW_NORMAL_P_VAL = 1.0,
+    CLAW_NORMAL_P_VAL = 1.0 / 25.0 * 1024.0,
     CLAW_NORMAL_I_VAL = 0.0,
     CLAW_NORMAL_D_VAL = 0.0,
     CLAW_NORMAL_F_VAL = 0.0;
@@ -39,10 +37,10 @@ public class Claw extends SubsystemBase {
   public static final double
     SPROCKET_DIAMETER_INCHES = 1.5;
     
-  private TalonFX claw;
+  private TalonSRX claw;
   /** Creates a new Claw. */
   public Claw() {
-    claw = new TalonFX(CAN.CLAW_TALON);
+    claw = new TalonSRX(CAN.CLAW_TALON);
 
     claw.configFactoryDefault();
 
@@ -50,8 +48,10 @@ public class Claw extends SubsystemBase {
     claw.setInverted(false);
     
     claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
-    claw.configSelectedFeedbackCoefficient(2*(SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
-
+    // claw.configSelectedFeedbackCoefficient(2*(SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackCoefficient(100/6200.0, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configForwardSoftLimitThreshold(99.0);
+    claw.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
     claw.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
@@ -76,6 +76,8 @@ public class Claw extends SubsystemBase {
       setClawPosition(ClawPosition.CONE);
     } else if (gamePiece == GamePiece.CUBE) {
       setClawPosition(ClawPosition.CUBE);
+    } else {
+      setClawPosition(ClawPosition.OPEN);
     }
   }
 
@@ -89,19 +91,19 @@ public class Claw extends SubsystemBase {
   }
 
   public void setClawPosition(ClawPosition position) {
-    claw.set(ControlMode.Position, MercMath.encoderTicksToDegrees(position.encoderPosition));
+    claw.set(ControlMode.Position, position.position);
   }
   
 
   public enum ClawPosition {
     OPEN(0),
-    CONE(0),
-    CUBE(0);
+    CONE(87),
+    CUBE(54);
 
-    public final double encoderPosition;
+    public final double position;
 
-    private ClawPosition(double encoderPos) {
-      this.encoderPosition = encoderPos;
+    private ClawPosition(double pos) {
+      this.position = pos;
     }
   }
 
@@ -111,5 +113,6 @@ public class Claw extends SubsystemBase {
     SmartDashboard.putNumber("Claw Position", claw.getSelectedSensorPosition(CLAW_PID_SLOT));
     SmartDashboard.putNumber("claw fwd limit", claw.isFwdLimitSwitchClosed()); // yellow
     SmartDashboard.putNumber("claw reverse limit", claw.isRevLimitSwitchClosed());
+    SmartDashboard.putNumber("claw supply current", claw.getSupplyCurrent());
   }
 }

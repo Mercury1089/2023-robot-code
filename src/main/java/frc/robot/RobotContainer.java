@@ -99,9 +99,9 @@ public class RobotContainer {
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
     wrist.setDefaultCommand(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
-    gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
-    gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
-    gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+    // gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
+    // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
+    // gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
 
     // autons
     auton = new Autons(drivetrain);
@@ -125,9 +125,28 @@ public class RobotContainer {
     // gamepadA.onTrue(auton.getScorePieceCommand(arm, telescope, claw));
 
   
+    gamepadA.onTrue(
+      new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs)
+    );
+    gamepadY.onTrue(
+      new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
+    );
+    gamepadX.onTrue(
+      new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
+    );
+    gamepadB.onTrue(
+      new RunCommand(() -> LEDs.lightUp(LEDState.OFF), LEDs)
+    );
 
-    left1.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
-    left2.onTrue(auton.testSwerveCommand());
+
+    left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
+    //left2.onTrue(auton.testSwerveCommand());
+    left2.onTrue(
+      new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
+
+    left3.onTrue(
+      new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+    
 
     left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj(), "traj"), drivetrain));
     left5.onTrue(auton.driveStraight());
@@ -136,7 +155,11 @@ public class RobotContainer {
     // in honor of resetTurret
     left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain));
 
-    right1.onTrue(new InstantCommand(() -> drivetrain.joyDrive(0, 0, 0), drivetrain));
+    right1.onTrue(new RunCommand(() -> claw.open(), claw));
+    right2.onTrue(
+      new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist)
+    );
+    
   }
 
   /**
@@ -203,9 +226,9 @@ public class RobotContainer {
         gamepadRightY = () -> -gamepad.getRightY();
 
         leftJoystickX = () -> leftJoystick.getX();
-        leftJoystickY = () -> -leftJoystick.getY();
+        leftJoystickY = () -> leftJoystick.getY();
         rightJoystickX = () -> rightJoystick.getX();
-        rightJoystickY = () -> -rightJoystick.getY();
+        rightJoystickY = () -> rightJoystick.getY();
 
 
   }

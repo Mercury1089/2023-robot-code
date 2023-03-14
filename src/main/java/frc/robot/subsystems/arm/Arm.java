@@ -12,10 +12,12 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
+import frc.robot.Constants.SWERVE;
 import frc.robot.util.MercMath;
 
 
@@ -60,6 +62,10 @@ public class Arm extends SubsystemBase {
     // arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
     arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
+    arm.configSelectedFeedbackCoefficient(50.0 / 290000.0);
+
+    arm.configForwardSoftLimitThreshold(50.0);
+    arm.configForwardSoftLimitEnable(true);
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
@@ -84,7 +90,9 @@ public class Arm extends SubsystemBase {
   }
 
   public void moveArm(Supplier<Double> speedSupplier) {
-    arm.set(ControlMode.PercentOutput, speedSupplier.get());
+    arm.set(ControlMode.PercentOutput, 
+      MathUtil.applyDeadband(speedSupplier.get(), SWERVE.JOYSTICK_DEADBAND)
+    );
   }
 
   public double getError() {
