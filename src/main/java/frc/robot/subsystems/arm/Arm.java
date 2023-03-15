@@ -43,6 +43,7 @@ public class Arm extends SubsystemBase {
     ARM_LOWER_LIMIT = -90;
   public final double GEAR_RATIO = 1;
   public final double THRESHOLD_DEGREES = 1.0;
+  public final int SAFE_TO_TELE_POS = 11;
 
   private TalonFX arm;
 
@@ -62,9 +63,9 @@ public class Arm extends SubsystemBase {
     // arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
     arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
-    arm.configSelectedFeedbackCoefficient(50.0 / 290000.0);
+    arm.configSelectedFeedbackCoefficient(50 / 290000.0);
 
-    arm.configForwardSoftLimitThreshold(50.0);
+    arm.configForwardSoftLimitThreshold(47.0);
     arm.configForwardSoftLimitEnable(true);
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
@@ -107,6 +108,10 @@ public class Arm extends SubsystemBase {
     return arm.getSelectedSensorPosition();
   }
 
+  public boolean isTelescopeSafe() {
+    return getArmPosition() > SAFE_TO_TELE_POS;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -118,14 +123,13 @@ public class Arm extends SubsystemBase {
 
   public enum ArmPosition {
     // enum values to be changed
-    INSIDE(0),
-    TOP_CONE(0),
-    MID_CONE(0),
-    TOP_CUBE(0),
-    MID_CUBE(0),
+    INSIDE(-2.0),
     FLOOR(0),
-    DOUBLE_SUBSTATION(0),
-    FELL_OVER(0);
+    RAMP_PICKUP(0),
+    HIGH_SCORE(0),
+    MID_SCORE(0),
+    BULLDOZER(11),
+    FELL_OVER(0); // lol
 
     public final double degreePos;
 

@@ -99,9 +99,9 @@ public class RobotContainer {
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
     wrist.setDefaultCommand(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
-    // gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
-    // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
-    // gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+    gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
+    gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
+    gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.STRAIGHT_DOWN), wrist));
 
     // autons
     auton = new Autons(drivetrain);
@@ -125,40 +125,60 @@ public class RobotContainer {
     // gamepadA.onTrue(auton.getScorePieceCommand(arm, telescope, claw));
 
   
-    gamepadA.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs)
+    // gamepadA.onTrue(
+    //   auton.getPickUpFloorCommand(arm, telescope)
+    // );
+    // gamepadY.onTrue(
+    //   auton.getPickUpRampCommand(arm, telescope)
+    // );
+    // gamepadX.onTrue(
+    //   auton.getScorePieceMidCommand(arm, telescope)
+    // );
+    // gamepadB.onTrue(
+    //   auton.getScorePieceHighCommand(arm, telescope)
+    // );
+
+    gamepadLB.onTrue(
+      auton.getTuckInCommand(telescope, arm)
     );
-    gamepadY.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
-    );
-    gamepadX.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
-    );
-    gamepadB.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.OFF), LEDs)
+
+    gamepadRB.onTrue(
+      auton.getTuckInCommand(telescope, arm)
     );
 
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     //left2.onTrue(auton.testSwerveCommand());
     left2.onTrue(
-      new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
-
+      new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs)
+    );
     left3.onTrue(
-      new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+      new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
+    );
+
     
 
     left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj(), "traj"), drivetrain));
     left5.onTrue(auton.driveStraight());
     left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())));
+    left8.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));
+    left9.onTrue(
+      new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
+    );
+
 
     // in honor of resetTurret
     left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain));
 
     right1.onTrue(new RunCommand(() -> claw.open(), claw));
     right2.onTrue(
-      new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist)
+      new RunCommand(() -> LEDs.lightUp(LEDState.OFF), LEDs)
     );
+    right3.onTrue(
+      new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
+    );
+    right4.onTrue(new RunCommand(() -> wrist.incrementWrist(-1), wrist));
+    right5.onTrue(new RunCommand(() -> wrist.incrementWrist(1), wrist));
     
   }
 
@@ -225,8 +245,8 @@ public class RobotContainer {
         gamepadLeftY = () -> -gamepad.getLeftY();
         gamepadRightY = () -> -gamepad.getRightY();
 
-        leftJoystickX = () -> leftJoystick.getX();
-        leftJoystickY = () -> leftJoystick.getY();
+        leftJoystickX = () -> -leftJoystick.getX();
+        leftJoystickY = () -> -leftJoystick.getY();
         rightJoystickX = () -> rightJoystick.getX();
         rightJoystickY = () -> rightJoystick.getY();
 

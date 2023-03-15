@@ -83,7 +83,7 @@ public class Autons {
         this.startingPoseChooser.addOption("BOTTOM SECOND", knownLocations.START_BOTTOM_SECOND);
         this.startingPoseChooser.addOption("BOTTOMMOST", knownLocations.START_BOTTOMMOST);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
-        SmartDashboard.putBoolean("MANUAL START NEEDED", false);
+      
 
         this.autonCommand = buildAutonCommand();
     }
@@ -236,7 +236,26 @@ public class Autons {
      * buttons in RBC
      * @return Command
      */
-    public Command getPickUpCommand(Arm arm, Telescope telescope) {
+
+     public Command getPickUpRampCommand(Arm arm, Telescope telescope) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.RAMP_PICKUP), arm),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.RAMP_PICKUP))
+                // RC to set wrist down
+              )
+            ),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new WaitUntilCommand(() -> telescope.isFinishedMoving())
+              // waitUntil wrist
+              // RC to close claw
+            )
+          );
+    }
+    public Command getPickUpFloorCommand(Arm arm, Telescope telescope) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR), arm),
             new SequentialCommandGroup(
@@ -255,9 +274,8 @@ public class Autons {
           );
     }
 
-    public Command getTuckInCommand(Claw claw, Telescope telescope, Arm arm, GamePieceLEDs LEDs) {
+    public Command getTuckInCommand(Telescope telescope, Arm arm) {
         return new ParallelCommandGroup(
-            new RunCommand(() -> claw.close(LEDs), claw),
             new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE)),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> telescope.isFinishedMoving()),
@@ -266,20 +284,27 @@ public class Autons {
           );
     }
 
-    public Command getScorePieceCommand(Arm arm, Telescope telescope, Claw claw) {
+    public Command getScorePieceMidCommand(Arm arm, Telescope telescope) {
         return new ParallelCommandGroup(
-            new RunCommand(() -> arm.setPosition(ArmPosition.MID_CONE), arm),
+            new RunCommand(() -> arm.setPosition(ArmPosition.MID_SCORE), arm),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> arm.isFinishedMoving()),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.OUT), telescope)
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.MID_SCORE), telescope)
                 // also RC for wrist level as well
-              ),
-              new SequentialCommandGroup(
-                new WaitUntilCommand(() -> arm.isFinishedMoving()),
-                new WaitUntilCommand(() -> telescope.isFinishedMoving()),
-                // also waitUntil(wrist)
-                new RunCommand(() -> claw.open(), claw)
+              )
+            )
+          );
+    }
+
+    public Command getScorePieceHighCommand(Arm arm, Telescope telescope) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope)
+                // also RC for wrist level as well
               )
             )
           );

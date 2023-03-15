@@ -98,6 +98,10 @@ public class Wrist extends SubsystemBase {
     wrist.set(ControlMode.Position, wristPos.degreePos);
   }
 
+  public void incrementWrist(double increment) {
+    wrist.set(ControlMode.Position, wrist.getSelectedSensorPosition(WRIST_PID_SLOT) + increment);
+  }
+
   public double getWristPosition() {
     return wrist.getSelectedSensorPosition();
   }
@@ -113,7 +117,7 @@ public class Wrist extends SubsystemBase {
     INSIDE(58.0),
     FLOOR(-25.0),
     LEVEL(0.0),
-    STRAIGHT_DOWN(-90.0),
+    STRAIGHT_DOWN(-70.0),
     FELL_OVER(0);
 
     public final double degreePos;

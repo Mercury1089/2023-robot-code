@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GamePieceLEDs extends SubsystemBase {
@@ -35,7 +36,7 @@ public class GamePieceLEDs extends SubsystemBase {
   }
 
   public enum LEDState {
-    OFF(0.99, GamePiece.NONE), YELLOW(0.69, GamePiece.CONE), PURPLE(0.91, GamePiece.CUBE), CELEBRATION(-0.87, GamePiece.NONE);
+    OFF(0.99, GamePiece.NONE), YELLOW(0.69, GamePiece.CONE), PURPLE(0.89, GamePiece.CUBE), CELEBRATION(-0.87, GamePiece.NONE);
 
     public final double colorValue;
     public final GamePiece gamePiece;
@@ -54,5 +55,6 @@ public class GamePieceLEDs extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putString("LED Color", gamePieceState.toString());
   }
 }

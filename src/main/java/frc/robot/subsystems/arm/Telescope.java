@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.arm.Arm;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import frc.robot.util.MercMath;
@@ -80,7 +81,12 @@ public class Telescope extends SubsystemBase {
 
   public void setPosition(TelescopePosition telePos) {
     telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
+    
   }
+
+  // public void setPosition(TelescopePosition telePos) {
+  //   telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
+  // }
 
   public double getError() {
     return telescope.getClosedLoopError(TELESCOPE_PID_SLOT);
@@ -105,13 +111,12 @@ public class Telescope extends SubsystemBase {
 
   public enum TelescopePosition {
     INSIDE(0),
-    OUT(0),
-    PICK_UP(0),
-    TOP_CUBE(0),
-    MID_CUBE(0),
     FLOOR(0),
-    DOUBLE_SUBSTATION(0),
-    FELL_OVER(0);
+    RAMP_PICKUP(0),
+    HIGH_SCORE(0),
+    MID_SCORE(0),
+    BULLDOZER(12),
+    FELL_OVER(0); // lol
 
     public final double encPos;
 
