@@ -99,52 +99,34 @@ public class RobotContainer {
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
     wrist.setDefaultCommand(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
-    gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
-    gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
-    gamepadX.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.STRAIGHT_DOWN), wrist));
+
+
+    // gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
+    // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
+    // gamepadY.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+
+    gamepadY.onTrue(
+      new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm)
+    );
+    gamepadX.onTrue(
+      new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope)
+    );
+    gamepadA.onTrue(
+      new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist)
+    );
+    gamepadB.onTrue(
+      new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist)
+    );
+
 
     // autons
     auton = new Autons(drivetrain);
 
-    // gamepadA.onTrue(new InstantCommand(() -> LEDs.setColor(Colors.CELEBRATION)));
-
-    /* PICK UP PIECE */
-    // gamepadX.onTrue(auton.getPickUpCommand(arm, telescope));
-
-    /** CLOSE THE CLAW */
-    // gamepadB.onTrue(
-    //   new ParallelCommandGroup(
-    //     new RunCommand(() -> claw.close(LEDs))
-    //   )
-    // );
-
-    /** TUCK EVERYTHING INTO ROBOT */
-    // gamepadY.onTrue(auton.getTuckInCommand(claw, telescope, arm, LEDs));
-
-    /** SCORE IT */
-    // gamepadA.onTrue(auton.getScorePieceCommand(arm, telescope, claw));
-
-  
-    // gamepadA.onTrue(
-    //   auton.getPickUpFloorCommand(arm, telescope)
-    // );
-    // gamepadY.onTrue(
-    //   auton.getPickUpRampCommand(arm, telescope)
-    // );
-    // gamepadX.onTrue(
-    //   auton.getScorePieceMidCommand(arm, telescope)
-    // );
-    // gamepadB.onTrue(
-    //   auton.getScorePieceHighCommand(arm, telescope)
-    // );
-
     gamepadLB.onTrue(
-      auton.getTuckInCommand(telescope, arm)
+      new RunCommand(() -> wrist.setWristPosition(WristPosition.HIGH_SCORE), wrist)
     );
 
-    gamepadRB.onTrue(
-      auton.getTuckInCommand(telescope, arm)
-    );
+
 
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));

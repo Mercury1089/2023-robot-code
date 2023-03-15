@@ -117,7 +117,8 @@ public class Wrist extends SubsystemBase {
     INSIDE(58.0),
     FLOOR(-25.0),
     LEVEL(0.0),
-    STRAIGHT_DOWN(-70.0),
+    HIGH_SCORE(20.0),
+    MID_SCORE(20.0),
     FELL_OVER(0);
 
     public final double degreePos;

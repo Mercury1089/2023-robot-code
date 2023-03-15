@@ -36,7 +36,7 @@ public class Telescope extends SubsystemBase {
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
     NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 1,
+    PEAK_OUTPUT_FORWARD = 0.55,
     PEAK_OUTPUT_REVERSE = -1;
 
   public final double THRESHOLD_INCHES = 1.0;
@@ -52,14 +52,14 @@ public class Telescope extends SubsystemBase {
     telescope.setSensorPhase(false);
 
     telescope.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
-    telescope.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / (GEAR_RATIO * Constants.UNITS.FALCON_ENCODER_TICKS_PER_REVOLUTION), TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
+    telescope.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / (GEAR_RATIO * Constants.UNITS.FALCON_ENCODER_TICKS_PER_REVOLUTION),
+    TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
 
     telescope.configForwardSoftLimitThreshold(13.0);
     telescope.configForwardSoftLimitEnable(true);
     
     telescope.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
-    
-    
+  
     telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
     telescope.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
@@ -84,16 +84,12 @@ public class Telescope extends SubsystemBase {
     
   }
 
-  // public void setPosition(TelescopePosition telePos) {
-  //   telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
-  // }
-
   public double getError() {
     return telescope.getClosedLoopError(TELESCOPE_PID_SLOT);
   }
 
   public boolean isFinishedMoving() {
-    return getError() < MercMath.inchesToEncoderTicks(THRESHOLD_INCHES);
+    return getError() < THRESHOLD_INCHES;
   }
   
   public double getTelescopePosition() {
@@ -112,9 +108,9 @@ public class Telescope extends SubsystemBase {
   public enum TelescopePosition {
     INSIDE(0),
     FLOOR(0),
-    RAMP_PICKUP(0),
-    HIGH_SCORE(0),
-    MID_SCORE(0),
+    RAMP_PICKUP(0.0),
+    HIGH_SCORE(13.0),
+    MID_SCORE(0.0),
     BULLDOZER(12),
     FELL_OVER(0); // lol
 

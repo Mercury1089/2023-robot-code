@@ -35,7 +35,7 @@ public class Arm extends SubsystemBase {
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
     NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 1.0,
+    PEAK_OUTPUT_FORWARD = 0.6,
     PEAK_OUTPUT_REVERSE = -1.0;
   // Need to find upper and lower limit values
   public final double
@@ -87,7 +87,8 @@ public class Arm extends SubsystemBase {
 
   /**  sets the position of the entire arm */
   public void setPosition(ArmPosition armPos) {
-    arm.set(ControlMode.Position, MercMath.degreesToEncoderTicks(armPos.degreePos));
+    arm.set(ControlMode.Position, 0.0);
+    // arm.set(ControlMode.Position, (290000.0 / 50.0) * armPos.degreePos);
   }
 
   public void moveArm(Supplier<Double> speedSupplier) {
@@ -125,10 +126,10 @@ public class Arm extends SubsystemBase {
     // enum values to be changed
     INSIDE(-2.0),
     FLOOR(0),
-    RAMP_PICKUP(0),
-    HIGH_SCORE(0),
-    MID_SCORE(0),
-    BULLDOZER(11),
+    RAMP_PICKUP(23.0),
+    HIGH_SCORE(50.0),
+    MID_SCORE(41.0),
+    BULLDOZER(11.0),
     FELL_OVER(0); // lol
 
     public final double degreePos;
