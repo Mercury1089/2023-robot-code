@@ -24,7 +24,7 @@ import frc.robot.util.MercMath;
 public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
   public static final int
-    ARM_PID_SLOT = 1;
+    ARM_PID_SLOT = 0;
 
   private static final double 
     ARM_NORMAL_P_VAL = 1.0,
@@ -87,7 +87,7 @@ public class Arm extends SubsystemBase {
 
   /**  sets the position of the entire arm */
   public void setPosition(ArmPosition armPos) {
-    arm.set(ControlMode.Position, 0.0);
+    arm.set(ControlMode.Position, armPos.degreePos);
     // arm.set(ControlMode.Position, (290000.0 / 50.0) * armPos.degreePos);
   }
 
