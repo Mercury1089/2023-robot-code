@@ -68,6 +68,7 @@ public class Claw extends SubsystemBase {
     claw.config_kD(CLAW_PID_SLOT, CLAW_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
     claw.config_kF(CLAW_PID_SLOT, CLAW_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
 
+    claw.selectProfileSlot(CLAW_PID_SLOT, Constants.CTRE.PRIMARY_PID_LOOP);
   }
 
   public void close(GamePieceLEDs leds) {

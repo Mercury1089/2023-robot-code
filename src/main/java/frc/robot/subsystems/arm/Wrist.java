@@ -84,7 +84,7 @@ public class Wrist extends SubsystemBase {
     wrist.config_kD(WRIST_PID_SLOT, WRIST_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
     wrist.config_kF(WRIST_PID_SLOT, WRIST_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
     
-    wrist.selectProfileSlot(WRIST_PID_SLOT, REMOTE_DEVICE_0);
+    wrist.selectProfileSlot(WRIST_PID_SLOT, Constants.CTRE.PRIMARY_PID_LOOP);
   }
 
   public void moveWrist(Supplier<Double> speedSupplier) {

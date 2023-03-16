@@ -73,6 +73,8 @@ public class Telescope extends SubsystemBase {
     telescope.config_kI(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_I_VAL, Constants.CTRE.TIMEOUT_MS);
     telescope.config_kD(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
     telescope.config_kF(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
+
+    telescope.selectProfileSlot(TELESCOPE_PID_SLOT, Constants.CTRE.PRIMARY_PID_LOOP);
   }
 
   public void moveTelescope(Supplier<Double> speedSupplier) {
