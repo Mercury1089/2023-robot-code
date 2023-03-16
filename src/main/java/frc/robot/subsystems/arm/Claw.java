@@ -47,26 +47,26 @@ public class Claw extends SubsystemBase {
     claw.setSensorPhase(true);
     claw.setInverted(false);
     
-    claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     // claw.configSelectedFeedbackCoefficient(2*(SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
-    claw.configSelectedFeedbackCoefficient(100/6200.0, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
+    claw.configSelectedFeedbackCoefficient(100/6200.0, CLAW_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     claw.configForwardSoftLimitThreshold(99.0);
-    claw.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
+    claw.configForwardSoftLimitEnable(true, Constants.CTRE.TIMEOUT_MS);
 
-    claw.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
+    claw.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
     claw.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
-    claw.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    claw.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
-    claw.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    claw.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
+    claw.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    claw.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
+    claw.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    claw.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
 
-    claw.configAllowableClosedloopError(CLAW_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
+    claw.configAllowableClosedloopError(CLAW_PID_SLOT, 0, Constants.CTRE.TIMEOUT_MS);
 
-    claw.config_kP(CLAW_PID_SLOT, CLAW_NORMAL_P_VAL, Constants.CTRE_TIMEOUT);
-    claw.config_kI(CLAW_PID_SLOT, CLAW_NORMAL_I_VAL, Constants.CTRE_TIMEOUT);
-    claw.config_kD(CLAW_PID_SLOT, CLAW_NORMAL_D_VAL, Constants.CTRE_TIMEOUT);
-    claw.config_kF(CLAW_PID_SLOT, CLAW_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
+    claw.config_kP(CLAW_PID_SLOT, CLAW_NORMAL_P_VAL, Constants.CTRE.TIMEOUT_MS);
+    claw.config_kI(CLAW_PID_SLOT, CLAW_NORMAL_I_VAL, Constants.CTRE.TIMEOUT_MS);
+    claw.config_kD(CLAW_PID_SLOT, CLAW_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
+    claw.config_kF(CLAW_PID_SLOT, CLAW_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
 
   }
 

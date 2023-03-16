@@ -62,7 +62,7 @@ public class Arm extends SubsystemBase {
     // arm.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
     // arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
-    arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE_TIMEOUT);
+    arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     arm.configSelectedFeedbackCoefficient(50 / 290000.0);
 
     arm.configForwardSoftLimitThreshold(47.0);
@@ -70,19 +70,19 @@ public class Arm extends SubsystemBase {
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
-    arm.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
+    arm.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
 
-    arm.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    arm.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
-    arm.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    arm.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
+    arm.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    arm.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
+    arm.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    arm.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
     
-    arm.configAllowableClosedloopError(ARM_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
+    arm.configAllowableClosedloopError(ARM_PID_SLOT, 0, Constants.CTRE.TIMEOUT_MS);
 
-    arm.config_kP(ARM_PID_SLOT, ARM_NORMAL_P_VAL, Constants.CTRE_TIMEOUT);
-    arm.config_kI(ARM_PID_SLOT, ARM_NORMAL_I_VAL, Constants.CTRE_TIMEOUT);
-    arm.config_kD(ARM_PID_SLOT, ARM_NORMAL_D_VAL, Constants.CTRE_TIMEOUT);
-    arm.config_kF(ARM_PID_SLOT, ARM_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
+    arm.config_kP(ARM_PID_SLOT, ARM_NORMAL_P_VAL, Constants.CTRE.TIMEOUT_MS);
+    arm.config_kI(ARM_PID_SLOT, ARM_NORMAL_I_VAL, Constants.CTRE.TIMEOUT_MS);
+    arm.config_kD(ARM_PID_SLOT, ARM_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
+    arm.config_kF(ARM_PID_SLOT, ARM_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
   }
 
   /**  sets the position of the entire arm */

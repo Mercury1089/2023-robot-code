@@ -118,12 +118,12 @@ public final class Constants {
     }
   }
 
-  public static final int CTRE_TIMEOUT = 10;
-
-  public static class PID {
+  public static class CTRE {
     public static final int PRIMARY_PID_LOOP = 0;
+    public static final int AUX_PID_LOOP = 1;
+    public static final int TIMEOUT_MS = 10;
 
-    private PID() {
+    private CTRE() {
     }
   }
 }

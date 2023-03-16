@@ -58,7 +58,7 @@ public class Wrist extends SubsystemBase {
     // Configure Gyro
     pigeon = new PigeonIMU(CAN.ARM_GYRO);
     pigeon.configFactoryDefault();
-    pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, Constants.CTRE_TIMEOUT);
+    pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, Constants.CTRE.TIMEOUT_MS);
 
     wrist.configFactoryDefault();
 
@@ -66,24 +66,25 @@ public class Wrist extends SubsystemBase {
     wrist.setInverted(false);
 
     wrist.configRemoteFeedbackFilter(pigeon.getDeviceID(), RemoteSensorSource.Pigeon_Roll, REMOTE_DEVICE_0);
-    wrist.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, WRIST_PID_SLOT, Constants.CTRE_TIMEOUT);
-    wrist.configSelectedFeedbackCoefficient(Constants.UNITS.MAX_ROLL_DEGREES / Constants.UNITS.PIGEON_ROLL_UNITS, WRIST_PID_SLOT, Constants.CTRE_TIMEOUT);
+    wrist.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, WRIST_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
+    wrist.configSelectedFeedbackCoefficient(Constants.UNITS.MAX_ROLL_DEGREES / Constants.UNITS.PIGEON_ROLL_UNITS, WRIST_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
 
     wrist.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
-    wrist.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    wrist.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
-    wrist.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    wrist.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
+    wrist.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    wrist.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
+    wrist.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    wrist.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
     //wrist.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0); 
 
-    wrist.configAllowableClosedloopError(WRIST_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
+    wrist.configAllowableClosedloopError(WRIST_PID_SLOT, 0, Constants.CTRE.TIMEOUT_MS);
 
-    wrist.config_kP(WRIST_PID_SLOT, WRIST_NORMAL_P_VAL, Constants.CTRE_TIMEOUT);
-    wrist.config_kI(WRIST_PID_SLOT, WRIST_NORMAL_I_VAL, Constants.CTRE_TIMEOUT);
-    wrist.config_kD(WRIST_PID_SLOT, WRIST_NORMAL_D_VAL, Constants.CTRE_TIMEOUT);
-    wrist.config_kF(WRIST_PID_SLOT, WRIST_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
+    wrist.config_kP(WRIST_PID_SLOT, WRIST_NORMAL_P_VAL, Constants.CTRE.TIMEOUT_MS);
+    wrist.config_kI(WRIST_PID_SLOT, WRIST_NORMAL_I_VAL, Constants.CTRE.TIMEOUT_MS);
+    wrist.config_kD(WRIST_PID_SLOT, WRIST_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
+    wrist.config_kF(WRIST_PID_SLOT, WRIST_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
     
+    wrist.selectProfileSlot(WRIST_PID_SLOT, REMOTE_DEVICE_0);
   }
 
   public void moveWrist(Supplier<Double> speedSupplier) {

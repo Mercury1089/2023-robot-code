@@ -51,28 +51,28 @@ public class Telescope extends SubsystemBase {
     telescope.setInverted(false);
     telescope.setSensorPhase(false);
 
-    telescope.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
+    telescope.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, TELESCOPE_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     telescope.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / (GEAR_RATIO * Constants.UNITS.FALCON_ENCODER_TICKS_PER_REVOLUTION),
-    TELESCOPE_PID_SLOT, Constants.CTRE_TIMEOUT);
+    TELESCOPE_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
 
     telescope.configForwardSoftLimitThreshold(13.0);
     telescope.configForwardSoftLimitEnable(true);
     
-    telescope.configClearPositionOnLimitR(true, Constants.CTRE_TIMEOUT);
+    telescope.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
   
     telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
-    telescope.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    telescope.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
-    telescope.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE_TIMEOUT);
-    telescope.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE_TIMEOUT);
+    telescope.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    telescope.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
+    telescope.configPeakOutputForward(PEAK_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
+    telescope.configPeakOutputReverse(PEAK_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
 
-    telescope.configAllowableClosedloopError(TELESCOPE_PID_SLOT, 0, Constants.CTRE_TIMEOUT);
+    telescope.configAllowableClosedloopError(TELESCOPE_PID_SLOT, 0, Constants.CTRE.TIMEOUT_MS);
 
-    telescope.config_kP(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_P_VAL, Constants.CTRE_TIMEOUT);
-    telescope.config_kI(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_I_VAL, Constants.CTRE_TIMEOUT);
-    telescope.config_kD(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_D_VAL, Constants.CTRE_TIMEOUT);
-    telescope.config_kF(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_F_VAL, Constants.CTRE_TIMEOUT);
+    telescope.config_kP(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_P_VAL, Constants.CTRE.TIMEOUT_MS);
+    telescope.config_kI(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_I_VAL, Constants.CTRE.TIMEOUT_MS);
+    telescope.config_kD(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_D_VAL, Constants.CTRE.TIMEOUT_MS);
+    telescope.config_kF(TELESCOPE_PID_SLOT, TELESCOPE_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
   }
 
   public void moveTelescope(Supplier<Double> speedSupplier) {
