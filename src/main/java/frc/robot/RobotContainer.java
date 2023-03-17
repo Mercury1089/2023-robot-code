@@ -153,13 +153,11 @@ public class RobotContainer {
 
     left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj(), "traj"), drivetrain));
     left5.onTrue(auton.driveStraight());
-    left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())));
-    left8.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));
-    left9.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
-    );
+    left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())).ignoringDisable(true));
+    left8.onTrue(new InstantCommand(() -> wrist.calibrate(), wrist).ignoringDisable(true));
+  
     // in honor of resetTurret
-    left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain));
+    left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain).ignoringDisable(true));
     left11.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     right1.onTrue(new RunCommand(() -> claw.open(), claw));
