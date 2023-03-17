@@ -234,9 +234,5 @@ public class Drivetrain extends SubsystemBase {
     }
     odometry.addVisionMeasurement(result.get().estimatedPose.toPose2d(), result.get().timestampSeconds);
 
-    
-
   }
-
-
 }

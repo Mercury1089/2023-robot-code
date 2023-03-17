@@ -25,10 +25,10 @@ import edu.wpi.first.math.util.Units;
 public class AprilTagCamera extends PhotonCamera {
 
     private static final String DEFAULT_CAM_NAME = "AprilTagCamera";
-    private static final double DEFAULT_CAM_X = Units.inchesToMeters(-12.5); // .5m forward of center
+    private static final double DEFAULT_CAM_X = Units.inchesToMeters(-10.5); // .5m forward of center
     private static final double DEFAULT_CAM_Y = 0.0; // centered in robot Y
-    private static final double DEFAULT_CAM_Z = Units.inchesToMeters(52); // 52in up from center
-    private final double CAMERA_HEIGHT = 0.0; // height on robot (meters)
+    private static final double DEFAULT_CAM_Z = Units.inchesToMeters(52.25); // 52in up from center
+    private final double CAMERA_HEIGHT = DEFAULT_CAM_Z; // height on robot (meters)
     private final double TARGET_HEIGHT = 0.36; // may need to change 
     private final int CAMERA_PITCH = 0; // tilt of our camera (radians)
 
@@ -45,7 +45,7 @@ public class AprilTagCamera extends PhotonCamera {
         Transform3d robotToCam = new Transform3d(
             new Translation3d(DEFAULT_CAM_X, DEFAULT_CAM_Y, DEFAULT_CAM_Z), new Rotation3d(0, 0, 0)
         );
-        estimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, this, robotToCam);
+        estimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, this, robotToCam);
     }
 
     public double getDistanceToTarget() {
@@ -82,6 +82,5 @@ public class AprilTagCamera extends PhotonCamera {
     public double getApriltagID() {
         return getLatestResult().getBestTarget().getFiducialId();
     }
-
 }
 
