@@ -15,6 +15,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
+import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
+import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -107,11 +109,19 @@ public class Wrist extends SubsystemBase {
     return wrist.getSelectedSensorPosition();
   }
 
+  public void calibrate() {
+    pigeon.enterCalibrationMode(CalibrationMode.BootTareGyroAccel);
+  }
+
+  public boolean isReady() {
+    return (pigeon.getState() == PigeonState.Ready);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Roll", pigeon.getRoll());
-    SmartDashboard.putNumber("Wrist Roll(Talon)", wrist.getSelectedSensorPosition(WRIST_PID_SLOT));
+    SmartDashboard.putBoolean("Wrist Ready", isReady());
   }
 
   public enum WristPosition {
