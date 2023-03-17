@@ -97,7 +97,7 @@ public class Wrist extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
-  public void setWristPosition(WristPosition wristPos) {
+  public void setPosition(WristPosition wristPos) {
     wrist.set(ControlMode.Position, wristPos.degreePos);
   }
 
@@ -130,6 +130,7 @@ public class Wrist extends SubsystemBase {
     LEVEL(0.0),
     HIGH_SCORE(20.0),
     MID_SCORE(20.0),
+    RAMP(20.0 * 1.0),
     FELL_OVER(0);
 
     public final double degreePos;

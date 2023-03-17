@@ -27,7 +27,7 @@ public class Arm extends SubsystemBase {
     ARM_PID_SLOT = 0;
 
   private static final double 
-    ARM_NORMAL_P_VAL = 1.0 / 23.0 * 1024.0,
+    ARM_NORMAL_P_VAL = 1.0 / 18.0 * 1024.0,
     ARM_NORMAL_I_VAL = 0.0,
     ARM_NORMAL_D_VAL = 0.0,
     ARM_NORMAL_F_VAL = 0.0;
@@ -37,13 +37,10 @@ public class Arm extends SubsystemBase {
     PEAK_OUTPUT_FORWARD = 1.0, // 0.6,
     NOMINAL_OUTPUT_REVERSE = -0.01, //-0.5,
     PEAK_OUTPUT_REVERSE = -1.0;
-  // Need to find upper and lower limit values
-  public final double
-    ARM_UPPER_LIMIT = 20,
-    ARM_LOWER_LIMIT = -90;
+
   public final double GEAR_RATIO = 1;
-  public final double THRESHOLD_DEGREES = 1.0;
-  public final int SAFE_TO_TELE_POS = 11;
+  public final double THRESHOLD_DEGREES = 2.0;
+  public final int SAFE_TO_TELE_POS = 22;
 
   private TalonFX arm;
 
@@ -68,7 +65,7 @@ public class Arm extends SubsystemBase {
     // arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
 
     arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
-    arm.configSelectedFeedbackCoefficient(50 / 290000.0);
+    arm.configSelectedFeedbackCoefficient(50.0 / 290000.0);
 
     arm.configForwardSoftLimitThreshold(100.0);
     arm.configForwardSoftLimitEnable(true);
@@ -118,7 +115,11 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean isFinishedMoving() {
-    return getError() < MercMath.degreesToEncoderTicks(THRESHOLD_DEGREES);
+    return getError() < THRESHOLD_DEGREES;
+  }
+
+  public boolean isAtPosition(ArmPosition pos) {
+    return Math.abs(getArmPosition() - pos.degreePos) < THRESHOLD_DEGREES;
   }
 
   public double getArmPosition() {
@@ -135,6 +136,8 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("arm encoder", getArmPosition());
     SmartDashboard.putNumber("arm error", getError());
     SmartDashboard.putNumber("arm rev limit", arm.isRevLimitSwitchClosed());
+    SmartDashboard.putBoolean("arm isFinished", isFinishedMoving());
+    SmartDashboard.putBoolean("arm atPosition", isAtPosition(ArmPosition.BULLDOZER));
 
     // configPID(
     //   SmartDashboard.getNumber("ARM P", ARM_LOWER_LIMIT),
@@ -148,12 +151,12 @@ public class Arm extends SubsystemBase {
 
   public enum ArmPosition {
     // enum values to be changed
-    INSIDE(-2.0),
+    INSIDE(-4.0),
     FLOOR(0),
-    RAMP_PICKUP(23.0),
-    HIGH_SCORE(50.0),
-    MID_SCORE(41.0),
-    BULLDOZER(11.0),
+    RAMP_PICKUP(46.0),
+    HIGH_SCORE(100.0),
+    MID_SCORE(82.0),
+    BULLDOZER(22.0),
     FELL_OVER(0); // lol
 
     public final double degreePos;
@@ -162,6 +165,5 @@ public class Arm extends SubsystemBase {
           this.degreePos = degreePos;
         }
   }
-
-  
+ 
 }

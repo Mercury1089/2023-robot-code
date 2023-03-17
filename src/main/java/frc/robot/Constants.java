@@ -64,7 +64,7 @@ public final class Constants {
     public static final double MAX_ROTATIONAL_SPEED = 2 * Math.PI; // radians per second
     public static final double MAX_ACCELERATION = 3.0; //m/s^2
 
-    public static final double JOYSTICK_DEADBAND = 0.1;
+    public static final double JOYSTICK_DEADBAND = 0.15;
 
     public static final int DRIVING_MOTOR_CURRENT_LIMIT = 50; // amps 
     public static final int TURNING_MOTOR_CURRENT_LIMIT = 20;// amps

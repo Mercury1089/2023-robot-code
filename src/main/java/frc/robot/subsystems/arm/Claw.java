@@ -50,6 +50,8 @@ public class Claw extends SubsystemBase {
     claw.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, CLAW_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     // claw.configSelectedFeedbackCoefficient(2*(SPROCKET_DIAMETER_INCHES * Math.PI) / Constants.UNITS.MAG_ENCODER_TICKS_PER_REVOLUTION, CLAW_PID_SLOT, Constants.CTRE_TIMEOUT);
     claw.configSelectedFeedbackCoefficient(100/6200.0, CLAW_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
+    // claw.setSelectedSensorPosition(ClawPosition.CONE.position + 10);
+    
     claw.configForwardSoftLimitThreshold(99.0);
     claw.configForwardSoftLimitEnable(true, Constants.CTRE.TIMEOUT_MS);
 
@@ -97,7 +99,7 @@ public class Claw extends SubsystemBase {
   
 
   public enum ClawPosition {
-    OPEN(0),
+    OPEN(-2),
     CONE(87),
     CUBE(54);
 
@@ -112,8 +114,7 @@ public class Claw extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Claw Position", claw.getSelectedSensorPosition(CLAW_PID_SLOT));
-    SmartDashboard.putNumber("claw fwd limit", claw.isFwdLimitSwitchClosed()); // yellow
-    SmartDashboard.putNumber("claw reverse limit", claw.isRevLimitSwitchClosed());
+    SmartDashboard.putBoolean("claw closed", claw.isRevLimitSwitchClosed() == 1);
     SmartDashboard.putNumber("claw supply current", claw.getSupplyCurrent());
   }
 }

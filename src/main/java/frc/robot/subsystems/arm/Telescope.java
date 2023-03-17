@@ -82,7 +82,7 @@ public class Telescope extends SubsystemBase {
   }
 
   public void setPosition(TelescopePosition telePos) {
-    telescope.set(ControlMode.Position, MercMath.inchesToEncoderTicks(telePos.encPos));
+    telescope.set(ControlMode.Position, telePos.encPos);
     
   }
 
@@ -98,6 +98,10 @@ public class Telescope extends SubsystemBase {
     return telescope.getSelectedSensorPosition();
   }
 
+  public boolean isAtPosition(TelescopePosition position) {
+    return Math.abs(getTelescopePosition() - position.encPos) < THRESHOLD_INCHES;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -105,6 +109,8 @@ public class Telescope extends SubsystemBase {
     SmartDashboard.putNumber("telescope error", getError());
     SmartDashboard.putNumber("Foward limit switch", telescope.isFwdLimitSwitchClosed());
     SmartDashboard.putNumber("Reverse limit switch", telescope.isRevLimitSwitchClosed());
+
+    SmartDashboard.putBoolean("telescope isAtPosition", isAtPosition(TelescopePosition.INSIDE));
   }
 
   public enum TelescopePosition {

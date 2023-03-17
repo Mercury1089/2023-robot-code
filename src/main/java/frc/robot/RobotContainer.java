@@ -89,8 +89,8 @@ public class RobotContainer {
     telescope.setDefaultCommand(new RunCommand(() -> telescope.moveTelescope(gamepadRightX), telescope));
     
     wrist = new Wrist();
+    wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
     claw = new Claw();
-    // claw.setDefaultCommand(new RunCommand(() -> claw.adjustClawMode(LEDs), claw));
     claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
     drivetrain = new Drivetrain();
@@ -98,32 +98,33 @@ public class RobotContainer {
     drivetrain.resetGyro();
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
-    wrist.setDefaultCommand(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+    auton = new Autons(drivetrain);
 
+    gamepadA.onTrue(auton.getScorePieceMidCommand(arm, telescope, wrist));
+    gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist));
+    gamepadY.onTrue(auton.getScorePieceHighCommand(arm, telescope, wrist));
+    gamepadLB.onTrue(auton.getBulldozeCommand(arm, telescope, wrist));
+    gamepadRB.onTrue(auton.getTuckInCommand(arm, telescope, wrist));
 
-    // gamepadA.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist));
-    // gamepadB.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist));
-    // gamepadY.onTrue(new RunCommand(() -> wrist.setWristPosition(WristPosition.INSIDE), wrist));
+    // gamepadY.onTrue(
+    //   new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm)
+    // );
 
-    gamepadY.onTrue(
-      new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm)
-    );
+    // gamepadA.onTrue(
+    //   new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
+    // );
 
-    gamepadA.onTrue(
-      new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
-    );
+    // gamepadB.onTrue(
+    //   new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm)
+    // );
 
-    gamepadB.onTrue(
-      new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm)
-    );
+    // gamepadX.onTrue(
+    //   new RunCommand(() -> arm.setPosition(ArmPosition.MID_SCORE), arm)
+    // );
 
-    gamepadX.onTrue(
-      new RunCommand(() -> arm.setPosition(ArmPosition.MID_SCORE), arm)
-    );
-
-    gamepadLB.onTrue(
-      new RunCommand(() -> arm.setPosition(ArmPosition.RAMP_PICKUP), arm)
-    );
+    // gamepadLB.onTrue(
+    //   new RunCommand(() -> arm.setPosition(ArmPosition.RAMP_PICKUP), arm)
+    // );
 
 
     // gamepadX.onTrue(
@@ -136,10 +137,6 @@ public class RobotContainer {
     //   new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist)
     // );
 
-
-    // autons
-    auton = new Autons(drivetrain);
-
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     //left2.onTrue(auton.testSwerveCommand());
     left2.onTrue(
@@ -150,9 +147,6 @@ public class RobotContainer {
     );
 
     
-
-    left4.onTrue(new InstantCommand(() -> drivetrain.setTrajectorySmartdash(auton.generateDriveStraightTraj(), "traj"), drivetrain));
-    left5.onTrue(auton.driveStraight());
     left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())).ignoringDisable(true));
     left8.onTrue(new InstantCommand(() -> wrist.calibrate(), wrist).ignoringDisable(true));
   

@@ -1,5 +1,6 @@
 package frc.robot.auton;
 
+import java.lang.invoke.WrongMethodTypeException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,8 +26,10 @@ import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Claw;
 import frc.robot.subsystems.arm.Telescope;
+import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
 import frc.robot.subsystems.arm.Telescope.TelescopePosition;
+import frc.robot.subsystems.arm.Wrist.WristPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
 
@@ -201,7 +204,7 @@ public class Autons {
             drivetrain);
         return swerveControllerCommand;
     }
-
+    
     public Trajectory generateDriveStraightTraj() {
         Pose2d initPose =  new Pose2d(Units.inchesToMeters(54.93), Units.inchesToMeters(199.65), Rotation2d.fromDegrees(0));
         Pose2d finalPose = new Pose2d(initPose.getX() + 5, initPose.getY(), Rotation2d.fromDegrees(180));
@@ -237,74 +240,64 @@ public class Autons {
      * @return Command
      */
 
-     public Command getPickUpRampCommand(Arm arm, Telescope telescope) {
+     public Command getSubstationCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.RAMP_PICKUP), arm),
             new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.RAMP_PICKUP)),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.RAMP_PICKUP))
-                // RC to set wrist down
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.RAMP_PICKUP)),
+                new RunCommand(() -> wrist.setPosition(WristPosition.RAMP), wrist)
               )
-            ),
-            new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isFinishedMoving()),
-              new WaitUntilCommand(() -> telescope.isFinishedMoving())
-              // waitUntil wrist
-              // RC to close claw
             )
           );
     }
-    public Command getPickUpFloorCommand(Arm arm, Telescope telescope) {
+    public Command getBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
-            new RunCommand(() -> arm.setPosition(ArmPosition.FLOOR), arm),
+            new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
             new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.FLOOR))
-                // RC to set wrist down
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope),
+                new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist)
               )
-            ),
-            new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isFinishedMoving()),
-              new WaitUntilCommand(() -> telescope.isFinishedMoving())
-              // waitUntil wrist
-              // RC to close claw
             )
           );
     }
 
-    public Command getTuckInCommand(Telescope telescope, Arm arm) {
+    public Command getTuckInCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
-            new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE)),
+            new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE), telescope),
+            new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
             new SequentialCommandGroup(
-              new WaitUntilCommand(() -> telescope.isFinishedMoving()),
+              new WaitUntilCommand(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
               new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
             )
           );
     }
 
-    public Command getScorePieceMidCommand(Arm arm, Telescope telescope) {
+    public Command getScorePieceMidCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.MID_SCORE), arm),
             new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.MID_SCORE)),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.MID_SCORE), telescope)
-                // also RC for wrist level as well
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.MID_SCORE), telescope),
+
+                new RunCommand(() -> wrist.setPosition(WristPosition.MID_SCORE), wrist)
               )
             )
           );
     }
 
-    public Command getScorePieceHighCommand(Arm arm, Telescope telescope) {
+    public Command getScorePieceHighCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
             new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isFinishedMoving()),
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.HIGH_SCORE)),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope)
-                // also RC for wrist level as well
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope),
+                new RunCommand(() -> wrist.setPosition(WristPosition.HIGH_SCORE), wrist)
               )
             )
           );
