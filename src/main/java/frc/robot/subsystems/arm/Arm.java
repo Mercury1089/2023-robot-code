@@ -70,7 +70,7 @@ public class Arm extends SubsystemBase {
     arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     arm.configSelectedFeedbackCoefficient(50 / 290000.0);
 
-    arm.configForwardSoftLimitThreshold(47.0);
+    arm.configForwardSoftLimitThreshold(100.0);
     arm.configForwardSoftLimitEnable(true);
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
