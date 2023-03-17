@@ -22,7 +22,7 @@ public class Telescope extends SubsystemBase {
   public static final int TELESCOPE_PID_SLOT = 0;
 
   private static final double
-    TELESCOPE_NORMAL_P_VAL = 1.0,
+    TELESCOPE_NORMAL_P_VAL = 1.0 / 7.0 * 1024.0,
     TELESCOPE_NORMAL_I_VAL = 0.0,
     TELESCOPE_NORMAL_D_VAL = 0.0,
     TELESCOPE_NORMAL_F_VAL = 0.0;

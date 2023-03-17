@@ -108,26 +108,37 @@ public class RobotContainer {
     gamepadY.onTrue(
       new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm)
     );
-    gamepadX.onTrue(
-      new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope)
-    );
+
     gamepadA.onTrue(
-      new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist)
+      new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
     );
+
     gamepadB.onTrue(
-      new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist)
+      new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm)
     );
+
+    gamepadX.onTrue(
+      new RunCommand(() -> arm.setPosition(ArmPosition.MID_SCORE), arm)
+    );
+
+    gamepadLB.onTrue(
+      new RunCommand(() -> arm.setPosition(ArmPosition.RAMP_PICKUP), arm)
+    );
+
+
+    // gamepadX.onTrue(
+    //   new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope)
+    // );
+    // gamepadA.onTrue(
+    //   new RunCommand(() -> wrist.setWristPosition(WristPosition.LEVEL), wrist)
+    // );
+    // gamepadB.onTrue(
+    //   new RunCommand(() -> wrist.setWristPosition(WristPosition.FLOOR), wrist)
+    // );
 
 
     // autons
     auton = new Autons(drivetrain);
-
-    gamepadLB.onTrue(
-      new RunCommand(() -> wrist.setWristPosition(WristPosition.HIGH_SCORE), wrist)
-    );
-
-
-
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     //left2.onTrue(auton.testSwerveCommand());
@@ -147,10 +158,9 @@ public class RobotContainer {
     left9.onTrue(
       new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
     );
-
-
     // in honor of resetTurret
     left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain));
+    left11.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     right1.onTrue(new RunCommand(() -> claw.open(), claw));
     right2.onTrue(

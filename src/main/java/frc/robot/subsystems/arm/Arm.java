@@ -27,15 +27,15 @@ public class Arm extends SubsystemBase {
     ARM_PID_SLOT = 0;
 
   private static final double 
-    ARM_NORMAL_P_VAL = 1.0,
+    ARM_NORMAL_P_VAL = 1.0 / 23.0 * 1024.0,
     ARM_NORMAL_I_VAL = 0.0,
     ARM_NORMAL_D_VAL = 0.0,
     ARM_NORMAL_F_VAL = 0.0;
 
   private final double 
-    NOMINAL_OUTPUT_FORWARD = 0.02,
-    NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 0.6,
+    NOMINAL_OUTPUT_FORWARD = 0.01, //0.02,
+    PEAK_OUTPUT_FORWARD = 1.0, // 0.6,
+    NOMINAL_OUTPUT_REVERSE = -0.01, //-0.5,
     PEAK_OUTPUT_REVERSE = -1.0;
   // Need to find upper and lower limit values
   public final double
@@ -55,7 +55,12 @@ public class Arm extends SubsystemBase {
     // Account for motor orientation.
     arm.setSensorPhase(true);
     arm.setInverted(true);
-    
+
+    SmartDashboard.putNumber("ARM P", ARM_NORMAL_P_VAL);
+    SmartDashboard.putNumber("ARM I", ARM_NORMAL_I_VAL);
+    SmartDashboard.putNumber("ARM D", ARM_NORMAL_D_VAL);
+    SmartDashboard.putNumber("ARM MIN REV", NOMINAL_OUTPUT_REVERSE);
+    SmartDashboard.putNumber("ARM MIN FWD", NOMINAL_OUTPUT_FORWARD);
 
     // arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
     // arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
@@ -85,6 +90,15 @@ public class Arm extends SubsystemBase {
     arm.config_kF(ARM_PID_SLOT, ARM_NORMAL_F_VAL, Constants.CTRE.TIMEOUT_MS);
 
     arm.selectProfileSlot(ARM_PID_SLOT, Constants.CTRE.PRIMARY_PID_LOOP);
+  }
+
+  public void configPID(double P, double I, double D, double nomFwd, double nomRev) {
+    arm.config_kP(ARM_PID_SLOT, P, Constants.CTRE.TIMEOUT_MS);
+    arm.config_kI(ARM_PID_SLOT, I, Constants.CTRE.TIMEOUT_MS);
+    arm.config_kD(ARM_PID_SLOT, D, Constants.CTRE.TIMEOUT_MS);
+    
+    arm.configNominalOutputForward(nomFwd, Constants.CTRE.TIMEOUT_MS);
+    arm.configNominalOutputReverse(nomRev, Constants.CTRE.TIMEOUT_MS);
   }
 
   /**  sets the position of the entire arm */
@@ -121,6 +135,14 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("arm encoder", getArmPosition());
     SmartDashboard.putNumber("arm error", getError());
     SmartDashboard.putNumber("arm rev limit", arm.isRevLimitSwitchClosed());
+
+    // configPID(
+    //   SmartDashboard.getNumber("ARM P", ARM_LOWER_LIMIT),
+    //   SmartDashboard.getNumber("ARM I", ARM_LOWER_LIMIT),
+    //   SmartDashboard.getNumber("ARM D", ARM_LOWER_LIMIT),
+    //   SmartDashboard.getNumber("ARM MIN REV", ARM_LOWER_LIMIT),
+    //   SmartDashboard.getNumber("ARM MIN FWD", ARM_LOWER_LIMIT)
+    // );
 
   }
 
