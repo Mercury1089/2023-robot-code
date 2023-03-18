@@ -86,9 +86,9 @@ public class RobotContainer {
     LEDs = new GamePieceLEDs();
     
     arm = new Arm();
-    arm.setDefaultCommand(new RunCommand(() -> arm.moveArm(gamepadRightY), arm));
+    arm.setDefaultCommand(new RunCommand(() -> arm.setSpeed(gamepadRightY), arm));
     telescope = new Telescope();
-    telescope.setDefaultCommand(new RunCommand(() -> telescope.moveTelescope(gamepadRightX), telescope));
+    telescope.setDefaultCommand(new RunCommand(() -> telescope.setSpeed(gamepadRightX), telescope));
     // telescope.setDefaultCommand(
     //   new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE), telescope)
     // );
@@ -111,6 +111,14 @@ public class RobotContainer {
     gamepadX.onTrue(auton.getHybridBulldozeCommand(arm, telescope, wrist));
     gamepadLB.onTrue(auton.getBulldozeCommand(arm, telescope, wrist));
     gamepadRB.onTrue(auton.getTuckInCommand(arm, telescope, wrist));
+
+    gamepadStart.and(gamepadBack).whileTrue(
+      new ParallelCommandGroup(
+        new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
+        new RunCommand(() -> telescope.setSpeed(() -> -1.6), telescope),
+        new RunCommand(() -> arm.setSpeed(() -> -.8), arm)
+      )
+    );
 
     // gamepadY.onTrue(
     //   new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm)
@@ -168,7 +176,7 @@ public class RobotContainer {
     right5.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
    
     right10.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
-    right11.onTrue(auton.getAutonScoreHighCommand(arm, telescope, wrist, claw));
+    right11.onTrue(new InstantCommand(() -> drivetrain.getInitialPose(), drivetrain));
     
   }
 

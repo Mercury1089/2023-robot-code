@@ -144,7 +144,7 @@ public class Autons {
             SmartDashboard.putBoolean("isDoNothing", true);
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
-            return getHomeCommand(arm, telescope, wrist);
+            return getHomeCommand(arm, telescope, wrist, claw, LEDs);
         }
 
         List<Translation2d> waypoints = List.of();
@@ -196,7 +196,7 @@ public class Autons {
         // scoreCommand()
 
         return new SequentialCommandGroup(
-            getHomeCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+            getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
             getAutonScoreHighCommand(arm, telescope, wrist, claw),
             new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
             firstSwerveCommand
@@ -336,10 +336,12 @@ public class Autons {
           );
     }
 
-    public Command getHomeCommand(Arm arm, Telescope telescope, Wrist wrist) {
+    public Command getHomeCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw, GamePieceLEDs LEDs) {
         return new ParallelCommandGroup(
             new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
             new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
+            new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs),
+            new RunCommand(() -> claw.close(LEDs), claw),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
               new RunCommand(() -> arm.setPosition(ArmPosition.HOME), arm)

@@ -104,7 +104,7 @@ public class Arm extends SubsystemBase {
     // arm.set(ControlMode.Position, (290000.0 / 50.0) * armPos.degreePos);
   }
 
-  public void moveArm(Supplier<Double> speedSupplier) {
+  public void setSpeed(Supplier<Double> speedSupplier) {
     arm.set(ControlMode.PercentOutput, 
       MathUtil.applyDeadband(speedSupplier.get(), SWERVE.JOYSTICK_DEADBAND)
     );

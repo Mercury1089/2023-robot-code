@@ -77,7 +77,7 @@ public class Telescope extends SubsystemBase {
     telescope.selectProfileSlot(TELESCOPE_PID_SLOT, Constants.CTRE.PRIMARY_PID_LOOP);
   }
 
-  public void moveTelescope(Supplier<Double> speedSupplier) {
+  public void setSpeed(Supplier<Double> speedSupplier) {
     telescope.set(ControlMode.PercentOutput, speedSupplier.get() * 0.5);
   }
 
