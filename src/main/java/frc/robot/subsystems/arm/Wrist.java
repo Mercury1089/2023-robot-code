@@ -26,6 +26,8 @@ import frc.robot.util.MercMath;
 
 public class Wrist extends SubsystemBase {
   /** Creates a new wrist. */
+
+  public final double THRESHOLD_DEGREES = 3.0;
   public static final int 
     WRIST_PID_SLOT = 0;
 
@@ -109,6 +111,10 @@ public class Wrist extends SubsystemBase {
     return wrist.getSelectedSensorPosition();
   }
 
+  public boolean isAtPosition(WristPosition pos) {
+    return Math.abs(getWristPosition() - pos.degreePos) < THRESHOLD_DEGREES;
+  }
+
   public void calibrate() {
     pigeon.enterCalibrationMode(CalibrationMode.BootTareGyroAccel);
   }
@@ -120,7 +126,7 @@ public class Wrist extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Wrist Roll", pigeon.getRoll());
+    SmartDashboard.putNumber("Wrist Roll", getWristPosition());
     SmartDashboard.putBoolean("Wrist Ready", isReady());
   }
 
@@ -130,7 +136,7 @@ public class Wrist extends SubsystemBase {
     LEVEL(0.0),
     HIGH_SCORE(20.0),
     MID_SCORE(20.0),
-    RAMP(20.0 * 1.0),
+    RAMP(38),
     FELL_OVER(0);
 
     public final double degreePos;

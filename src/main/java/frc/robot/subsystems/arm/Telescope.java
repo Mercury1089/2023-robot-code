@@ -114,7 +114,8 @@ public class Telescope extends SubsystemBase {
   }
 
   public enum TelescopePosition {
-    INSIDE(0),
+    HOME(-3.0),
+    INSIDE(0.0),
     FLOOR(0),
     RAMP_PICKUP(0.0),
     HIGH_SCORE(13.0),

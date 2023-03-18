@@ -14,20 +14,26 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.GamePieceLEDs;
+import frc.robot.subsystems.GamePieceLEDs.LEDState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Claw;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
+import frc.robot.subsystems.arm.Claw.ClawPosition;
 import frc.robot.subsystems.arm.Telescope.TelescopePosition;
 import frc.robot.subsystems.arm.Wrist.WristPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -39,12 +45,13 @@ public class Autons {
     private SendableChooser<Pose2d> startingPoseChooser;
     private Pose2d currentSelectedAuton;
     private Pose2d currentSelectedPose;
-    private Drivetrain drivetrain;
     private TrajectoryConfig trajConfig;
     private ProfiledPIDController turningPIDController;
     private PIDController xController, yController;
     private Command autonCommand;
     private KnownLocations knownLocations;
+
+    private Alliance allianceColor;
 
     private final double TURNING_P_VAL = 1;
     private final double X_P_VAL = 1, Y_P_VAL = 1;
@@ -52,16 +59,30 @@ public class Autons {
     private final double MAX_DIRECTIONAL_SPEED = 3, MAX_ACCELERATION = 3;
     private final double MAX_ROTATIONAL_SPEED = Math.PI;
 
+    private Drivetrain drivetrain;
+    private Arm arm;
+    private Telescope telescope;
+    private Wrist wrist;
+    private Claw claw;
+    private GamePieceLEDs LEDs;
+
     /**
      * made by rohan no thanks to owen :(
      */
-    public Autons(Drivetrain drivetrain) {
+    public Autons(Drivetrain drivetrain, Arm arm, Telescope telescope, Wrist wrist, Claw claw, GamePieceLEDs LEDs) {
+
+        this.allianceColor = DriverStation.getAlliance();
 
         this.knownLocations = new KnownLocations();
         this.currentSelectedAuton = knownLocations.ELEMENT1;
         this.currentSelectedPose = knownLocations.START_TOPMOST;
+
         this.drivetrain = drivetrain;
-        
+        this.arm = arm;
+        this.telescope = telescope;
+        this.wrist = wrist;
+        this.claw = claw;
+
         this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics());
         this.trapezoidalConstraint = new TrapezoidProfile.Constraints(
             MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
@@ -71,8 +92,16 @@ public class Autons {
         xController = new PIDController(X_P_VAL, 0, 0);
         yController = new PIDController(Y_P_VAL, 0, 0);
         
+        setChoosers();
+
+        this.LEDs = LEDs;
+    }
+
+    public void setChoosers() {
         autonChooser = new SendableChooser<Pose2d>();
-        autonChooser.setDefaultOption("Element 1", knownLocations.ELEMENT1);
+        autonChooser.setDefaultOption("DO NOTHING", new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        autonChooser.addOption("Preload", knownLocations.ELEMENT1);
+        autonChooser.addOption("Element 1", knownLocations.ELEMENT1);
         autonChooser.addOption("Element 2", knownLocations.ELEMENT2);
         autonChooser.addOption("Element 3", knownLocations.ELEMENT3);
         autonChooser.addOption("Element 4", knownLocations.ELEMENT4);
@@ -86,23 +115,38 @@ public class Autons {
         this.startingPoseChooser.addOption("BOTTOM SECOND", knownLocations.START_BOTTOM_SECOND);
         this.startingPoseChooser.addOption("BOTTOMMOST", knownLocations.START_BOTTOMMOST);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
-      
 
-        this.autonCommand = buildAutonCommand();
+        
     }
 
     public Command getAutonCommand() {
-        return this.autonCommand;
+        return buildAutonCommand();
     }
+
+    // public Command buildAutonCommand() {
+    //     drivetrain.setManualPose(currentSelectedPose);
+    //     drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
+    //     drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
+    //     return getTuckInCommand(arm, telescope, wrist);
+    // }
 
     public Command buildAutonCommand() {
         // will eventually use this.swerveCommand; 
         // in conjunction w/ other subsystems;
         // to build full autons;
-        long nanos = System.nanoTime();
-        generateTestTrajectory();
-        long diff = System.nanoTime() - nanos;
-        SmartDashboard.putNumber("RobotPathfinder Generation Time (s)", diff / 1e9);
+
+        
+        // SET OUR INITIAL POST
+        drivetrain.setManualPose(currentSelectedPose);
+        
+
+        if (currentSelectedAuton.equals(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))) {
+            SmartDashboard.putBoolean("isDoNothing", true);
+            drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
+            drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
+            return getHomeCommand(arm, telescope, wrist);
+        }
+
         List<Translation2d> waypoints = List.of();
         Pose2d finalPose = currentSelectedPose;
 
@@ -146,14 +190,16 @@ public class Autons {
         Command firstSwerveCommand = generateSwerveCommand(traj1);
         // pickUpCommand()
         // tuckInCommand()
-        Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, finalPose, waypoints);
-        drivetrain.setTrajectorySmartdash(traj2, "traj2");
-        Command secondSwerveCommand = generateSwerveCommand(traj2);
+        // Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, finalPose, waypoints);
+        // drivetrain.setTrajectorySmartdash(traj2, "traj2");
+        // Command secondSwerveCommand = generateSwerveCommand(traj2);
         // scoreCommand()
 
         return new SequentialCommandGroup(
-            firstSwerveCommand,
-            secondSwerveCommand
+            getHomeCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+            getAutonScoreHighCommand(arm, telescope, wrist, claw),
+            new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
+            firstSwerveCommand
         );
     }
 
@@ -240,14 +286,15 @@ public class Autons {
      * @return Command
      */
 
-     public Command getSubstationCommand(Arm arm, Telescope telescope, Wrist wrist) {
+     public Command getSubstationCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.RAMP_PICKUP), arm),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.RAMP_PICKUP)),
               new ParallelCommandGroup(
                 new RunCommand(() -> telescope.setPosition(TelescopePosition.RAMP_PICKUP)),
-                new RunCommand(() -> wrist.setPosition(WristPosition.RAMP), wrist)
+                new RunCommand(() -> wrist.setPosition(WristPosition.RAMP), wrist),
+                new RunCommand(() -> claw.setPosition(ClawPosition.RAMP), claw)
               )
             )
           );
@@ -265,13 +312,37 @@ public class Autons {
           );
     }
 
+    public Command getHybridBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE), telescope),
+                new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist)
+              )
+            )
+          );
+    }
+
     public Command getTuckInCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE), telescope),
             new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
-              new RunCommand(() -> arm.setPosition(ArmPosition.INSIDE), arm)
+              new RunCommand(() -> arm.setPosition(ArmPosition.HOME), arm)
+            )
+          );
+    }
+
+    public Command getHomeCommand(Arm arm, Telescope telescope, Wrist wrist) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
+            new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
+              new RunCommand(() -> arm.setPosition(ArmPosition.HOME), arm)
             )
           );
     }
@@ -303,10 +374,33 @@ public class Autons {
           );
     }
 
+    public Command getAutonScoreHighCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw) {
+        return new SequentialCommandGroup(
+            getScorePieceHighCommand(arm, telescope, wrist).until(() ->
+            (wrist.isAtPosition(WristPosition.HIGH_SCORE) && 
+            telescope.isAtPosition(TelescopePosition.HIGH_SCORE))
+            ),
+            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist).until(() -> wrist.isAtPosition(WristPosition.LEVEL)),
+            new RunCommand(() -> claw.open(), claw).until(() -> claw.isAtPosition(ClawPosition.OPEN)),
+            getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE))
+        );
+        
+    }
+
     public void updateDash() {
         // run constantly when disabled
         Pose2d currAuton = autonChooser.getSelected();
         Pose2d currPose = startingPoseChooser.getSelected();
+
+        Alliance color = DriverStation.getAlliance();
+
+        if (color != this.allianceColor) {
+            this.allianceColor = color;
+            this.knownLocations = new KnownLocations();
+            SmartDashboard.putString("alliance color!", this.allianceColor.toString());
+            setChoosers();
+            this.autonCommand = buildAutonCommand();
+        }
         
         if (currAuton != this.currentSelectedAuton) {
             this.currentSelectedAuton = currAuton;

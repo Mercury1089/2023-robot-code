@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.ADXL345_I2C.AllAxes;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /** Absolute (X, Y) of certain field locations
@@ -44,13 +45,14 @@ public class KnownLocations {
         WAYPOINT_BOTTOM;
     
         
-    public static Alliance allianceColor = DriverStation.getAlliance();
+    public Alliance allianceColor = DriverStation.getAlliance();
 
     public KnownLocations() {
 
         // ToDo: configure theta values
         // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/geometry/coordinate-systems.html#field-coordinate-system
         
+        allianceColor = DriverStation.getAlliance();
         if (allianceColor == Alliance.Blue) {
             START_TOPMOST = Pose2dInch(54.93, 199.65, 0);
             START_TOP_SECOND = Pose2dInch(54.93, 173.52, 0);

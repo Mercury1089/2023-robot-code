@@ -42,6 +42,11 @@ public class SwerveOnJoysticks extends CommandBase {
     xSpeed = MathUtil.applyDeadband(leftJoyY.get(), SWERVE.JOYSTICK_DEADBAND);
     ySpeed = MathUtil.applyDeadband(leftJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
     angularSpeed = MathUtil.applyDeadband(-rightJoyX.get(), SWERVE.JOYSTICK_DEADBAND);
+
+    xSpeed = xSpeed > 0.0 ? Math.pow(xSpeed, 2) : -Math.pow(xSpeed, 2);
+    ySpeed = ySpeed > 0.0 ? Math.pow(ySpeed, 2) : -Math.pow(ySpeed, 2);
+    angularSpeed = angularSpeed > 0.0 ? Math.pow(angularSpeed, 2) : -Math.pow(angularSpeed, 2);
+    
     
     SmartDashboard.putNumber("xSpeedJoystick", xSpeed);
     SmartDashboard.putNumber("ySpeedJoystick", ySpeed);

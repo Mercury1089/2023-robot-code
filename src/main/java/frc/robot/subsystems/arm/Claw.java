@@ -22,6 +22,8 @@ public class Claw extends SubsystemBase {
 
   public static final int CLAW_PID_SLOT = 0;
 
+  public final double THRESHOLD = 5.0;
+
   private static final double
     CLAW_NORMAL_P_VAL = 1.0 / 25.0 * 1024.0,
     CLAW_NORMAL_I_VAL = 0.0,
@@ -76,16 +78,16 @@ public class Claw extends SubsystemBase {
   public void close(GamePieceLEDs leds) {
     GamePiece gamePiece = leds.getGameState();
     if (gamePiece == GamePiece.CONE) {
-      setClawPosition(ClawPosition.CONE);
+      setPosition(ClawPosition.CONE);
     } else if (gamePiece == GamePiece.CUBE) {
-      setClawPosition(ClawPosition.CUBE);
+      setPosition(ClawPosition.CUBE);
     } else {
-      setClawPosition(ClawPosition.OPEN);
+      setPosition(ClawPosition.OPEN);
     }
   }
 
   public void open() {
-    setClawPosition(ClawPosition.OPEN);
+    setPosition(ClawPosition.OPEN);
   }
 
 
@@ -93,7 +95,11 @@ public class Claw extends SubsystemBase {
     claw.set(ControlMode.PercentOutput, speedSupplier.get() * 0.25);
   }
 
-  public void setClawPosition(ClawPosition position) {
+  public boolean isAtPosition(ClawPosition pos) {
+    return Math.abs(claw.getSelectedSensorPosition() - pos.position) < THRESHOLD;
+  }
+
+  public void setPosition(ClawPosition position) {
     claw.set(ControlMode.Position, position.position);
   }
   
@@ -101,7 +107,8 @@ public class Claw extends SubsystemBase {
   public enum ClawPosition {
     OPEN(-2),
     CONE(87),
-    CUBE(54);
+    CUBE(54),
+    RAMP(25);
 
     public final double position;
 

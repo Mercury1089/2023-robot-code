@@ -18,6 +18,7 @@ import frc.robot.subsystems.arm.Claw;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
+import frc.robot.subsystems.arm.Claw.ClawPosition;
 import frc.robot.subsystems.arm.Telescope.TelescopePosition;
 import frc.robot.subsystems.arm.Wrist.WristPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
@@ -25,6 +26,7 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -87,9 +89,12 @@ public class RobotContainer {
     arm.setDefaultCommand(new RunCommand(() -> arm.moveArm(gamepadRightY), arm));
     telescope = new Telescope();
     telescope.setDefaultCommand(new RunCommand(() -> telescope.moveTelescope(gamepadRightX), telescope));
+    // telescope.setDefaultCommand(
+    //   new RunCommand(() -> telescope.setPosition(TelescopePosition.INSIDE), telescope)
+    // );
     
     wrist = new Wrist();
-    wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
+    // wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
     claw = new Claw();
     claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
@@ -98,11 +103,12 @@ public class RobotContainer {
     drivetrain.resetGyro();
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
-    auton = new Autons(drivetrain);
+    auton = new Autons(drivetrain, arm, telescope, wrist, claw, LEDs);
 
     gamepadA.onTrue(auton.getScorePieceMidCommand(arm, telescope, wrist));
-    gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist));
+    gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist, claw));
     gamepadY.onTrue(auton.getScorePieceHighCommand(arm, telescope, wrist));
+    gamepadX.onTrue(auton.getHybridBulldozeCommand(arm, telescope, wrist));
     gamepadLB.onTrue(auton.getBulldozeCommand(arm, telescope, wrist));
     gamepadRB.onTrue(auton.getTuckInCommand(arm, telescope, wrist));
 
@@ -139,15 +145,15 @@ public class RobotContainer {
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     //left2.onTrue(auton.testSwerveCommand());
-    left2.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs)
-    );
+    
     left3.onTrue(
       new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
     );
+    //-38 wrist ramp pickup
+    //25 claw ramp pickup
 
     
-    left6.onTrue(new InstantCommand(() -> SmartDashboard.putString("ALLIANCE COLOR", DriverStation.getAlliance().toString())).ignoringDisable(true));
+    left6.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs));
     left8.onTrue(new InstantCommand(() -> wrist.calibrate(), wrist).ignoringDisable(true));
   
     // in honor of resetTurret
@@ -155,14 +161,14 @@ public class RobotContainer {
     left11.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     right1.onTrue(new RunCommand(() -> claw.open(), claw));
-    right2.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.OFF), LEDs)
-    );
-    right3.onTrue(
-      new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
-    );
-    right4.onTrue(new RunCommand(() -> wrist.incrementWrist(-1), wrist));
-    right5.onTrue(new RunCommand(() -> wrist.incrementWrist(1), wrist));
+    
+    right3.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));
+    
+    right4.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
+    right5.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
+   
+    right10.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
+    right11.onTrue(auton.getAutonScoreHighCommand(arm, telescope, wrist, claw));
     
   }
 
