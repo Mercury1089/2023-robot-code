@@ -7,9 +7,6 @@ package frc.robot;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.auton.Autons;
-import frc.robot.commands.arm.ManualArm;
-import frc.robot.commands.arm.MoveArm;
-import frc.robot.commands.arm.MoveTelescope;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
@@ -17,28 +14,16 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Claw;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
-import frc.robot.subsystems.arm.Arm.ArmPosition;
-import frc.robot.subsystems.arm.Claw.ClawPosition;
-import frc.robot.subsystems.arm.Telescope.TelescopePosition;
 import frc.robot.subsystems.arm.Wrist.WristPosition;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
-import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController; 
 import edu.wpi.first.wpilibj2.command.button.Trigger;

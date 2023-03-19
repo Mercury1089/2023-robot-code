@@ -12,10 +12,8 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.arm.Arm;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
-import frc.robot.util.MercMath;
 
 public class Telescope extends SubsystemBase {
   /** Creates a new Telescope. */
