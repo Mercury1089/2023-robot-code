@@ -52,10 +52,10 @@ public class KnownLocations {
         
         allianceColor = DriverStation.getAlliance();
         if (allianceColor == Alliance.Blue) {
-            START_TOPMOST = Pose2dInch(54.93, 199.65, 0);
-            START_TOP_SECOND = Pose2dInch(54.93, 173.52, 0);
-            START_BOTTOM_SECOND = Pose2dInch(54.93, 41.67, 0);
-            START_BOTTOMMOST = Pose2dInch(54.93, 16.15, 0);
+            START_TOPMOST = Pose2dInch(54.93, 199.65, 180);
+            START_TOP_SECOND = Pose2dInch(54.93, 173.52, 180);
+            START_BOTTOM_SECOND = Pose2dInch(54.93, 41.67, 180);
+            START_BOTTOMMOST = Pose2dInch(54.93, 16.15, 180);
 
             ELEMENT1 = Pose2dInch(279.31, 180.02, 0);
             ELEMENT2 = Pose2dInch(279.31, 132.02, 0);

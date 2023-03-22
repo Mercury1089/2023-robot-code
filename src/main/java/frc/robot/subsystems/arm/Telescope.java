@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,8 +34,8 @@ public class Telescope extends SubsystemBase {
 
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.02,
+    PEAK_OUTPUT_FORWARD = 1,
     NOMINAL_OUTPUT_REVERSE = -0.02,
-    PEAK_OUTPUT_FORWARD = 0.55,
     PEAK_OUTPUT_REVERSE = -1;
 
   public final double THRESHOLD_INCHES = 1.0;
@@ -59,6 +60,7 @@ public class Telescope extends SubsystemBase {
     telescope.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
   
     telescope.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
+    telescope.setNeutralMode(NeutralMode.Brake);
 
     telescope.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
     telescope.configNominalOutputReverse(NOMINAL_OUTPUT_REVERSE, Constants.CTRE.TIMEOUT_MS);
@@ -76,7 +78,7 @@ public class Telescope extends SubsystemBase {
   }
 
   public void setSpeed(Supplier<Double> speedSupplier) {
-    telescope.set(ControlMode.PercentOutput, speedSupplier.get() * 0.5);
+    telescope.set(ControlMode.PercentOutput, speedSupplier.get());
   }
 
   public void setPosition(TelescopePosition telePos) {

@@ -33,6 +33,7 @@ public class Drivetrain extends SubsystemBase {
 
   private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
   private WPI_PigeonIMU pigeon;
+  private double angleOffset = 0.0;
   private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
   private AprilTagCamera photonCam;
@@ -181,6 +182,7 @@ public class Drivetrain extends SubsystemBase {
    * Used to set initial pose from an auton trajectory
    */
   public void setManualPose(Pose2d pose) {
+    angleOffset = pose.getRotation().getDegrees();
     odometry.resetPosition(
     getPigeonRotation(), 
     new SwerveModulePosition[] {
@@ -202,7 +204,7 @@ public class Drivetrain extends SubsystemBase {
     /* return the pigeon's yaw as Rotation2d object */
 
     // Yaw is negated for field-centric in order to ensure 'true' forward of robot
-    return Rotation2d.fromDegrees(-pigeon.getAngle());
+    return Rotation2d.fromDegrees(-(pigeon.getAngle() + angleOffset));
   }
 
   @Override
@@ -226,7 +228,9 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("CurrentPose X", getPose().getX());
     SmartDashboard.putNumber("CurrentPose Y", getPose().getY());
     SmartDashboard.putNumber("CurrentPose Rotation", getPose().getRotation().getDegrees());
-    SmartDashboard.putNumber("Drive Yaw", getPigeonRotation().getDegrees());
+    SmartDashboard.putNumber("Drive Angle", getPigeonRotation().getDegrees());
+    SmartDashboard.putNumber("Drive Yaw", pigeon.getYaw());
+    SmartDashboard.putNumber("Drive fused heading", pigeon.getFusedHeading());
 
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
     if (result.isEmpty()) {

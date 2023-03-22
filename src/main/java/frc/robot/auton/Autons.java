@@ -82,7 +82,7 @@ public class Autons {
         this.wrist = wrist;
         this.claw = claw;
 
-        this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics());
+        this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics()).setReversed(true);
         this.trapezoidalConstraint = new TrapezoidProfile.Constraints(
             MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
 
