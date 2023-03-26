@@ -8,12 +8,11 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -23,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
@@ -44,8 +42,8 @@ public class Autons {
     private SendableChooser<PathPoint> startingPoseChooser;
     private PathPoint currentSelectedAuton;
     private PathPoint currentSelectedPose;
-    private PathConstraints trajConfig;
-    private ProfiledPIDController turningPIDController;
+    private PathConstraints pathConstraints;
+    private PIDController turningPIDController;
     private PIDController xController, yController;
     private Command autonCommand;
     private KnownLocations knownLocations;
@@ -54,9 +52,7 @@ public class Autons {
 
     private final double TURNING_P_VAL = 1;
     private final double X_P_VAL = 1, Y_P_VAL = 1;
-    private final TrapezoidProfile.Constraints trapezoidalConstraint;
     private final double MAX_DIRECTIONAL_SPEED = 3, MAX_ACCELERATION = 3;
-    private final double MAX_ROTATIONAL_SPEED = Math.PI;
 
     private Drivetrain drivetrain;
     private Arm arm;
@@ -82,11 +78,8 @@ public class Autons {
         this.wrist = wrist;
         this.claw = claw;
 
-        this.trajConfig = new PathConstraints(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION); //.setKinematics(this.drivetrain.getKinematics()).setReversed(true);
-        this.trapezoidalConstraint = new TrapezoidProfile.Constraints(
-            MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
-
-        turningPIDController = new ProfiledPIDController(TURNING_P_VAL, 0, 0, this.trapezoidalConstraint);
+        this.pathConstraints = new PathConstraints(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION); 
+        turningPIDController = new PIDController(TURNING_P_VAL, 0, 0);
         turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
         xController = new PIDController(X_P_VAL, 0, 0);
         yController = new PIDController(Y_P_VAL, 0, 0);
@@ -195,12 +188,12 @@ public class Autons {
         points.add(finalPose);
         PathPoint point2 = points.remove(0);
         // Following passes an array to vararg (see: https://programming.guide/java/passing-list-to-vararg-method.html)
-        return PathPlanner.generatePath(trajConfig, initialPose, point2, points.toArray(new PathPoint[0]));
+        return PathPlanner.generatePath(pathConstraints, initialPose, point2, points.toArray(new PathPoint[0]));
     }
 
     /** Generate the swerve-specfic command by building the desired trajectory */
-    public Command generateSwerveCommand(Trajectory trajectory) {
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+    public Command generateSwerveCommand(PathPlannerTrajectory trajectory) {
+        PPSwerveControllerCommand swerveControllerCommand = new PPSwerveControllerCommand(
             trajectory,
             () -> drivetrain.getPose(), // Functional interface to feed supplier
             drivetrain.getKinematics(),
@@ -209,6 +202,7 @@ public class Autons {
             yController,
             turningPIDController,
             (x) -> drivetrain.setModuleStates(x),
+            false,
             drivetrain);
         return swerveControllerCommand;
     }
