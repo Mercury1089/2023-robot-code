@@ -1,19 +1,19 @@
 package frc.robot.auton;
 
-import java.lang.invoke.WrongMethodTypeException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,11 +40,11 @@ import frc.robot.subsystems.drivetrain.Drivetrain;
 
 public class Autons {
 
-    private SendableChooser<Pose2d> autonChooser;
-    private SendableChooser<Pose2d> startingPoseChooser;
-    private Pose2d currentSelectedAuton;
-    private Pose2d currentSelectedPose;
-    private TrajectoryConfig trajConfig;
+    private SendableChooser<PathPoint> autonChooser;
+    private SendableChooser<PathPoint> startingPoseChooser;
+    private PathPoint currentSelectedAuton;
+    private PathPoint currentSelectedPose;
+    private PathConstraints trajConfig;
     private ProfiledPIDController turningPIDController;
     private PIDController xController, yController;
     private Command autonCommand;
@@ -82,7 +82,7 @@ public class Autons {
         this.wrist = wrist;
         this.claw = claw;
 
-        this.trajConfig = new TrajectoryConfig(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION).setKinematics(this.drivetrain.getKinematics()).setReversed(true);
+        this.trajConfig = new PathConstraints(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION); //.setKinematics(this.drivetrain.getKinematics()).setReversed(true);
         this.trapezoidalConstraint = new TrapezoidProfile.Constraints(
             MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
 
@@ -97,8 +97,8 @@ public class Autons {
     }
 
     public void setChoosers() {
-        autonChooser = new SendableChooser<Pose2d>();
-        autonChooser.setDefaultOption("DO NOTHING", new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        autonChooser = new SendableChooser<PathPoint>();
+        autonChooser.setDefaultOption("DO NOTHING", KnownLocations.DO_NOTHING);
         autonChooser.addOption("Preload", knownLocations.ELEMENT1);
         autonChooser.addOption("Element 1", knownLocations.ELEMENT1);
         autonChooser.addOption("Element 2", knownLocations.ELEMENT2);
@@ -108,7 +108,7 @@ public class Autons {
         SmartDashboard.putData("Auton Chooser", autonChooser);
         SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
 
-        this.startingPoseChooser = new SendableChooser<Pose2d>();
+        this.startingPoseChooser = new SendableChooser<PathPoint>();
         this.startingPoseChooser.setDefaultOption("TOPMOST", knownLocations.START_TOPMOST);
         this.startingPoseChooser.addOption("TOP SECOND", knownLocations.START_TOP_SECOND);
         this.startingPoseChooser.addOption("BOTTOM SECOND", knownLocations.START_BOTTOM_SECOND);
@@ -124,21 +124,21 @@ public class Autons {
 
     public Command buildAutonCommand() {        
         // SET OUR INITIAL POST
-        drivetrain.setManualPose(currentSelectedPose);
+        drivetrain.setManualPose(new Pose2d(currentSelectedPose.position, currentSelectedPose.holonomicRotation));
         
-        if (currentSelectedAuton.equals(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))) {
+        if (currentSelectedAuton == KnownLocations.DO_NOTHING) {
             SmartDashboard.putBoolean("isDoNothing", true);
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
             return getHomeCommand(arm, telescope, wrist, claw, LEDs);
         }
 
-        List<Translation2d> waypoints = List.of();
-        Pose2d finalPose = currentSelectedPose;
+        List<PathPoint> waypoints = List.of();
+        PathPoint finalPose = currentSelectedPose;
 
         if (currentSelectedPose == knownLocations.START_TOPMOST || currentSelectedPose == knownLocations.START_TOP_SECOND) {
             waypoints = Arrays.asList(knownLocations.WAYPOINT_TOP);
-            // 
+
             if (currentSelectedPose == knownLocations.START_TOPMOST) {
                 finalPose = knownLocations.START_TOP_SECOND;
             } else {
@@ -160,18 +160,18 @@ public class Autons {
             finalPose = currentSelectedAuton;
 
 
-            Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, finalPose, waypoints);
+            PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, finalPose);
             drivetrain.setTrajectorySmartdash(traj1, "traj1");
             Command firstSwerveCommand = generateSwerveCommand(traj1);
 
             // reset the 2nd trajectory on the field widget
-            Trajectory traj2 = new Trajectory();
+            PathPlannerTrajectory traj2 = new PathPlannerTrajectory();
             drivetrain.setTrajectorySmartdash(traj2, "traj2");
 
             return firstSwerveCommand;
         }
 
-        Trajectory traj1 = generateSwerveTrajectory(currentSelectedPose, currentSelectedAuton, waypoints);
+        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, finalPose);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
         // pickUpCommand()
@@ -189,37 +189,13 @@ public class Autons {
         );
     }
 
-    public Trajectory generateTestTrajectory() {
-        return TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, Rotation2d.fromDegrees(0.0)), 
-            List.of(new Translation2d(.5, .5)), 
-            new Pose2d(1, 1, Rotation2d.fromDegrees(180)), 
-            trajConfig);
-    }
-
-    public Command testSwerveCommand() {
-       // drivetrain.setManualPose(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0, 0, Rotation2d.fromDegrees(0.0)), 
-            List.of(new Translation2d(.5, .5)), 
-            new Pose2d(1, 1, Rotation2d.fromDegrees(180)), 
-            trajConfig);
-
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-            trajectory,
-            () -> drivetrain.getPose(),
-            drivetrain.getKinematics(), 
-            xController, 
-            yController,
-            turningPIDController,
-            (x) -> drivetrain.setModuleStates(x),
-            drivetrain);
-
-        return swerveControllerCommand;
-    }
-
-    public Trajectory generateSwerveTrajectory(Pose2d initialPose, Pose2d finalPose, List<Translation2d> waypoints) {
-        return TrajectoryGenerator.generateTrajectory(initialPose, waypoints, finalPose, trajConfig);
+    public PathPlannerTrajectory generateSwerveTrajectory(PathPoint initialPose, List<PathPoint> waypoints, PathPoint finalPose) {
+        List<PathPoint> points = new ArrayList<PathPoint>();
+        points.addAll(waypoints);
+        points.add(finalPose);
+        PathPoint point2 = points.remove(0);
+        // Following passes an array to vararg (see: https://programming.guide/java/passing-list-to-vararg-method.html)
+        return PathPlanner.generatePath(trajConfig, initialPose, point2, points.toArray(new PathPoint[0]));
     }
 
     /** Generate the swerve-specfic command by building the desired trajectory */
@@ -236,33 +212,6 @@ public class Autons {
             drivetrain);
         return swerveControllerCommand;
     }
-    
-    public Trajectory generateDriveStraightTraj() {
-        Pose2d initPose =  new Pose2d(Units.inchesToMeters(54.93), Units.inchesToMeters(199.65), Rotation2d.fromDegrees(0));
-        Pose2d finalPose = new Pose2d(initPose.getX() + 5, initPose.getY(), Rotation2d.fromDegrees(180));
-        Translation2d waypoint = new Translation2d(initPose.getX() + 2.5, initPose.getY() + 2.5);
-
-        Trajectory traj = TrajectoryGenerator.generateTrajectory(
-            initPose, 
-            List.of(waypoint),
-            finalPose, 
-            trajConfig);
-        return traj;
-    }
-
-    /** Move straight in x direction */
-    public Command driveStraight() {
-        return new SwerveControllerCommand(
-            generateDriveStraightTraj(),
-            () -> drivetrain.getPose(), 
-            drivetrain.getKinematics(), 
-            xController, 
-            yController, 
-            turningPIDController,
-            (x) -> drivetrain.setModuleStates(x),
-            drivetrain
-            );
-        }
 
     /**
      * The logic for picking up, moving, and scoring pieces
@@ -372,8 +321,8 @@ public class Autons {
 
     public void updateDash() {
         // run constantly when disabled
-        Pose2d currAuton = autonChooser.getSelected();
-        Pose2d currPose = startingPoseChooser.getSelected();
+        PathPoint currAuton = autonChooser.getSelected();
+        PathPoint currPose = startingPoseChooser.getSelected();
 
         Alliance color = DriverStation.getAlliance();
 
