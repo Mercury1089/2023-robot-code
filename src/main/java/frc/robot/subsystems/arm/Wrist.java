@@ -8,9 +8,11 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
@@ -51,11 +53,11 @@ public class Wrist extends SubsystemBase {
     WRIST_LOWER_LIMIT = -90;
   // Need to find Gear ratio 30:1
 
-  private TalonFX wrist;
+  private VictorSPX wrist;
   private PigeonIMU pigeon;
 
   public Wrist() {
-    wrist = new TalonFX(CAN.WRIST_TALON);
+    wrist = new VictorSPX(CAN.WRIST_TALON);
     // Configure Gyro
     pigeon = new PigeonIMU(CAN.ARM_GYRO);
     pigeon.configFactoryDefault();
@@ -65,7 +67,7 @@ public class Wrist extends SubsystemBase {
 
     wrist.setSensorPhase(true);
     wrist.setInverted(false);
-
+    wrist.setNeutralMode(NeutralMode.Brake);
     wrist.configRemoteFeedbackFilter(pigeon.getDeviceID(), RemoteSensorSource.Pigeon_Roll, REMOTE_DEVICE_0);
     wrist.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, WRIST_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
     wrist.configSelectedFeedbackCoefficient(Constants.UNITS.MAX_ROLL_DEGREES / Constants.UNITS.PIGEON_ROLL_UNITS, WRIST_PID_SLOT, Constants.CTRE.TIMEOUT_MS);

@@ -283,11 +283,11 @@ public class Autons {
     public Command getBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
+            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope),
-                new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist)
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope)
               )
             )
         );
@@ -307,14 +307,18 @@ public class Autons {
     }
 
     public Command getTuckInCommand(Arm arm, Telescope telescope, Wrist wrist) {
-        return new ParallelCommandGroup(
-            new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
-            new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
-            new SequentialCommandGroup(
-              new WaitUntilCommand(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
-              new RunCommand(() -> arm.setPosition(ArmPosition.HOME), arm)
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
+                new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
+                new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm))
+                    .until(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
+            new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
+                new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
+                new RunCommand(() -> arm.setPosition(ArmPosition.HOME), arm)
             )
-          );
+        );
     }
 
     public Command getHomeCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw, GamePieceLEDs LEDs) {
@@ -350,7 +354,7 @@ public class Autons {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
             new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.HIGH_SCORE)),
+              new WaitUntilCommand(() -> arm.getArmPosition() > ArmPosition.MID_SCORE.degreePos),
               new ParallelCommandGroup(
                 new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope),
                 new RunCommand(() -> wrist.setPosition(WristPosition.HIGH_SCORE), wrist)
