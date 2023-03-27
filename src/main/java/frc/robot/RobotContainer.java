@@ -79,7 +79,8 @@ public class RobotContainer {
     // );
     
     wrist = new Wrist();
-    // wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
+    // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
+    wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
     claw = new Claw();
     claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 

@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
@@ -38,7 +39,6 @@ public class Arm extends SubsystemBase {
 
   public final double GEAR_RATIO = 1;
   public final double THRESHOLD_DEGREES = 2.0;
-  public final int SAFE_TO_TELE_POS = 22;
 
   private TalonFX arm;
 
@@ -57,18 +57,16 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("ARM MIN REV", NOMINAL_OUTPUT_REVERSE);
     SmartDashboard.putNumber("ARM MIN FWD", NOMINAL_OUTPUT_FORWARD);
 
-    // arm.configForwardSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_UPPER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
-    // arm.configReverseSoftLimitThreshold(MercMath.degreesToEncoderTicks(ARM_LOWER_LIMIT)*GEAR_RATIO, Constants.CTRE_TIMEOUT);
-    // arm.configForwardSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
-    // arm.configReverseSoftLimitEnable(true, Constants.CTRE_TIMEOUT);
-
     arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
-    arm.configSelectedFeedbackCoefficient(50.0 / 290000.0);
+    // arm.configSelectedFeedbackCoefficient(50.0 / 290000.0);
+    arm.configSelectedFeedbackCoefficient(100.0 / 410400.0);
 
     arm.configForwardSoftLimitThreshold(100.0);
     arm.configForwardSoftLimitEnable(true);
 
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
+    arm.setNeutralMode(NeutralMode.Brake);
+
 
     arm.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
 
@@ -124,10 +122,6 @@ public class Arm extends SubsystemBase {
     return arm.getSelectedSensorPosition();
   }
 
-  public boolean isTelescopeSafe() {
-    return getArmPosition() > SAFE_TO_TELE_POS;
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -155,7 +149,7 @@ public class Arm extends SubsystemBase {
     RAMP_PICKUP(46.0),
     HIGH_SCORE(100.0),
     MID_SCORE(82.0),
-    BULLDOZER(22.0),
+    BULLDOZER(17.0),
     FELL_OVER(0); // lol
 
     public final double degreePos;
