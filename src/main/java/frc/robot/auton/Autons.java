@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -52,7 +53,8 @@ public class Autons {
 
     private final double TURNING_P_VAL = 1;
     private final double X_P_VAL = 1, Y_P_VAL = 1;
-    private final double MAX_DIRECTIONAL_SPEED = 3, MAX_ACCELERATION = 3;
+    private final double MAX_DIRECTIONAL_SPEED = 2, MAX_ACCELERATION = 2.0;
+    private boolean testMode = true;
 
     private Drivetrain drivetrain;
     private Arm arm;
@@ -152,19 +154,45 @@ public class Autons {
             waypoints = List.of(); // ToDo: get waypoint for directly in front of the charging station
             finalPose = currentSelectedAuton;
 
-
-            PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, finalPose);
+            PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, knownLocations.ELEMENT1);
             drivetrain.setTrajectorySmartdash(traj1, "traj1");
             Command firstSwerveCommand = generateSwerveCommand(traj1);
 
             // reset the 2nd trajectory on the field widget
-            PathPlannerTrajectory traj2 = new PathPlannerTrajectory();
+            waypoints = List.of(knownLocations.WAYPOINT_CHARGING);
+            PathPlannerTrajectory traj2 = generateSwerveTrajectory(knownLocations.ELEMENT1, waypoints, finalPose);
             drivetrain.setTrajectorySmartdash(traj2, "traj2");
-
-            return firstSwerveCommand;
+            Command secondSwerveCommand = generateSwerveCommand(traj2);
+            // +44in to charge edge
+            return new SequentialCommandGroup(
+                // new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
+                getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                getAutonScoreHighCommand(arm, telescope, wrist, claw),
+                new ParallelCommandGroup(
+                    firstSwerveCommand,
+                    new SequentialCommandGroup(
+                        getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                        getBulldozeCommand(arm, telescope, wrist).until(() ->telescope.isAtPosition(TelescopePosition.BULLDOZER))
+                    ) 
+                ),
+                new InstantCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs),
+                new RunCommand(() -> claw.close(LEDs), claw).until(() -> claw.isAtPosition(ClawPosition.CUBE)),
+                new ParallelDeadlineGroup(
+                    secondSwerveCommand,
+                    new SequentialCommandGroup(
+                        getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                        new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist)
+                    )
+                ),
+                new ParallelCommandGroup(
+                    new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist),
+                    new RunCommand(() -> drivetrain.lockSwerve(), drivetrain)
+                )
+                
+            );
         }
 
-        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, finalPose);
+        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, List.of(), currentSelectedAuton);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
         // pickUpCommand()
@@ -173,6 +201,10 @@ public class Autons {
         // drivetrain.setTrajectorySmartdash(traj2, "traj2");
         // Command secondSwerveCommand = generateSwerveCommand(traj2);
         // scoreCommand()
+
+        if (testMode) {
+            return firstSwerveCommand;
+        }
 
         return new SequentialCommandGroup(
             getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
@@ -188,7 +220,7 @@ public class Autons {
         points.add(finalPose);
         PathPoint point2 = points.remove(0);
         // Following passes an array to vararg (see: https://programming.guide/java/passing-list-to-vararg-method.html)
-        return PathPlanner.generatePath(pathConstraints, initialPose, point2, points.toArray(new PathPoint[0]));
+        return PathPlanner.generatePath(pathConstraints, initialPose, point2, points.toArray(new PathPoint[points.size()]));
     }
 
     /** Generate the swerve-specfic command by building the desired trajectory */
@@ -311,8 +343,7 @@ public class Autons {
             getScorePieceHighCommand(arm, telescope, wrist).until(() ->
             (telescope.isAtPosition(TelescopePosition.HIGH_SCORE))),
             new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist).until(() -> wrist.isAtPosition(WristPosition.LEVEL)),
-            new RunCommand(() -> claw.open(), claw).until(() -> claw.isAtPosition(ClawPosition.OPEN)),
-            getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE))
+            new RunCommand(() -> claw.open(), claw).until(() -> claw.isAtPosition(ClawPosition.OPEN))
         );
         
     }

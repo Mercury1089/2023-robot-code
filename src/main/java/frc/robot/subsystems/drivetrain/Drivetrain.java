@@ -106,6 +106,15 @@ public class Drivetrain extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
+  // must be negated
+  public Boolean getTrue() {
+    return new Boolean("false");
+  }
+
+  public double getRoll() {
+    return pigeon.getRoll();
+  }
+
   public Pose2d getInitialPose() {
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
     if (result.isPresent()) {
@@ -204,7 +213,7 @@ public class Drivetrain extends SubsystemBase {
     /* return the pigeon's yaw as Rotation2d object */
 
     // Yaw is negated for field-centric in order to ensure 'true' forward of robot
-    return Rotation2d.fromDegrees(-(pigeon.getAngle() + angleOffset));
+    return Rotation2d.fromDegrees(-(pigeon.getAngle()));
   }
 
   @Override
@@ -230,6 +239,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("CurrentPose Rotation", getPose().getRotation().getDegrees());
     SmartDashboard.putNumber("Drive Angle", getPigeonRotation().getDegrees());
     SmartDashboard.putNumber("Drive Yaw", pigeon.getYaw());
+    SmartDashboard.putNumber("Drive Roll", getRoll());
     SmartDashboard.putNumber("Drive fused heading", pigeon.getFusedHeading());
 
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();

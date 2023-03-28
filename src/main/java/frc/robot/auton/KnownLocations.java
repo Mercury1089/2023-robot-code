@@ -47,7 +47,8 @@ public class KnownLocations {
 
     public final PathPoint
         WAYPOINT_TOP,
-        WAYPOINT_BOTTOM;
+        WAYPOINT_BOTTOM,
+        WAYPOINT_CHARGING;
     
         
     public Alliance allianceColor = DriverStation.getAlliance();
@@ -59,15 +60,15 @@ public class KnownLocations {
         
         allianceColor = DriverStation.getAlliance();
         if (allianceColor == Alliance.Blue) {
-            START_TOPMOST = PathPointInch(54.93, 199.65, 180, 180);
-            START_TOP_SECOND = PathPointInch(54.93, 173.52, 180, 180);
-            START_BOTTOM_SECOND = PathPointInch(54.93, 41.67, 180, 180);
-            START_BOTTOMMOST = PathPointInch(54.93, 16.15, 180, 180);
+            START_TOPMOST = PathPointInch(54.93+16.5, 199.65, 0, 180);
+            START_TOP_SECOND = PathPointInch(54.93+16.5, 173.52, 0, 180);
+            START_BOTTOM_SECOND = PathPointInch(54.93+16.5, 41.67, 0, 180);
+            START_BOTTOMMOST = PathPointInch(54.93+16.5, 16.15, 0, 180);
 
-            ELEMENT1 = PathPointInch(279.31, 180.02, 180, 0);
-            ELEMENT2 = PathPointInch(279.31, 132.02, 180, 0);
-            ELEMENT3 = PathPointInch(279.31, 84.02, 180, 0);
-            ELEMENT4 = PathPointInch(279.31, 36.02, 180, 0);
+            ELEMENT1 = PathPointInch(279.31-33.5, 180.02, 0, 0);
+            ELEMENT2 = PathPointInch(279.31-33.5, 132.02, 0, 0);
+            ELEMENT3 = PathPointInch(279.31-33.5, 84.02, 0, 0);
+            ELEMENT4 = PathPointInch(279.31-33.5, 36.02, 0, 0);
 
             CHARGING_CENTER = PathPointInch(153.93, 107.85, 0, 0);
             CHARGING_TOP_LEFT=  PathPointInch(117.16, 155.51, 0, 0);
@@ -75,8 +76,17 @@ public class KnownLocations {
             CHARGING_BOTTOM_LEFT = PathPointInch(117.16, 60.2, 0, 0);
             CHARGING_BOTTOM_RIGHT = PathPointInch(190.96, 60.2, 0, 0);
 
-            WAYPOINT_TOP = PathPointInch(190.96, 185.62, 180, 180);
-            WAYPOINT_BOTTOM = PathPointInch(190.96, 30.101, 180, 180);
+            WAYPOINT_TOP = PathPointInch(190.96, 185.62, 0, 315);
+            WAYPOINT_BOTTOM = PathPointInch(190.96, 30.101, 0, 180);
+
+            WAYPOINT_CHARGING = new PathPoint(
+                new Translation2d(
+                    (ELEMENT1.position.getX() + CHARGING_TOP_RIGHT.position.getX()) / 2.0,
+                    (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
+                ),
+                Rotation2d.fromDegrees(180),
+                Rotation2d.fromDegrees(0)
+            );
         } else {
             START_TOPMOST = PathPointInch(598.41, 199.65, 0, 0);
             START_TOP_SECOND = PathPointInch(598.41, 173.52, 0, 0);
@@ -96,6 +106,15 @@ public class KnownLocations {
 
             WAYPOINT_TOP = PathPointInch(463.39, 185.62, 0, 180);
             WAYPOINT_BOTTOM = PathPointInch(463.39, 30.1, 0, 180);
+
+            WAYPOINT_CHARGING = new PathPoint(
+                new Translation2d(
+                    (ELEMENT1.position.getX() + CHARGING_TOP_RIGHT.position.getX()) / 2.0,
+                    (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
+                ),
+                Rotation2d.fromDegrees(0),
+                Rotation2d.fromDegrees(0)
+            );
         }
     }
 
