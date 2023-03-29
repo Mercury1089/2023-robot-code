@@ -82,7 +82,7 @@ public class RobotContainer {
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
     wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
     claw = new Claw();
-    claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
+    // claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
@@ -92,7 +92,8 @@ public class RobotContainer {
     auton = new Autons(drivetrain, arm, telescope, wrist, claw, LEDs);
 
     gamepadA.onTrue(auton.getScorePieceMidCommand(arm, telescope, wrist));
-    gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist, claw));
+    // gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist, claw));
+    gamepadB.onTrue(auton.getShelfPickupCommand(arm, telescope, wrist));
     gamepadY.onTrue(auton.getScorePieceHighCommand(arm, telescope, wrist));
     gamepadX.onTrue(auton.getHybridBulldozeCommand(arm, telescope, wrist));
     gamepadLB.onTrue(auton.getBulldozeCommand(arm, telescope, wrist));
@@ -104,6 +105,10 @@ public class RobotContainer {
         new RunCommand(() -> telescope.setSpeed(() -> -1.6), telescope),
         new RunCommand(() -> arm.setSpeed(() -> -.8), arm)
       )
+    );
+
+    gamepadPOVRight.or(gamepadPOVUpRight).or(gamepadPOVDownRight).whileTrue(
+      new RunCommand(() -> claw.moveClaw(() -> -1.0), claw)
     );
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
@@ -198,8 +203,8 @@ public class RobotContainer {
         gamepadLeftY = () -> -gamepad.getLeftY();
         gamepadRightY = () -> -gamepad.getRightY();
 
-        leftJoystickX = () -> -leftJoystick.getX();
-        leftJoystickY = () -> -leftJoystick.getY();
+        leftJoystickX = () -> leftJoystick.getX();
+        leftJoystickY = () -> leftJoystick.getY();
         rightJoystickX = () -> rightJoystick.getX();
         rightJoystickY = () -> rightJoystick.getY();
 

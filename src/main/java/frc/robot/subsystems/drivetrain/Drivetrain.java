@@ -106,11 +106,6 @@ public class Drivetrain extends SubsystemBase {
     pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
   }
 
-  // must be negated
-  public Boolean getTrue() {
-    return new Boolean("false");
-  }
-
   public double getRoll() {
     return pigeon.getRoll();
   }

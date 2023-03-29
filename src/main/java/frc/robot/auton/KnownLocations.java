@@ -88,15 +88,15 @@ public class KnownLocations {
                 Rotation2d.fromDegrees(0)
             );
         } else {
-            START_TOPMOST = PathPointInch(598.41, 199.65, 0, 0);
-            START_TOP_SECOND = PathPointInch(598.41, 173.52, 0, 0);
-            START_BOTTOM_SECOND = PathPointInch(598.41, 41.67, 0, 0);
-            START_BOTTOMMOST = PathPointInch(598.41, 16.15, 0, 0);
+            START_TOPMOST = PathPointInch(598.41-16.5, 199.65, 180, 0);
+            START_TOP_SECOND = PathPointInch(598.41-16.5, 173.52, 180, 0);
+            START_BOTTOM_SECOND = PathPointInch(598.41-16.5, 41.67, 180, 0);
+            START_BOTTOMMOST = PathPointInch(598.41-16.5, 16.15, 180, 0);
 
-            ELEMENT1 = PathPointInch(374.03, 180.02, 0, 180);
-            ELEMENT2 = PathPointInch(374.03, 132.02, 0, 180);
-            ELEMENT3 = PathPointInch(374.03, 84.02, 0, 180);
-            ELEMENT4 = PathPointInch(374.03, 36.02, 0, 180);
+            ELEMENT1 = PathPointInch(374.03+33.5, 180.02, 180, 180);
+            ELEMENT2 = PathPointInch(374.03+33.5, 132.02, 180, 180);
+            ELEMENT3 = PathPointInch(374.03+33.5, 84.02, 180, 180);
+            ELEMENT4 = PathPointInch(374.03+33.5, 36.02, 180, 180);
 
             CHARGING_CENTER = PathPointInch(499.41, 107.85, 0, 180);
             CHARGING_TOP_LEFT = PathPointInch(462.38, 155.51, 0, 180);
@@ -109,11 +109,11 @@ public class KnownLocations {
 
             WAYPOINT_CHARGING = new PathPoint(
                 new Translation2d(
-                    (ELEMENT1.position.getX() + CHARGING_TOP_RIGHT.position.getX()) / 2.0,
+                    (ELEMENT1.position.getX() + CHARGING_BOTTOM_LEFT.position.getX()) / 2.0,
                     (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
                 ),
                 Rotation2d.fromDegrees(0),
-                Rotation2d.fromDegrees(0)
+                Rotation2d.fromDegrees(180)
             );
         }
     }
