@@ -55,7 +55,6 @@ public class Autons {
     private final double TURNING_P_VAL = 1;
     private final double X_P_VAL = 1, Y_P_VAL = 1;
     private final double MAX_DIRECTIONAL_SPEED = 2, MAX_ACCELERATION = 2.0;
-    private boolean testMode = true;
 
     private Drivetrain drivetrain;
     private Arm arm;
@@ -223,11 +222,12 @@ public class Autons {
 
     public PathPlannerTrajectory generateSwerveTrajectory(PathPoint initialPose, List<PathPoint> waypoints, PathPoint finalPose) {
         List<PathPoint> points = new ArrayList<PathPoint>();
+        points.add(initialPose);
         points.addAll(waypoints);
         points.add(finalPose);
-        PathPoint point2 = points.remove(0);
         // Following passes an array to vararg (see: https://programming.guide/java/passing-list-to-vararg-method.html)
-        return PathPlanner.generatePath(pathConstraints, initialPose, point2, points.toArray(new PathPoint[points.size()]));
+        return PathPlanner.generatePath(pathConstraints, points);
+        // return PathPlanner.generatePath(pathConstraints, initialPose, point2, points.toArray(new PathPoint[points.size()]));
     }
 
     /** Generate the swerve-specfic command by building the desired trajectory */

@@ -6,7 +6,6 @@ package frc.robot.auton;
 
 import com.pathplanner.lib.PathPoint;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
@@ -76,16 +75,17 @@ public class KnownLocations {
             CHARGING_BOTTOM_LEFT = PathPointInch(117.16, 60.2, 0, 0);
             CHARGING_BOTTOM_RIGHT = PathPointInch(190.96, 60.2, 0, 0);
 
-            WAYPOINT_TOP = PathPointInch(190.96, 185.62, 0, 315);
-            WAYPOINT_BOTTOM = PathPointInch(190.96, 30.101, 0, 180);
-
+            // WAYPOINT_TOP = PathPointInch(190.96, 185.62, 0, 315);
+            // WAYPOINT_BOTTOM = PathPointInch(190.96, 30.101, 0, 180);
+            WAYPOINT_TOP = PathWayPoint(190.96, 185.62, 0);
+            WAYPOINT_BOTTOM = PathWayPoint(190.96, 30.101, 0);
             WAYPOINT_CHARGING = new PathPoint(
                 new Translation2d(
                     (ELEMENT1.position.getX() + CHARGING_TOP_RIGHT.position.getX()) / 2.0,
                     (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
                 ),
                 Rotation2d.fromDegrees(180),
-                Rotation2d.fromDegrees(0)
+                null
             );
         } else {
             START_TOPMOST = PathPointInch(598.41-16.5, 199.65, 180, 0);
@@ -104,26 +104,39 @@ public class KnownLocations {
             CHARGING_BOTTOM_LEFT = PathPointInch(462.38, 60.2, 0, 180);
             CHARGING_BOTTOM_RIGHT = PathPointInch(536.18, 60.2, 0, 180);
 
-            WAYPOINT_TOP = PathPointInch(463.39, 185.62, 0, 180);
-            WAYPOINT_BOTTOM = PathPointInch(463.39, 30.1, 0, 180);
-
+            // WAYPOINT_TOP = PathPointInch(463.39, 185.62, 0, 180);
+            // WAYPOINT_BOTTOM = PathPointInch(463.39, 30.1, 0, 180);
+            // WAYPOINT_CHARGING = new PathPoint(
+            //     new Translation2d(
+            //         (ELEMENT1.position.getX() + CHARGING_BOTTOM_LEFT.position.getX()) / 2.0,
+            //         (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
+            //     ),
+            //     Rotation2d.fromDegrees(0),
+            //     Rotation2d.fromDegrees(180)
+            // );
+            WAYPOINT_TOP = PathWayPoint(463.39, 185.62, 0);
+            WAYPOINT_BOTTOM = PathWayPoint(463.39, 30.1, 0);
             WAYPOINT_CHARGING = new PathPoint(
                 new Translation2d(
                     (ELEMENT1.position.getX() + CHARGING_BOTTOM_LEFT.position.getX()) / 2.0,
                     (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
                 ),
                 Rotation2d.fromDegrees(0),
-                Rotation2d.fromDegrees(180)
+                null
             );
+
+            
         }
     }
 
-    /** Convenience method to create Pose2d from inches */
-    private static Pose2d Pose2dInch(double xInches, double yInches, double thetaDegrees) {
-        return new Pose2d(Units.inchesToMeters(xInches), Units.inchesToMeters(yInches), Rotation2d.fromDegrees(thetaDegrees));
-    }
     /** Convenience method to create PathPoint from inches */
     private static PathPoint PathPointInch(double xInches, double yInches, double headingDegrees, double rotationDegrees) {
         return new PathPoint(new Translation2d(Units.inchesToMeters(xInches), Units.inchesToMeters(yInches)), Rotation2d.fromDegrees(headingDegrees), Rotation2d.fromDegrees(rotationDegrees));
     }
+
+    /** Convenience method to create waypoint excluding holonomic rotation */
+    private static PathPoint PathWayPoint(double xInches, double yInches, double headingDegrees) {
+        return new PathPoint(new Translation2d(Units.inchesToMeters(xInches), Units.inchesToMeters(yInches)), Rotation2d.fromDegrees(headingDegrees), null);
+    }
+
 }

@@ -33,7 +33,6 @@ public class Drivetrain extends SubsystemBase {
 
   private SwerveModule frontLeftModule, frontRightModule, backLeftModule, backRightModule;
   private WPI_PigeonIMU pigeon;
-  private double angleOffset = 0.0;
   private SwerveDrivePoseEstimator odometry;
   private SwerveDriveKinematics swerveKinematics;
   private AprilTagCamera photonCam;
@@ -186,7 +185,6 @@ public class Drivetrain extends SubsystemBase {
    * Used to set initial pose from an auton trajectory
    */
   public void setManualPose(Pose2d pose) {
-    angleOffset = pose.getRotation().getDegrees();
     odometry.resetPosition(
     getPigeonRotation(), 
     new SwerveModulePosition[] {
