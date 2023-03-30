@@ -41,9 +41,10 @@ public class Autons {
 
     private SendableChooser<PathPoint> autonChooser;
     private SendableChooser<PathPoint> startingPoseChooser;
-    private SendableChooser<PathPoint> chargingElementChooser;
+    private SendableChooser<AutonTypes> autonTypeChooser;
     private PathPoint currentSelectedAuton;
     private PathPoint currentSelectedPose;
+    private AutonTypes currentSelectedAutonType;
     private PathConstraints pathConstraints;
     private PIDController turningPIDController;
     private PIDController xController, yController;
@@ -71,8 +72,9 @@ public class Autons {
         this.allianceColor = DriverStation.getAlliance();
 
         this.knownLocations = new KnownLocations();
-        this.currentSelectedAuton = knownLocations.ELEMENT1;
+        this.currentSelectedAuton = knownLocations.DO_NOTHING;
         this.currentSelectedPose = knownLocations.START_TOPMOST;
+        this.currentSelectedAutonType = AutonTypes.LEAVE_COMMUNITY;
 
         this.drivetrain = drivetrain;
         this.arm = arm;
@@ -92,17 +94,18 @@ public class Autons {
     }
 
     public void setChoosers() {
+
+        // select the ELEMENT to visit during auton (or DO NOTHING)
         autonChooser = new SendableChooser<PathPoint>();
         autonChooser.setDefaultOption("DO NOTHING", KnownLocations.DO_NOTHING);
-        autonChooser.addOption("Preload", knownLocations.ELEMENT1);
         autonChooser.addOption("Element 1", knownLocations.ELEMENT1);
         autonChooser.addOption("Element 2", knownLocations.ELEMENT2);
         autonChooser.addOption("Element 3", knownLocations.ELEMENT3);
         autonChooser.addOption("Element 4", knownLocations.ELEMENT4);
-        autonChooser.addOption("Charging Station", knownLocations.CHARGING_CENTER);
-        SmartDashboard.putData("Auton Chooser", autonChooser);
+        SmartDashboard.putData("Auton Element Chooser", autonChooser);
         SmartDashboard.putString("Auton Selected: ", this.currentSelectedAuton.toString());
 
+        // select the MANUAL STARTING POSITION of the robot
         this.startingPoseChooser = new SendableChooser<PathPoint>();
         this.startingPoseChooser.setDefaultOption("TOPMOST", knownLocations.START_TOPMOST);
         this.startingPoseChooser.addOption("TOP SECOND", knownLocations.START_TOP_SECOND);
@@ -110,12 +113,12 @@ public class Autons {
         this.startingPoseChooser.addOption("BOTTOMMOST", knownLocations.START_BOTTOMMOST);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
 
-        this.chargingElementChooser = new SendableChooser<PathPoint>();
-        chargingElementChooser.setDefaultOption("Element 1", knownLocations.ELEMENT1);
-        chargingElementChooser.addOption("Element 2", knownLocations.ELEMENT2);
-        chargingElementChooser.addOption("Element 3", knownLocations.ELEMENT3);
-        chargingElementChooser.addOption("Element 4", knownLocations.ELEMENT4);
-        SmartDashboard.putData("Charging Auton Chooser", chargingElementChooser);
+        // select whether to visit charging station or score 2nd piece (or leave community)
+        this.autonTypeChooser = new SendableChooser<AutonTypes>();
+        autonTypeChooser.setDefaultOption("LEAVE COMMUNITY", AutonTypes.LEAVE_COMMUNITY);
+        autonTypeChooser.addOption("2ND PIECE SCORE", AutonTypes.SCORE_2ND_PIECE);
+        autonTypeChooser.addOption("CHARGING STATION", AutonTypes.CHARGING_STATION);
+        SmartDashboard.putData("Auton Type", autonTypeChooser);
     }
 
     public Command getAutonCommand() {
@@ -133,6 +136,7 @@ public class Autons {
             return getHomeCommand(arm, telescope, wrist, claw, LEDs);
         }
 
+       
         List<PathPoint> waypoints = List.of();
         PathPoint finalPose = currentSelectedPose;
 
@@ -154,20 +158,56 @@ public class Autons {
             }
         }
 
-        // if charging station is selected, this is our final destination (only 1 traj required)
-        if (currentSelectedAuton == knownLocations.CHARGING_CENTER) {
+        // whether we are leaving community or scoring 2nd piece, 1st trajectory is the same
+        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, currentSelectedAuton);
+        drivetrain.setTrajectorySmartdash(traj1, "traj1");
+        Command firstSwerveCommand = generateSwerveCommand(traj1);
 
-            waypoints = List.of(); // ToDo: get waypoint for directly in front of the charging station
-            finalPose = currentSelectedAuton;
-            PathPoint element = this.chargingElementChooser.getSelected();
+        if (this.currentSelectedAutonType == AutonTypes.LEAVE_COMMUNITY) {
+            // reset SDB widget
+            drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
+            
+            return new SequentialCommandGroup(
+                getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                getAutonScoreHighCommand(arm, telescope, wrist, claw),
+                new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
+                firstSwerveCommand
+            ); 
+        }
 
-            PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, element);
-            drivetrain.setTrajectorySmartdash(traj1, "traj1");
-            Command firstSwerveCommand = generateSwerveCommand(traj1);
+        if (this.currentSelectedAutonType == AutonTypes.SCORE_2ND_PIECE) {
+            PathPlannerTrajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, waypoints, finalPose);
+            drivetrain.setTrajectorySmartdash(traj2, "traj2");
+            Command secondSwerveCommand = generateSwerveCommand(traj2);
 
-            // reset the 2nd trajectory on the field widget
+            return new SequentialCommandGroup(
+                getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                getAutonScoreHighCommand(arm, telescope, wrist, claw),
+                new ParallelCommandGroup(
+                    firstSwerveCommand,
+                    new SequentialCommandGroup(
+                        getHybridBulldozeCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
+                        getBulldozeCommand(arm, telescope, wrist).until(() ->telescope.isAtPosition(TelescopePosition.BULLDOZER))
+                    ) 
+                ),
+                new InstantCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs),
+                new RunCommand(() -> claw.close(LEDs), claw).until(() -> claw.isAtPosition(ClawPosition.CUBE)),
+                new ParallelDeadlineGroup(
+                    secondSwerveCommand,
+                    new SequentialCommandGroup(
+                        getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                        new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist)
+                    )
+                ),
+                getAutonScoreHighCommand(arm, telescope, wrist, claw)
+            ); 
+        }
+
+        // if charging station is selected, this is our final destination
+        if (this.currentSelectedAutonType == AutonTypes.CHARGING_STATION) {
+
             waypoints = List.of(knownLocations.WAYPOINT_CHARGING);
-            PathPlannerTrajectory traj2 = generateSwerveTrajectory(element, waypoints, finalPose);
+            PathPlannerTrajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, waypoints, knownLocations.CHARGING_CENTER);
             drivetrain.setTrajectorySmartdash(traj2, "traj2");
             Command secondSwerveCommand = generateSwerveCommand(traj2);
 
@@ -194,30 +234,15 @@ public class Autons {
                 new ParallelCommandGroup(
                     new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist),
                     new RunCommand(() -> drivetrain.lockSwerve(), drivetrain)
-                )
-                
+                )  
             );
         }
 
-        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, List.of(), currentSelectedAuton);
-        drivetrain.setTrajectorySmartdash(traj1, "traj1");
-        Command firstSwerveCommand = generateSwerveCommand(traj1);
+        // Should never get here
+        drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
         drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
-        // pickUpCommand()
-        // tuckInCommand()
-        // Trajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, finalPose, waypoints);
-        // drivetrain.setTrajectorySmartdash(traj2, "traj2");
-        // Command secondSwerveCommand = generateSwerveCommand(traj2);
-        // scoreCommand()
+        return getHomeCommand(arm, telescope, wrist, claw, LEDs);
 
-      
-
-        return new SequentialCommandGroup(
-            getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
-            getAutonScoreHighCommand(arm, telescope, wrist, claw),
-            new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
-            firstSwerveCommand
-        );
     }
 
     public PathPlannerTrajectory generateSwerveTrajectory(PathPoint initialPose, List<PathPoint> waypoints, PathPoint finalPose) {
@@ -358,10 +383,18 @@ public class Autons {
         
     }
 
+    /**
+     * Rebuilds the autonCommand when ONE of the following conditions changes:
+     * - Starting Pose
+     * - Alliance Color
+     * - Desired Element
+     * - Auton Type
+     */
     public void updateDash() {
-        // run constantly when disabled
+        // runs constantly when disabled
         PathPoint currAuton = autonChooser.getSelected();
         PathPoint currPose = startingPoseChooser.getSelected();
+        AutonTypes currAutonType = autonTypeChooser.getSelected();
 
         Alliance color = DriverStation.getAlliance();
 
@@ -383,5 +416,23 @@ public class Autons {
             this.currentSelectedPose = currPose;
             this.autonCommand = buildAutonCommand();
         }
-    }    
+
+        if (currAutonType != this.currentSelectedAutonType) {
+            this.currentSelectedAutonType = currAutonType;
+            this.autonCommand = buildAutonCommand();
+        }
+    }
+    
+    /**
+     * Determines what we do with our 2nd path
+     * 
+     * LEAVE COMMUNITY - no 2nd path
+     * SCORE_2ND_PIECE - return to appropriate node
+     * CHARGING_STATION - center onto the charging station
+     */
+    public enum AutonTypes {
+        LEAVE_COMMUNITY,
+        SCORE_2ND_PIECE,
+        CHARGING_STATION
+    }
 }
