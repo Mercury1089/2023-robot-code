@@ -171,6 +171,7 @@ public class Autons {
                 getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
                 getAutonScoreHighCommand(arm, telescope, wrist, claw),
                 new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
+                getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
                 firstSwerveCommand
             ); 
         }
