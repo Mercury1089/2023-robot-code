@@ -37,4 +37,9 @@ public class SwerveOnGyro extends PIDCommand {
   public boolean isFinished() {
     return getController().atSetpoint();
   }
+
+  /** must be negated */
+  public boolean getTrue() {
+    return false;
+  }
 }

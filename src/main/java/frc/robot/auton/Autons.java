@@ -159,7 +159,7 @@ public class Autons {
         }
 
         // whether we are leaving community or scoring 2nd piece, 1st trajectory is the same
-        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, currentSelectedAuton);
+        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, List.of(), currentSelectedAuton);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
 
@@ -177,7 +177,7 @@ public class Autons {
         }
 
         if (this.currentSelectedAutonType == AutonTypes.SCORE_2ND_PIECE) {
-            PathPlannerTrajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, waypoints, finalPose);
+            PathPlannerTrajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, List.of(), finalPose);
             drivetrain.setTrajectorySmartdash(traj2, "traj2");
             Command secondSwerveCommand = generateSwerveCommand(traj2);
 

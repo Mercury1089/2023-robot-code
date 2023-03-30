@@ -55,7 +55,7 @@ public class KnownLocations {
     public KnownLocations() {
 
         allianceColor = DriverStation.getAlliance();
-        
+
         if (allianceColor == Alliance.Blue) {
             START_TOPMOST = PathPointInch(54.93+16.5, 199.65, 0, 180);
             START_TOP_SECOND = PathPointInch(54.93+16.5, 173.52, 0, 180);
@@ -75,15 +75,15 @@ public class KnownLocations {
 
             // WAYPOINT_TOP = PathPointInch(190.96, 185.62, 0, 315);
             // WAYPOINT_BOTTOM = PathPointInch(190.96, 30.101, 0, 180);
-            WAYPOINT_TOP = PathWayPoint(190.96, 185.62, 180);
-            WAYPOINT_BOTTOM = PathWayPoint(190.96, 30.101, 180);
+            WAYPOINT_TOP = PathPointInch(190.96, 185.62, 0, 40.0);
+            WAYPOINT_BOTTOM = PathWayPoint(190.96, 30.101, 40.0);
             WAYPOINT_CHARGING = new PathPoint(
                 new Translation2d(
                     (ELEMENT1.position.getX() + CHARGING_TOP_RIGHT.position.getX()) / 2.0,
                     (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
                 ),
                 Rotation2d.fromDegrees(180),
-                null
+                Rotation2d.fromDegrees(0)
             );
         } else {
             START_TOPMOST = PathPointInch(598.41-16.5, 199.65, 180, 0);
@@ -112,15 +112,15 @@ public class KnownLocations {
             //     Rotation2d.fromDegrees(0),
             //     Rotation2d.fromDegrees(180)
             // );
-            WAYPOINT_TOP = PathWayPoint(463.39, 185.62, 0);
-            WAYPOINT_BOTTOM = PathWayPoint(463.39, 30.1, 0);
+            WAYPOINT_TOP = PathWayPoint(463.39, 185.62, 140.0);
+            WAYPOINT_BOTTOM = PathWayPoint(463.39, 30.1, 140.0);
             WAYPOINT_CHARGING = new PathPoint(
                 new Translation2d(
                     (ELEMENT1.position.getX() + CHARGING_BOTTOM_LEFT.position.getX()) / 2.0,
                     (CHARGING_TOP_RIGHT.position.getY() + CHARGING_BOTTOM_RIGHT.position.getY()) / 2.0
                 ),
                 Rotation2d.fromDegrees(0),
-                null
+                Rotation2d.fromDegrees(180)
             );
 
             
