@@ -18,24 +18,26 @@ public class SwerveOnGyro extends PIDCommand {
   public SwerveOnGyro(Drivetrain drivetrain, double setpoint) {
     super(
         // The controller that the command will use
-        new PIDController(.5 / 14, 0, 0),
+        new PIDController(0.1/14, 0, 0),
         // This should return the measurement
         () -> drivetrain.getRoll(),
         // This should return the setpoint (can also be a constant)
         setpoint,
         // This uses the output
-        (output) -> drivetrain.joyDrive(setpoint, 0.0, 0.0),
+        (output) -> drivetrain.joyDrive(-output, 0.0, 0.0),
         drivetrain
     );
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(THRESHOLD_DEGREES);
+    getController().enableContinuousInput(-90.0, 90.0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atSetpoint();
+    // return getController().atSetpoint();
+    return false;
   }
 
   /** must be negated */

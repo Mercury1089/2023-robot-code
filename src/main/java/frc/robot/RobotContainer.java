@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.auton.Autons;
+import frc.robot.commands.drivetrain.SwerveOnGyro;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
@@ -123,6 +124,7 @@ public class RobotContainer {
     
     left6.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs));
     left8.onTrue(new InstantCommand(() -> wrist.calibrate(), wrist).ignoringDisable(true));
+    // left9.onTrue(new SwerveOnGyro(drivetrain, -1.75));
   
     // in honor of resetTurret
     left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain).ignoringDisable(true));

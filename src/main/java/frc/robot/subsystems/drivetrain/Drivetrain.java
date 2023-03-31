@@ -41,6 +41,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
+  public final double PITCH_WHEN_LEVEL = -1.75;
 
   private Pose2d testInitialPose; 
 
@@ -233,7 +234,9 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive Angle", getPigeonRotation().getDegrees());
     SmartDashboard.putNumber("Drive Yaw", pigeon.getYaw());
     SmartDashboard.putNumber("Drive Roll", getRoll());
+    SmartDashboard.putNumber("Drive Pitch", pigeon.getPitch());
     SmartDashboard.putNumber("Drive fused heading", pigeon.getFusedHeading());
+
 
     Optional<EstimatedRobotPose> result = photonCam.getGlobalPose();
     if (result.isEmpty()) {
