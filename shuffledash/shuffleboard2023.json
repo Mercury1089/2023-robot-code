@@ -156,9 +156,7 @@
               "_showGlyph": false,
               "Game/Game": "A2023_Charged_Up",
               "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false,
-              "Colors/traj2": "#FFFFFFFF",
-              "Colors/traj1": "#FFFFFFFF"
+              "Visuals/Show Outside Circles": false
             }
           },
           "9,2": {
@@ -326,9 +324,7 @@
               "_showGlyph": false,
               "Game/Game": "A2023_Charged_Up",
               "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false,
-              "Colors/traj2": "#FFFFFFFF",
-              "Colors/traj1": "#FFFFFFFF"
+              "Visuals/Show Outside Circles": false
             }
           }
         }

@@ -7,7 +7,6 @@ package frc.robot;
 import frc.robot.Constants.DS_USB;
 import frc.robot.Constants.JOYSTICK_BUTTONS;
 import frc.robot.auton.Autons;
-import frc.robot.commands.drivetrain.SwerveOnGyro;
 import frc.robot.commands.drivetrain.SwerveOnJoysticks;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
@@ -113,8 +112,8 @@ public class RobotContainer {
     );
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
-    //left2.onTrue(auton.testSwerveCommand());
-    
+    left2.whileTrue(new RunCommand(() -> claw.moveClaw(() -> -1.0), claw));
+
     left3.onTrue(
       new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
     );

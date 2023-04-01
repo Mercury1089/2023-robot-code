@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.drivetrain.SwerveOnGyro;
 import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
 import frc.robot.subsystems.arm.Arm;
@@ -72,7 +73,7 @@ public class Autons {
         this.allianceColor = DriverStation.getAlliance();
 
         this.knownLocations = new KnownLocations();
-        this.currentSelectedAuton = knownLocations.DO_NOTHING;
+        this.currentSelectedAuton = KnownLocations.DO_NOTHING;
         this.currentSelectedPose = knownLocations.START_TOPMOST;
         this.currentSelectedAutonType = AutonTypes.LEAVE_COMMUNITY;
 
@@ -159,7 +160,7 @@ public class Autons {
         }
 
         // whether we are leaving community or scoring 2nd piece, 1st trajectory is the same
-        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, List.of(), currentSelectedAuton);
+        PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, waypoints, currentSelectedAuton);
         drivetrain.setTrajectorySmartdash(traj1, "traj1");
         Command firstSwerveCommand = generateSwerveCommand(traj1);
 
@@ -234,8 +235,8 @@ public class Autons {
                 ),
                 new ParallelCommandGroup(
                     new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist),
-                    // new RunCommand(() -> new SwerveOnGyro(drivetrain, drivetrain.PITCH_WHEN_LEVEL), drivetrain)
-                    new RunCommand(() -> drivetrain.lockSwerve(), drivetrain)
+                    new SwerveOnGyro(drivetrain, drivetrain.ROLL_WHEN_LEVEL)
+                    // new RunCommand(() -> drivetrain.lockSwerve(), drivetrain)
                 )  
             );
         }
@@ -300,7 +301,7 @@ public class Autons {
     public Command getBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
-            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist),
+            new RunCommand(() -> wrist.setPosition(WristPosition.BULLDOZER), wrist),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
               new ParallelCommandGroup(

@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
@@ -133,6 +132,7 @@ public class Wrist extends SubsystemBase {
     INSIDE(58.0),
     FLOOR(-25.0),
     LEVEL(0.0),
+    BULLDOZER(10.0),
     HIGH_SCORE(20.0),
     MID_SCORE(20.0),
     RAMP(38),

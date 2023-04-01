@@ -60,14 +60,14 @@ public class KnownLocations {
             START_TOPMOST = PathPointInch(54.93+16.5, 199.65, 0, 180);
             START_TOP_SECOND = PathPointInch(54.93+16.5, 173.52, 0, 180);
             START_BOTTOM_SECOND = PathPointInch(54.93+16.5, 41.67, 0, 180);
-            START_BOTTOMMOST = PathPointInch(54.93+16.5, 16.15, 0, 180);
+            START_BOTTOMMOST = PathPointInch(54.93+16.5, 16.15, 0, -180);
 
             ELEMENT1 = PathPointInch(279.31-33.5, 180.02, 0, 0);
             ELEMENT2 = PathPointInch(279.31-33.5, 132.02, 0, 0);
             ELEMENT3 = PathPointInch(279.31-33.5, 84.02, 0, 0);
             ELEMENT4 = PathPointInch(279.31-33.5, 36.02, 0, 0);
 
-            CHARGING_CENTER = PathPointInch(153.93, 107.85, 0, 0);
+            CHARGING_CENTER = PathPointInch(153.93-12, 107.85, 0, 0);
             CHARGING_TOP_LEFT=  PathPointInch(117.16, 155.51, 0, 0);
             CHARGING_TOP_RIGHT = PathPointInch(190.96, 155.51, 0, 0);
             CHARGING_BOTTOM_LEFT = PathPointInch(117.16, 60.2, 0, 0);
@@ -96,7 +96,7 @@ public class KnownLocations {
             ELEMENT3 = PathPointInch(374.03+33.5, 84.02, 180, 180);
             ELEMENT4 = PathPointInch(374.03+33.5, 36.02, 180, 180);
 
-            CHARGING_CENTER = PathPointInch(499.41, 107.85, 0, 180);
+            CHARGING_CENTER = PathPointInch(499.41+12, 107.85, 0, 180);
             CHARGING_TOP_LEFT = PathPointInch(462.38, 155.51, 0, 180);
             CHARGING_TOP_RIGHT = PathPointInch(536.18, 155.51, 0, 180);
             CHARGING_BOTTOM_LEFT = PathPointInch(462.38, 60.2, 0, 180);

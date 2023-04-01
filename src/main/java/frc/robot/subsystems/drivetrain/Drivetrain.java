@@ -41,7 +41,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final double WHEEL_WIDTH = 27; // distance between front/back wheels (in inches)
   private final double WHEEL_LENGTH = 27; // distance between left/right wheels (in inches)
-  public final double PITCH_WHEN_LEVEL = -1.75;
+  public final double ROLL_WHEN_LEVEL = -1.75;
 
   private Pose2d testInitialPose; 
 
@@ -160,19 +160,29 @@ public class Drivetrain extends SubsystemBase {
     pigeon.reset();
   }
 
-  public void joyDrive(double xSpeed, double ySpeed, double angularSpeed) {
+  public void joyDrive(double xSpeed, double ySpeed, double angularSpeed, boolean fieldRelative) {
     xSpeed *= SWERVE.MAX_DIRECTION_SPEED;
     ySpeed *= SWERVE.MAX_DIRECTION_SPEED;
     angularSpeed *= SWERVE.MAX_ROTATIONAL_SPEED;
 
-    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, angularSpeed, getPigeonRotation());
-    // ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds(xSpeed, ySpeed, angularSpeed);
+    ChassisSpeeds fieldRelativeSpeeds;
+
+    if (fieldRelative) {
+      fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, angularSpeed, getPigeonRotation());
+    } else {
+      fieldRelativeSpeeds = new ChassisSpeeds(xSpeed, ySpeed, angularSpeed);
+    }
     
     // general swerve speeds --> speed per module
     SwerveModuleState[] moduleStates = swerveKinematics.toSwerveModuleStates(fieldRelativeSpeeds);
 
     setModuleStates(moduleStates);
   }
+
+  public void joyDrive(double xSpeed, double ySpeed, double angularSpeed) {
+    joyDrive(xSpeed, ySpeed, angularSpeed, true);
+  }
+
 
   /** update smartdash with trajectory */
   public void setTrajectorySmartdash(Trajectory trajectory, String type) {
