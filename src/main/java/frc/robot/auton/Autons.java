@@ -112,6 +112,7 @@ public class Autons {
         this.startingPoseChooser.addOption("TOP SECOND", knownLocations.START_TOP_SECOND);
         this.startingPoseChooser.addOption("BOTTOM SECOND", knownLocations.START_BOTTOM_SECOND);
         this.startingPoseChooser.addOption("BOTTOMMOST", knownLocations.START_BOTTOMMOST);
+        this.startingPoseChooser.addOption("DO NOT CHOOSE", knownLocations.START_MIDDLE_CONE);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
 
         // select whether to visit charging station or score 2nd piece (or leave community)
@@ -198,7 +199,7 @@ public class Autons {
                     secondSwerveCommand,
                     new SequentialCommandGroup(
                         getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
-                        new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist)
+                        new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
                     )
                 ),
                 getAutonScoreHighCommand(arm, telescope, wrist, claw)
@@ -230,11 +231,11 @@ public class Autons {
                     secondSwerveCommand,
                     new SequentialCommandGroup(
                         getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
-                        new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist)
+                        new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
                     )
                 ),
                 new ParallelCommandGroup(
-                    new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist),
+                    new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist),
                     new SwerveOnGyro(drivetrain, drivetrain.ROLL_WHEN_LEVEL)
                     // new RunCommand(() -> drivetrain.lockSwerve(), drivetrain)
                 )  

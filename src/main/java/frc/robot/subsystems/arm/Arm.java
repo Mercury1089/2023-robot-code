@@ -33,7 +33,7 @@ public class Arm extends SubsystemBase {
 
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.01, //0.02,
-    PEAK_OUTPUT_FORWARD = 0.85, // 0.6,
+    PEAK_OUTPUT_FORWARD = 0.8, // 0.6,
     NOMINAL_OUTPUT_REVERSE = -0.01, //-0.5,
     PEAK_OUTPUT_REVERSE = -1.0;
 

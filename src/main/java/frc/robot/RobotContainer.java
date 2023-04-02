@@ -111,6 +111,12 @@ public class RobotContainer {
       new RunCommand(() -> claw.moveClaw(() -> -1.0), claw)
     );
 
+    gamepadPOVLeft.or(gamepadPOVUpLeft).or(gamepadPOVDownLeft).onTrue(
+      new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
+    );
+    gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.8), wrist));
+    gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.8), wrist));
+
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     left2.whileTrue(new RunCommand(() -> claw.moveClaw(() -> -1.0), claw));
 
@@ -136,7 +142,7 @@ public class RobotContainer {
     right4.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
     right5.onTrue(new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist));
    
-    right10.onTrue(new RunCommand(() -> wrist.moveWrist(() -> 0.0), wrist));
+    right10.onTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist));
     right11.onTrue(new InstantCommand(() -> drivetrain.joyDrive(0.0, 0.0, 0.0), drivetrain));
     
   }

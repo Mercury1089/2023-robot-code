@@ -89,7 +89,7 @@ public class Wrist extends SubsystemBase {
     wrist.selectProfileSlot(WRIST_PID_SLOT, Constants.CTRE.PRIMARY_PID_LOOP);
   }
 
-  public void moveWrist(Supplier<Double> speedSupplier) {
+  public void setSpeed(Supplier<Double> speedSupplier) {
     wrist.set(ControlMode.PercentOutput, speedSupplier.get());
   }
 

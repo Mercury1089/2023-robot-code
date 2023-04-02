@@ -18,7 +18,7 @@ public class SwerveOnGyro extends PIDCommand {
   public SwerveOnGyro(Drivetrain drivetrain, double setpoint) {
     super(
         // The controller that the command will use
-        new PIDController(0.2/14, 0, 0),
+        new PIDController(0.12/14, 0, 0),
         // This should return the measurement
         () -> drivetrain.getRoll(),
         // This should return the setpoint (can also be a constant)
