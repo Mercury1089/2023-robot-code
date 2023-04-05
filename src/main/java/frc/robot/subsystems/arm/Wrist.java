@@ -129,7 +129,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public enum WristPosition {
-    INSIDE(58.0),
+    INSIDE(64.0),
     FLOOR(-25.0),
     LEVEL(0.0),
     BULLDOZER(10.0),

@@ -112,7 +112,7 @@ public class Autons {
         this.startingPoseChooser.addOption("TOP SECOND", knownLocations.START_TOP_SECOND);
         this.startingPoseChooser.addOption("BOTTOM SECOND", knownLocations.START_BOTTOM_SECOND);
         this.startingPoseChooser.addOption("BOTTOMMOST", knownLocations.START_BOTTOMMOST);
-        this.startingPoseChooser.addOption("DO NOT CHOOSE", knownLocations.START_MIDDLE_CONE);
+        this.startingPoseChooser.addOption("MIDDLE CONE", knownLocations.START_MIDDLE_CONE);
         SmartDashboard.putData("Manual Starting Pose", startingPoseChooser);
 
         // select whether to visit charging station or score 2nd piece (or leave community)
@@ -141,6 +141,26 @@ public class Autons {
        
         List<PathPoint> waypoints = List.of();
         PathPoint finalPose = currentSelectedPose;
+        
+        // if (this.currentSelectedAutonType == AutonTypes.CHARGING_STATION && currentSelectedPose == knownLocations.START_MIDDLE_CONE) {
+        //     PathPlannerTrajectory traj1 = generateSwerveTrajectory(currentSelectedPose, List.of(), knownLocations.CHARGING_CENTER);
+        //     drivetrain.setTrajectorySmartdash(traj1, "traj1");
+        //     Command firstSwerveCommand = generateSwerveCommand(traj1);
+
+        //     return new SequentialCommandGroup(
+        //         getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+        //         getAutonScoreHighCommand(arm, telescope, wrist, claw),
+        //         getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+        //         new ParallelDeadlineGroup(
+        //             firstSwerveCommand,
+        //             new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
+        //         ),
+        //         new ParallelCommandGroup(
+        //             new SwerveOnGyro(drivetrain, drivetrain.ROLL_WHEN_LEVEL),
+        //             new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
+        //         )
+        //     );
+        // }
 
         if (currentSelectedPose == knownLocations.START_TOPMOST || currentSelectedPose == knownLocations.START_TOP_SECOND) {
             waypoints = Arrays.asList(knownLocations.WAYPOINT_TOP);
@@ -158,6 +178,9 @@ public class Autons {
             } else {
                 finalPose = knownLocations.START_BOTTOMMOST;
             }
+        } else if (currentSelectedPose == knownLocations.START_MIDDLE_CONE) {
+            currentSelectedAuton = knownLocations.CHARGING_MIDDLE_CONE;
+            waypoints = List.of();
         }
 
         // whether we are leaving community or scoring 2nd piece, 1st trajectory is the same
@@ -208,6 +231,22 @@ public class Autons {
 
         // if charging station is selected, this is our final destination
         if (this.currentSelectedAutonType == AutonTypes.CHARGING_STATION) {
+
+            // if (currentSelectedPose == knownLocations.START_MIDDLE_CONE) {
+            //     return new SequentialCommandGroup(
+            //         getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+            //         getAutonScoreHighCommand(arm, telescope, wrist, claw),
+            //         getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+            //         new ParallelDeadlineGroup(
+            //             firstSwerveCommand,
+            //             new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
+            //         ),
+            //         new ParallelCommandGroup(
+            //             new SwerveOnGyro(drivetrain, drivetrain.ROLL_WHEN_LEVEL),
+            //             new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
+            //         )
+            //     );
+            // }
 
             waypoints = List.of(knownLocations.WAYPOINT_CHARGING);
             PathPlannerTrajectory traj2 = generateSwerveTrajectory(currentSelectedAuton, waypoints, knownLocations.CHARGING_CENTER);

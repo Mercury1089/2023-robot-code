@@ -136,6 +136,7 @@ public class RobotContainer {
     left11.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     right1.onTrue(new RunCommand(() -> claw.open(), claw));
+    right2.whileTrue(new RunCommand(() -> claw.moveClaw(() -> 1.0), claw));
     
     right3.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));
     
