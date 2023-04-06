@@ -67,7 +67,6 @@ public class Arm extends SubsystemBase {
     arm.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
     arm.setNeutralMode(NeutralMode.Brake);
 
-
     arm.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
 
     arm.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);
