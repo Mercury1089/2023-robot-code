@@ -118,7 +118,6 @@ public class RobotContainer {
     gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.8), wrist));
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
-    left2.whileTrue(new RunCommand(() -> claw.moveClaw(() -> -1.0), claw));
 
     left3.onTrue(
       new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
@@ -136,7 +135,6 @@ public class RobotContainer {
     left11.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
     right1.onTrue(new RunCommand(() -> claw.open(), claw));
-    right2.whileTrue(new RunCommand(() -> claw.moveClaw(() -> 1.0), claw));
     
     right3.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));
     
