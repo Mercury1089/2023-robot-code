@@ -80,7 +80,7 @@ public class RobotContainer {
     
     wrist = new Wrist();
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
-    wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
+    wrist.setDefaultCommand(new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist));
     claw = new Claw();
     // claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
@@ -114,8 +114,8 @@ public class RobotContainer {
     gamepadPOVLeft.or(gamepadPOVUpLeft).or(gamepadPOVDownLeft).onTrue(
       new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
     );
-    gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.8), wrist));
-    gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.8), wrist));
+    gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.4), wrist));
+    gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.4), wrist));
 
     left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
 

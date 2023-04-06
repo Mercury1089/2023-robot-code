@@ -404,16 +404,22 @@ public class Autons {
     }
 
     public Command getScorePieceHighCommand(Arm arm, Telescope telescope, Wrist wrist) {
-        return new ParallelCommandGroup(
-            new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
-            new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.getArmPosition() > ArmPosition.MID_SCORE.degreePos),
-              new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope),
-                new RunCommand(() -> wrist.setPosition(WristPosition.HIGH_SCORE), wrist)
-              )
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
+                new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist)
+            ).until(() -> wrist.isAtPosition(WristPosition.INSIDE)),  
+            new ParallelCommandGroup(
+                new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> arm.getArmPosition() > ArmPosition.MID_SCORE.degreePos),
+                    new ParallelCommandGroup(
+                        new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope),
+                        new RunCommand(() -> wrist.setPosition(WristPosition.HIGH_SCORE), wrist)
+                    )
+                )
             )
-          );
+        );
     }
 
     public Command getAutonScoreHighCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw) {
