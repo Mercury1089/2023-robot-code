@@ -82,7 +82,7 @@ public class RobotContainer {
     
     wrist = new Wrist();
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
-    wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
+    wrist.setDefaultCommand(new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist));
     // claw = new Claw();
     // claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
 
@@ -99,8 +99,9 @@ public class RobotContainer {
     // gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist, claw));
     gamepadB.onTrue(auton.getShelfPickupCommand(arm, telescope, wrist));
     gamepadY.onTrue(auton.getScorePieceHighCommand(arm, telescope, wrist));
-    gamepadX.onTrue(auton.getHybridBulldozeCommand(arm, telescope, wrist));
-    gamepadLB.onTrue(auton.getBulldozeCommand(arm, telescope, wrist));
+    // gamepadX.onTrue(auton.getHybridBulldozeCommand(arm, telescope, wrist));
+    gamepadX.onTrue(auton.getUpConeBulldozeCommand(arm, telescope, wrist));
+    gamepadLB.onTrue(auton.getCubeBulldozeCommand(arm, telescope, wrist));
     gamepadRB.onTrue(auton.getTuckInCommand(arm, telescope, wrist));
 
     gamepadStart.and(gamepadBack).whileTrue(
@@ -112,14 +113,14 @@ public class RobotContainer {
     );
 
     gamepadPOVLeft.or(gamepadPOVUpLeft).or(gamepadPOVDownLeft).onTrue(
-      new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
+      auton.getFlatConeBulldozeCommand(arm, telescope, wrist)
     );
-    gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.8), wrist));
-    gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.8), wrist));
+    gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.2), wrist));
+    gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.2), wrist));
 
     // left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     left1.whileTrue(
-      new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.EJECT), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))
+      new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.INTAKE), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))
     );
     
     left3.onTrue(
@@ -139,7 +140,7 @@ public class RobotContainer {
 
     // right1.onTrue(new RunCommand(() -> claw.open(), claw));
     right1.whileTrue(
-      new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.INTAKE), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))
+      new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.EJECT), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))
     );
     
     right3.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));

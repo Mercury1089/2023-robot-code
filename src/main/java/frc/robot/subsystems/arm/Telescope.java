@@ -54,7 +54,7 @@ public class Telescope extends SubsystemBase {
     telescope.configSelectedFeedbackCoefficient((SPROCKET_DIAMETER_INCHES * Math.PI) / (GEAR_RATIO * Constants.UNITS.FALCON_ENCODER_TICKS_PER_REVOLUTION),
     TELESCOPE_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
 
-    telescope.configForwardSoftLimitThreshold(13.0);
+    telescope.configForwardSoftLimitThreshold(12.0);
     telescope.configForwardSoftLimitEnable(true);
     
     telescope.configClearPositionOnLimitR(true, Constants.CTRE.TIMEOUT_MS);
@@ -118,9 +118,11 @@ public class Telescope extends SubsystemBase {
     INSIDE(0.0),
     FLOOR(0),
     RAMP_PICKUP(0.0),
-    HIGH_SCORE(13.0),
+    HIGH_SCORE(8.0),
     MID_SCORE(0.0),
-    BULLDOZER(12),
+    CUBE_BULLDOZER(12.0),
+    FLAT_CONE_BULLDOZER(7.0),
+    UP_CONE_BULLDOZER(0.0),
     FELL_OVER(0); // lol
 
     public final double encPos;

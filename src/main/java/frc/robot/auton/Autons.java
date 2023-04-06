@@ -214,7 +214,7 @@ public class Autons {
                     firstSwerveCommand,
                     new SequentialCommandGroup(
                         getHybridBulldozeCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
-                        getBulldozeCommand(arm, telescope, wrist).until(() ->telescope.isAtPosition(TelescopePosition.BULLDOZER))
+                        getCubeBulldozeCommand(arm, telescope, wrist).until(() ->telescope.isAtPosition(TelescopePosition.CUBE_BULLDOZER))
                     ) 
                 ),
                 new InstantCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs),
@@ -262,7 +262,7 @@ public class Autons {
                     firstSwerveCommand,
                     new SequentialCommandGroup(
                         getHybridBulldozeCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
-                        getBulldozeCommand(arm, telescope, wrist).until(() ->telescope.isAtPosition(TelescopePosition.BULLDOZER))
+                        getCubeBulldozeCommand(arm, telescope, wrist).until(() ->telescope.isAtPosition(TelescopePosition.CUBE_BULLDOZER))
                     ) 
                 ),
                 new InstantCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs),
@@ -327,7 +327,7 @@ public class Autons {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.SHELF_PICKUP), arm),
             new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
-            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist) 
+            new RunCommand(() -> wrist.setPosition(WristPosition.SHELF), wrist) 
         );
     }
 
@@ -339,14 +339,38 @@ public class Autons {
             new RunCommand(() -> claw.setPosition(ClawPosition.RAMP), claw)   
         );
     }
-    public Command getBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
+    public Command getCubeBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
-            new RunCommand(() -> wrist.setPosition(WristPosition.BULLDOZER), wrist),
+            new RunCommand(() -> wrist.setPosition(WristPosition.CUBE_BULLDOZER), wrist),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
               new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.BULLDOZER), telescope)
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.CUBE_BULLDOZER), telescope)
+              )
+            )
+        );
+    }
+    public Command getFlatConeBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
+            new RunCommand(() -> wrist.setPosition(WristPosition.FLAT_CONE_BULLDOZER), wrist),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.FLAT_CONE_BULLDOZER), telescope)
+              )
+            )
+        );
+    }
+    public Command getUpConeBulldozeCommand(Arm arm, Telescope telescope, Wrist wrist) {
+        return new ParallelCommandGroup(
+            new RunCommand(() -> arm.setPosition(ArmPosition.BULLDOZER), arm),
+            new RunCommand(() -> wrist.setPosition(WristPosition.UP_CONE_BULLDOZER), wrist),
+            new SequentialCommandGroup(
+              new WaitUntilCommand(() -> arm.isAtPosition(ArmPosition.BULLDOZER)),
+              new ParallelCommandGroup(
+                new RunCommand(() -> telescope.setPosition(TelescopePosition.UP_CONE_BULLDOZER), telescope)
               )
             )
         );
@@ -388,8 +412,10 @@ public class Autons {
             )
           );
     }
+     
 
     public Command getScorePieceMidCommand(Arm arm, Telescope telescope, Wrist wrist) {
+        
         return new ParallelCommandGroup(
             new RunCommand(() -> arm.setPosition(ArmPosition.MID_SCORE), arm),
             new SequentialCommandGroup(
@@ -404,24 +430,30 @@ public class Autons {
     }
 
     public Command getScorePieceHighCommand(Arm arm, Telescope telescope, Wrist wrist) {
-        return new ParallelCommandGroup(
-            new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
-            new SequentialCommandGroup(
-              new WaitUntilCommand(() -> arm.getArmPosition() > ArmPosition.MID_SCORE.degreePos),
-              new ParallelCommandGroup(
-                new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope),
-                new RunCommand(() -> wrist.setPosition(WristPosition.HIGH_SCORE), wrist)
-              )
+        return new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
+                new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist)
+            ).until(() -> wrist.isAtPosition(WristPosition.INSIDE)),  
+            new ParallelCommandGroup(
+                new RunCommand(() -> arm.setPosition(ArmPosition.HIGH_SCORE), arm),
+                new SequentialCommandGroup(
+                    new WaitUntilCommand(() -> arm.getArmPosition() > ArmPosition.MID_SCORE.degreePos),
+                    new ParallelCommandGroup(
+                        new RunCommand(() -> telescope.setPosition(TelescopePosition.HIGH_SCORE), telescope),
+                        new RunCommand(() -> wrist.setPosition(WristPosition.HIGH_SCORE), wrist)
+                    )
+                )
             )
-          );
+        );
     }
 
     public Command getAutonScoreHighCommand(Arm arm, Telescope telescope, Wrist wrist, Intake intake) {
         return new SequentialCommandGroup(
             getScorePieceHighCommand(arm, telescope, wrist).until(() ->
             (telescope.isAtPosition(TelescopePosition.HIGH_SCORE))),
-            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist).until(() -> wrist.isAtPosition(WristPosition.LEVEL))
-            // new RunCommand(() -> claw.open(), claw).until(() -> claw.isAtPosition(ClawPosition.OPEN))
+            // new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist).until(() -> wrist.isAtPosition(WristPosition.LEVEL)),
+            new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.EJECT), intake).withTimeout(1.5)
         );
         
     }

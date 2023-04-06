@@ -101,8 +101,8 @@ public final class Constants {
     public static final int WRIST_TALON = 11;
     public static final int TELESCOPE_TALON = 12;
     public static final int ARM_GYRO = 13;
-    public static final int CLAW_TALON = 14;
-    public static final int INTAKE_TALON = 15;
+    public static final int CLAW_TALON = 16;
+    public static final int INTAKE_TALON = 14;
 
     
     private CAN() {}
