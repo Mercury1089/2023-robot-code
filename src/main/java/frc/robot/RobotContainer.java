@@ -12,6 +12,7 @@ import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Claw;
+import frc.robot.subsystems.arm.Intake;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Wrist.WristPosition;
@@ -53,7 +54,8 @@ public class RobotContainer {
   private GamePieceLEDs LEDs;
   private Arm arm;
   private Telescope telescope;
-  private Claw claw;
+  // private Claw claw;
+  private Intake intake;
   private Wrist wrist;
   private Drivetrain drivetrain;
 
@@ -81,15 +83,17 @@ public class RobotContainer {
     wrist = new Wrist();
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
     wrist.setDefaultCommand(new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist));
-    claw = new Claw();
+    // claw = new Claw();
     // claw.setDefaultCommand(new RunCommand(() -> claw.moveClaw(gamepadLeftX), claw));
+
+    intake = new Intake(LEDs);
 
     drivetrain = new Drivetrain();
     drivetrain.setDefaultCommand(new SwerveOnJoysticks(drivetrain, leftJoystickX, leftJoystickY, rightJoystickX));
     drivetrain.resetGyro();
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
-    auton = new Autons(drivetrain, arm, telescope, wrist, claw, LEDs);
+    auton = new Autons(drivetrain, arm, telescope, wrist, intake, LEDs);
 
     gamepadA.onTrue(auton.getScorePieceMidCommand(arm, telescope, wrist));
     // gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist, claw));
@@ -107,18 +111,17 @@ public class RobotContainer {
       )
     );
 
-    gamepadPOVRight.or(gamepadPOVUpRight).or(gamepadPOVDownRight).whileTrue(
-      new RunCommand(() -> claw.moveClaw(() -> -1.0), claw)
-    );
-
     gamepadPOVLeft.or(gamepadPOVUpLeft).or(gamepadPOVDownLeft).onTrue(
       new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
     );
     gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.8), wrist));
     gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.8), wrist));
 
-    left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
-
+    // left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
+    left1.whileTrue(
+      new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.EJECT), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))
+    );
+    
     left3.onTrue(
       new RunCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs)
     );
@@ -134,7 +137,10 @@ public class RobotContainer {
     left10.onTrue(new InstantCommand(() -> drivetrain.resetGyro(), drivetrain).ignoringDisable(true));
     left11.onTrue(new RunCommand(() -> drivetrain.lockSwerve(), drivetrain));
 
-    right1.onTrue(new RunCommand(() -> claw.open(), claw));
+    // right1.onTrue(new RunCommand(() -> claw.open(), claw));
+    right1.whileTrue(
+      new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.INTAKE), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))
+    );
     
     right3.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs));
     

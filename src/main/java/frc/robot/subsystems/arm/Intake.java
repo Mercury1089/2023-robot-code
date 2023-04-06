@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,10 +35,16 @@ public class Intake extends SubsystemBase {
     NOMINAL_OUTPUT_REVERSE = -0.02,
     PEAK_OUTPUT_FORWARD = 1,
     PEAK_OUTPUT_REVERSE = -1;
-    
+
+  private double maxCurrent = 0.0;
+  private int maxCurrentCtr = 0;
+
   private TalonSRX intake;
+  private GamePieceLEDs leds;
   /** Creates a new intake. */
-  public Intake() {
+  public Intake(GamePieceLEDs leds) {
+    this.leds = leds;
+
     intake = new TalonSRX(CAN.INTAKE_TALON);
 
     intake.configFactoryDefault();
@@ -62,23 +69,43 @@ public class Intake extends SubsystemBase {
   }
 
   public void setSpeed(IntakeSpeed intakeSpeed) {
-    intake.set(ControlMode.PercentOutput, intakeSpeed.speed * 0.25); 
+    if (leds.getGameState() == GamePiece.CONE) {
+      intake.set(ControlMode.PercentOutput, intakeSpeed.coneSpeed); 
+    } else if (leds.getGameState() == GamePiece.CUBE) {
+      intake.set(ControlMode.PercentOutput, intakeSpeed.cubeSpeed); 
+    } else {
+      intake.set(ControlMode.PercentOutput, 0.0);
+    }
   }  
 
   public enum IntakeSpeed {
-    STOP(0.0),
-    INTAKE(1.0),
-    EJECT(-1.0);
+    STOP(0.0, 0.0),
+    INTAKE(1.0, -1.0),
+    EJECT(-1.0, 1.0);
 
-    public final double speed;
+    public final double coneSpeed;
+    public final double cubeSpeed;
 
-    private IntakeSpeed(double speed) {
-      this.speed = speed;
+    private IntakeSpeed(double coneSpeed, double cubeSpeed) {
+      this.coneSpeed = coneSpeed;
+      this.cubeSpeed = cubeSpeed;
     }
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Intake current", intake.getSupplyCurrent());
+    if (DriverStation.isDisabled()) {
+      maxCurrent = 0.0;
+    } else {
+      double current = intake.getSupplyCurrent();
+      if(current > maxCurrent || maxCurrentCtr > 500) {
+        maxCurrent = current;
+        maxCurrentCtr = 0;
+      }
+    }
+    maxCurrentCtr++;
+    SmartDashboard.putNumber("Intake max current", maxCurrent);
 
   }
 }

@@ -29,6 +29,7 @@ import frc.robot.subsystems.GamePieceLEDs;
 import frc.robot.subsystems.GamePieceLEDs.LEDState;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Claw;
+import frc.robot.subsystems.arm.Intake;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
@@ -62,13 +63,13 @@ public class Autons {
     private Arm arm;
     private Telescope telescope;
     private Wrist wrist;
-    private Claw claw;
+    private Intake intake;
     private GamePieceLEDs LEDs;
 
     /**
      * made by rohan no thanks to owen :(
      */
-    public Autons(Drivetrain drivetrain, Arm arm, Telescope telescope, Wrist wrist, Claw claw, GamePieceLEDs LEDs) {
+    public Autons(Drivetrain drivetrain, Arm arm, Telescope telescope, Wrist wrist, Intake intake, GamePieceLEDs LEDs) {
 
         this.allianceColor = DriverStation.getAlliance();
 
@@ -81,7 +82,7 @@ public class Autons {
         this.arm = arm;
         this.telescope = telescope;
         this.wrist = wrist;
-        this.claw = claw;
+        this.intake = intake;
 
         this.pathConstraints = new PathConstraints(MAX_DIRECTIONAL_SPEED, MAX_ACCELERATION); 
         turningPIDController = new PIDController(TURNING_P_VAL, 0, 0);
@@ -135,7 +136,7 @@ public class Autons {
             SmartDashboard.putBoolean("isDoNothing", true);
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
-            return getHomeCommand(arm, telescope, wrist, claw, LEDs);
+            return getHomeCommand(arm, telescope, wrist, LEDs);
         }
 
        
@@ -193,8 +194,8 @@ public class Autons {
             drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
             
             return new SequentialCommandGroup(
-                getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
-                getAutonScoreHighCommand(arm, telescope, wrist, claw),
+                getHomeCommand(arm, telescope, wrist, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                getAutonScoreHighCommand(arm, telescope, wrist, intake),
                 new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
                 getTuckInCommand(arm, telescope, wrist).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
                 firstSwerveCommand
@@ -207,8 +208,8 @@ public class Autons {
             Command secondSwerveCommand = generateSwerveCommand(traj2);
 
             return new SequentialCommandGroup(
-                getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
-                getAutonScoreHighCommand(arm, telescope, wrist, claw),
+                getHomeCommand(arm, telescope, wrist, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                getAutonScoreHighCommand(arm, telescope, wrist, intake),
                 new ParallelCommandGroup(
                     firstSwerveCommand,
                     new SequentialCommandGroup(
@@ -217,7 +218,7 @@ public class Autons {
                     ) 
                 ),
                 new InstantCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs),
-                new RunCommand(() -> claw.close(LEDs), claw).until(() -> claw.isAtPosition(ClawPosition.CUBE)),
+//                new RunCommand(() -> claw.close(LEDs), intake).until(() -> intake.isAtPosition(ClawPosition.CUBE)),
                 new ParallelDeadlineGroup(
                     secondSwerveCommand,
                     new SequentialCommandGroup(
@@ -225,7 +226,7 @@ public class Autons {
                         new RunCommand(() -> wrist.setSpeed(() -> 0.0), wrist)
                     )
                 ),
-                getAutonScoreHighCommand(arm, telescope, wrist, claw)
+                getAutonScoreHighCommand(arm, telescope, wrist, intake)
             ); 
         }
 
@@ -255,8 +256,8 @@ public class Autons {
 
             return new SequentialCommandGroup(
                 // new InstantCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs),
-                getHomeCommand(arm, telescope, wrist, claw, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
-                getAutonScoreHighCommand(arm, telescope, wrist, claw),
+                getHomeCommand(arm, telescope, wrist, LEDs).until(() -> arm.isAtPosition(ArmPosition.INSIDE)),
+                getAutonScoreHighCommand(arm, telescope, wrist, intake),
                 new ParallelCommandGroup(
                     firstSwerveCommand,
                     new SequentialCommandGroup(
@@ -265,7 +266,7 @@ public class Autons {
                     ) 
                 ),
                 new InstantCommand(() -> LEDs.lightUp(LEDState.PURPLE), LEDs),
-                new RunCommand(() -> claw.close(LEDs), claw).until(() -> claw.isAtPosition(ClawPosition.CUBE)),
+                // new RunCommand(() -> claw.close(LEDs), claw).until(() -> claw.isAtPosition(ClawPosition.CUBE)),
                 new ParallelDeadlineGroup(
                     secondSwerveCommand,
                     new SequentialCommandGroup(
@@ -284,7 +285,7 @@ public class Autons {
         // Should never get here
         drivetrain.setTrajectorySmartdash(new Trajectory(), "traj1");
         drivetrain.setTrajectorySmartdash(new Trajectory(), "traj2");
-        return getHomeCommand(arm, telescope, wrist, claw, LEDs);
+        return getHomeCommand(arm, telescope, wrist, LEDs);
 
     }
 
@@ -374,13 +375,12 @@ public class Autons {
         );
     }
 
-    public Command getHomeCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw, GamePieceLEDs LEDs) {
+    public Command getHomeCommand(Arm arm, Telescope telescope, Wrist wrist, GamePieceLEDs LEDs) {
         return new ParallelCommandGroup(
             new RunCommand(() -> telescope.setPosition(TelescopePosition.HOME), telescope),
             new RunCommand(() -> wrist.setPosition(WristPosition.INSIDE), wrist),
             new SequentialCommandGroup(
-                new InstantCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs),
-                new RunCommand(() -> claw.close(LEDs), claw)
+                new InstantCommand(() -> LEDs.lightUp(LEDState.YELLOW), LEDs)
             ),
             new SequentialCommandGroup(
               new WaitUntilCommand(() -> telescope.isAtPosition(TelescopePosition.INSIDE)),
@@ -416,12 +416,12 @@ public class Autons {
           );
     }
 
-    public Command getAutonScoreHighCommand(Arm arm, Telescope telescope, Wrist wrist, Claw claw) {
+    public Command getAutonScoreHighCommand(Arm arm, Telescope telescope, Wrist wrist, Intake intake) {
         return new SequentialCommandGroup(
             getScorePieceHighCommand(arm, telescope, wrist).until(() ->
             (telescope.isAtPosition(TelescopePosition.HIGH_SCORE))),
-            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist).until(() -> wrist.isAtPosition(WristPosition.LEVEL)),
-            new RunCommand(() -> claw.open(), claw).until(() -> claw.isAtPosition(ClawPosition.OPEN))
+            new RunCommand(() -> wrist.setPosition(WristPosition.LEVEL), wrist).until(() -> wrist.isAtPosition(WristPosition.LEVEL))
+            // new RunCommand(() -> claw.open(), claw).until(() -> claw.isAtPosition(ClawPosition.OPEN))
         );
         
     }
