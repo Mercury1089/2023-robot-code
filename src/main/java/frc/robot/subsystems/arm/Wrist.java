@@ -98,7 +98,11 @@ public class Wrist extends SubsystemBase {
   }
 
   public void setPosition(WristPosition wristPos) {
-    wrist.set(ControlMode.Position, wristPos.degreePos);
+    if (!isReady()) {
+      wrist.set(ControlMode.PercentOutput, 0.0);
+    } else {
+      wrist.set(ControlMode.Position, wristPos.degreePos);
+    }
   }
 
   public void incrementWrist(double increment) {
@@ -134,9 +138,9 @@ public class Wrist extends SubsystemBase {
     SHELF(-40.0),
     CUBE_BULLDOZER(10.0),
     UP_CONE_BULLDOZER(-49.0),
-    FLAT_CONE_BULLDOZER(-47.0), // -45.0
-    HIGH_SCORE(-40.0),
-    MID_SCORE(-20.0),
+    FLAT_CONE_BULLDOZER(-53.0), // -45.0
+    HIGH_SCORE(-31.0), // 40.0
+    MID_SCORE(-35.0),
     RAMP(38),
     FELL_OVER(0);
 

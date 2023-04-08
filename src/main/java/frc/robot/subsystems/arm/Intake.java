@@ -50,10 +50,8 @@ public class Intake extends SubsystemBase {
     intake.configFactoryDefault();
 
     // intake.setSensorPhase(false);
-    intake.setInverted(false);
-    
-    intake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, INTAKE_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
- 
+    intake.setInverted(true);
+   
     intake.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, Constants.CAN_STATUS_FREQ.HIGH);
 
     intake.configNominalOutputForward(NOMINAL_OUTPUT_FORWARD, Constants.CTRE.TIMEOUT_MS);

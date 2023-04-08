@@ -11,6 +11,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -38,7 +40,10 @@ public class Telescope extends SubsystemBase {
     NOMINAL_OUTPUT_REVERSE = -0.02,
     PEAK_OUTPUT_REVERSE = -1;
 
+  private final double JOYSTICK_DEADBAND = 0.1;
+
   public final double THRESHOLD_INCHES = 1.0;
+  
 
   private TalonFX telescope;
 
@@ -78,7 +83,9 @@ public class Telescope extends SubsystemBase {
   }
 
   public void setSpeed(Supplier<Double> speedSupplier) {
-    telescope.set(ControlMode.PercentOutput, speedSupplier.get());
+    telescope.set(ControlMode.PercentOutput,
+      MathUtil.applyDeadband(speedSupplier.get(), JOYSTICK_DEADBAND)
+    );
   }
 
   public void setPosition(TelescopePosition telePos) {
@@ -118,7 +125,7 @@ public class Telescope extends SubsystemBase {
     INSIDE(0.0),
     FLOOR(0),
     RAMP_PICKUP(0.0),
-    HIGH_SCORE(8.0),
+    HIGH_SCORE(7.0),
     MID_SCORE(0.0),
     CUBE_BULLDOZER(12.0),
     FLAT_CONE_BULLDOZER(7.0),

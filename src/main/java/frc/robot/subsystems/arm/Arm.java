@@ -141,14 +141,13 @@ public class Arm extends SubsystemBase {
   }
 
   public enum ArmPosition {
-    // enum values to be changed
     INSIDE(0.0),
     HOME(-20.0),
-    FLOOR(0),
-    RAMP_PICKUP(46.0),
-    SHELF_PICKUP(88.0),
+    RAMP_PICKUP(46.0), // single substation
+    SHELF_PICKUP(100.0), // double substation
     HIGH_SCORE(100.0),
     MID_SCORE(75.0),
+    UP_CONE_BULLDOZER(20.0),
     BULLDOZER(17.0),
     FELL_OVER(0); // lol
 
