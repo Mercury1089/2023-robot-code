@@ -12,10 +12,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.Pigeon2_Faults;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
-import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
-import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -53,12 +52,14 @@ public class Wrist extends SubsystemBase {
   // Need to find Gear ratio 30:1
 
   private VictorSPX wrist;
-  private PigeonIMU pigeon;
+  private Pigeon2 pigeon;
+  private Pigeon2_Faults pigeon_faults;
 
   public Wrist() {
     wrist = new VictorSPX(CAN.WRIST_TALON);
     // Configure Gyro
-    pigeon = new PigeonIMU(CAN.ARM_GYRO);
+    pigeon = new Pigeon2(CAN.ARM_GYRO);
+    pigeon_faults = new Pigeon2_Faults();
     pigeon.configFactoryDefault();
     pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, Constants.CTRE.TIMEOUT_MS);
 
@@ -93,10 +94,6 @@ public class Wrist extends SubsystemBase {
     wrist.set(ControlMode.PercentOutput, speedSupplier.get());
   }
 
-  public void calibratePigeon() {
-    pigeon.enterCalibrationMode(PigeonIMU.CalibrationMode.BootTareGyroAccel);
-  }
-
   public void setPosition(WristPosition wristPos) {
     if (!isReady()) {
       wrist.set(ControlMode.PercentOutput, 0.0);
@@ -117,12 +114,9 @@ public class Wrist extends SubsystemBase {
     return Math.abs(getWristPosition() - pos.degreePos) < THRESHOLD_DEGREES;
   }
 
-  public void calibrate() {
-    pigeon.enterCalibrationMode(CalibrationMode.BootTareGyroAccel);
-  }
-
   public boolean isReady() {
-    return (pigeon.getState() == PigeonState.Ready);
+    pigeon.getFaults(pigeon_faults);
+    return !pigeon_faults.hasAnyFault();
   }
 
   @Override

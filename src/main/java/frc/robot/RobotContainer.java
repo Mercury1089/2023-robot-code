@@ -131,7 +131,6 @@ public class RobotContainer {
 
     
     left6.onTrue(new RunCommand(() -> LEDs.lightUp(LEDState.CELEBRATION), LEDs));
-    left8.onTrue(new InstantCommand(() -> wrist.calibrate(), wrist).ignoringDisable(true));
     // left9.onTrue(new SwerveOnGyro(drivetrain, -1.75));
   
     // in honor of resetTurret
