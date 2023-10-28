@@ -94,12 +94,10 @@ public class RobotContainer {
 
     // wrist.setDefaultCommand(new RunCommand(() -> wrist.moveWrist(gamepadLeftY), wrist));
     auton = new Autons(drivetrain, arm, telescope, wrist, intake, LEDs);
-
+/*
     gamepadA.onTrue(auton.getScorePieceMidCommand(arm, telescope, wrist));
-    // gamepadB.onTrue(auton.getSubstationCommand(arm, telescope, wrist, claw));
     gamepadB.onTrue(auton.getShelfPickupCommand(arm, telescope, wrist));
     gamepadY.onTrue(auton.getScorePieceHighCommand(arm, telescope, wrist));
-    // gamepadX.onTrue(auton.getHybridBulldozeCommand(arm, telescope, wrist));
     gamepadX.onTrue(auton.getUpConeBulldozeCommand(arm, telescope, wrist));
     gamepadLB.onTrue(auton.getCubeBulldozeCommand(arm, telescope, wrist));
     gamepadRB.onTrue(auton.getTuckInCommand(arm, telescope, wrist));
@@ -117,7 +115,7 @@ public class RobotContainer {
     );
     gamepadLT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> -0.4), wrist));
     gamepadRT.whileTrue(new RunCommand(() -> wrist.setSpeed(() -> 0.4), wrist));
-
+*/
     // left1.onTrue(new RunCommand(() -> claw.close(LEDs), claw));
     left1.whileTrue(
       new RunCommand(() -> intake.setSpeed(Intake.IntakeSpeed.INTAKE), intake).handleInterrupt(() -> intake.setSpeed(Intake.IntakeSpeed.STOP))

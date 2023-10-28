@@ -49,7 +49,7 @@ public class Arm extends SubsystemBase {
 
     // Account for motor orientation.
     arm.setSensorPhase(true);
-    arm.setInverted(true);
+    arm.setInverted(false);
 
     SmartDashboard.putNumber("ARM P", ARM_NORMAL_P_VAL);
     SmartDashboard.putNumber("ARM I", ARM_NORMAL_I_VAL);
@@ -95,7 +95,8 @@ public class Arm extends SubsystemBase {
 
   /**  sets the position of the entire arm */
   public void setPosition(ArmPosition armPos) {
-    arm.set(ControlMode.Position, armPos.degreePos);
+    arm.set(ControlMode.PercentOutput, 0.0);
+    // arm.set(ControlMode.Position, armPos.degreePos);
     // arm.set(ControlMode.Position, (290000.0 / 50.0) * armPos.degreePos);
   }
 
