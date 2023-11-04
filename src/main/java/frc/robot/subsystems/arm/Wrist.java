@@ -62,10 +62,11 @@ public class Wrist extends SubsystemBase {
     pigeon_faults = new Pigeon2_Faults();
     pigeon.configFactoryDefault();
     pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, Constants.CTRE.TIMEOUT_MS);
+    pigeon.configMountPose(0.0, 0.0, 0.0);
 
     wrist.configFactoryDefault();
 
-    wrist.setSensorPhase(true);
+    wrist.setSensorPhase(false);
     wrist.setInverted(false);
     wrist.setNeutralMode(NeutralMode.Brake);
     wrist.configRemoteFeedbackFilter(pigeon.getDeviceID(), RemoteSensorSource.Pigeon_Roll, REMOTE_DEVICE_0);

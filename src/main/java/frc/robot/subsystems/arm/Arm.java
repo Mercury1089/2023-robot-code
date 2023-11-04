@@ -33,9 +33,9 @@ public class Arm extends SubsystemBase {
 
   private final double 
     NOMINAL_OUTPUT_FORWARD = 0.01, //0.02,
-    PEAK_OUTPUT_FORWARD = 0.8, // 0.6,
+    PEAK_OUTPUT_FORWARD = 1.0, // 0.6,
     NOMINAL_OUTPUT_REVERSE = -0.01, //-0.5,
-    PEAK_OUTPUT_REVERSE = -1.0;
+    PEAK_OUTPUT_REVERSE = -0.6;
 
   public final double GEAR_RATIO = 1;
   public final double THRESHOLD_DEGREES = 2.0;
@@ -58,8 +58,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("ARM MIN FWD", NOMINAL_OUTPUT_FORWARD);
 
     arm.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, ARM_PID_SLOT, Constants.CTRE.TIMEOUT_MS);
-    // arm.configSelectedFeedbackCoefficient(50.0 / 290000.0);
-    arm.configSelectedFeedbackCoefficient(100.0 / 410400.0);
+    arm.configSelectedFeedbackCoefficient(100.0 / 200000.0);
 
     arm.configForwardSoftLimitThreshold(100.0);
     arm.configForwardSoftLimitEnable(true);
@@ -95,9 +94,7 @@ public class Arm extends SubsystemBase {
 
   /**  sets the position of the entire arm */
   public void setPosition(ArmPosition armPos) {
-    arm.set(ControlMode.PercentOutput, 0.0);
-    // arm.set(ControlMode.Position, armPos.degreePos);
-    // arm.set(ControlMode.Position, (290000.0 / 50.0) * armPos.degreePos);
+    arm.set(ControlMode.Position, armPos.degreePos);
   }
 
   public void setSpeed(Supplier<Double> speedSupplier) {
@@ -143,12 +140,12 @@ public class Arm extends SubsystemBase {
 
   public enum ArmPosition {
     INSIDE(0.0),
-    HOME(-20.0),
+    HOME(-5.0),
     RAMP_PICKUP(46.0), // single substation
     SHELF_PICKUP(100.0), // double substation
     HIGH_SCORE(100.0),
     MID_SCORE(75.0),
-    UP_CONE_BULLDOZER(20.0),
+    UP_CONE_BULLDOZER(28.0),
     BULLDOZER(17.0),
     FELL_OVER(0); // lol
 
