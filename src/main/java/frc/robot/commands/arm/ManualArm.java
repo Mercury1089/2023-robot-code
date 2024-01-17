@@ -6,12 +6,12 @@ package frc.robot.commands.arm;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Wrist;
 import frc.robot.subsystems.arm.Telescope;
 
-public class ManualArm extends CommandBase {
+public class ManualArm extends Command {
 
   private Arm arm;
   private Telescope telescope;

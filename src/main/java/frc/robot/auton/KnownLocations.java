@@ -4,7 +4,9 @@
 
 package frc.robot.auton;
 
-import com.pathplanner.lib.PathPoint;
+import java.util.Optional;
+
+import com.pathplanner.lib.path.PathPoint;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -53,13 +55,13 @@ public class KnownLocations {
         // WAYPOINT_CHARGING_BACK;
     
         
-    public Alliance allianceColor = DriverStation.getAlliance();
+    public Optional<Alliance> allianceColor = DriverStation.getAlliance();
 
     public KnownLocations() {
 
         allianceColor = DriverStation.getAlliance();
 
-        if (allianceColor == Alliance.Blue) {
+        if ( allianceColor == Alliance.Blue) {
             START_TOPMOST = PathPointInch(54.93+16.5, 199.65, 0, 180);
             START_TOP_SECOND = PathPointInch(54.93+16.5, 173.52, 0, 180);
             START_BOTTOM_SECOND = PathPointInch(54.93+16.5, 41.67, 0, 180);

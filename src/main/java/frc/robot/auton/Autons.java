@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.pathfinding.
+import com.pathplanner.lib.path.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;

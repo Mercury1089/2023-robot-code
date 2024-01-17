@@ -4,12 +4,12 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Telescope;
 import frc.robot.subsystems.arm.Telescope.TelescopePosition;
 import frc.robot.util.MercMath;
 
-public class MoveTelescope extends CommandBase {
+public class MoveTelescope extends Command {
   /** Creates a new MoveTelescope. */
   Telescope scope;
   TelescopePosition scopePos;

@@ -4,12 +4,12 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.Arm.ArmPosition;
 import frc.robot.util.MercMath;
 
-public class MoveArm extends CommandBase {
+public class MoveArm extends Command {
   /** Creates a new MoveArm. */
   Arm arm;
   ArmPosition armPos;

@@ -8,11 +8,11 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SWERVE;
 import frc.robot.subsystems.drivetrain.Drivetrain;
 
-public class SwerveOnJoysticks extends CommandBase {
+public class SwerveOnJoysticks extends Command {
   Drivetrain drivetrain;
   Supplier<Double> leftJoyX, leftJoyY, rightJoyX;
   double xSpeed, ySpeed, angularSpeed;

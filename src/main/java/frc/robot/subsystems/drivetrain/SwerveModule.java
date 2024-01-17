@@ -6,12 +6,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.SWERVE;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.RelativeEncoder;
+
 
 public class SwerveModule {
     private final CANSparkMax drivingSparkMax;
@@ -20,8 +21,8 @@ public class SwerveModule {
     private final RelativeEncoder drivingEncoder;
     private final AbsoluteEncoder turningEncoder;
 
-    private final SparkMaxPIDController drivingPIDController;
-    private final SparkMaxPIDController turningPIDController;
+    private final SparkPIDController drivingPIDController;
+    private final SparkPIDController turningPIDController;
 
     private final double DRIVING_PVAL = 0.04;
     private final double DRIVING_IVAL = 0.0;
