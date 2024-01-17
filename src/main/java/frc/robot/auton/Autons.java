@@ -3,10 +3,10 @@ package frc.robot.auton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.pathfinding.
-import com.pathplanner.lib.path.PathPlanner;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
@@ -72,7 +72,8 @@ public class Autons {
      */
     public Autons(Drivetrain drivetrain, Arm arm, Telescope telescope, Wrist wrist, Intake intake, GamePieceLEDs LEDs) {
 
-        this.allianceColor = DriverStation.getAlliance();
+        Optional<Alliance> allianceColor = DriverStation.getAlliance();
+        this.allianceColor = allianceColor.isPresent() ? allianceColor.get() : Alliance.Blue;
 
         this.knownLocations = new KnownLocations();
         this.currentSelectedAuton = KnownLocations.DO_NOTHING;
@@ -476,7 +477,8 @@ public class Autons {
         PathPoint currPose = startingPoseChooser.getSelected();
         AutonTypes currAutonType = autonTypeChooser.getSelected();
 
-        Alliance color = DriverStation.getAlliance();
+        Optional<Alliance> allianceColor = DriverStation.getAlliance();
+        Alliance color = allianceColor.isPresent() ? allianceColor.get() : Alliance.Blue;
 
         if (color != this.allianceColor) {
             this.allianceColor = color;
